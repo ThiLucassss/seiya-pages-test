@@ -36,55 +36,9 @@
         /* DISCLAIMER */
         .disclaimer { background: #72757c; padding: 7px 16px; text-align: center; font-size: 11px; color: rgba(255,255,255,0.7); position: relative; z-index: 50; }
 
-        /* ========== INTRO TEXT (before video) ========== */
-        .intro {
-            min-height: 80vh; min-height: 80dvh;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            text-align: center; padding: 60px 24px;
-            position: relative;
-        }
-        .intro::before {
-            content: ''; position: absolute; inset: 0;
-            background-image: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
-            background-size: 40px 40px; pointer-events: none;
-            mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%);
-        }
-        .intro > * { position: relative; z-index: 1; }
-        .intro-badge {
-            display: inline-flex; align-items: center; gap: 7px;
-            border-radius: 100px; padding: 5px 14px;
-            font-family: var(--font-display); font-size: 11px; font-weight: 700;
-            letter-spacing: 0.08em; text-transform: uppercase;
-            background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.18);
-            color: #EF4444; margin-bottom: 20px;
-        }
-        .intro-dot { width: 7px; height: 7px; border-radius: 50%; background: #EF4444; animation: pdot 1.5s ease-in-out infinite; }
-        @keyframes pdot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.3)} }
-        .intro h1 {
-            font-family: var(--font-display); font-size: clamp(24px, 5vw, 42px);
-            font-weight: 800; line-height: 1.15; color: var(--text-primary);
-            letter-spacing: -0.03em; max-width: 700px; margin-bottom: 20px;
-        }
-        .intro h1 .accent { color: var(--accent); font-style: italic; }
-        .intro .sub {
-            font-size: 15px; color: var(--text-muted); max-width: 580px; line-height: 1.6;
-        }
-        .intro .sub strong { color: #1F2937; font-weight: 600; text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; text-decoration-thickness: 2px; }
-
-        .scroll-cue {
-            margin-top: 40px; display: flex; flex-direction: column; align-items: center; gap: 6px;
-            color: var(--text-muted); font-size: 10px; font-family: var(--font-display);
-            font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
-        }
-        .scroll-cue-line { width: 1px; height: 32px; background: rgba(0,0,0,0.12); position: relative; overflow: hidden; }
-        .scroll-cue-line::after { content: ''; position: absolute; top: -100%; left: 0; width: 100%; height: 100%; background: var(--accent); animation: sline 1.5s cubic-bezier(0.77,0,0.175,1) infinite; }
-        @keyframes sline { 0%{transform:translateY(-100%)} 100%{transform:translateY(200%)} }
-
-        /* ========== CANVAS HERO — FULLSCREEN, LONG SCROLL ========== */
+        /* ========== CANVAS HERO WITH TEXT THAT FOLLOWS SCROLL ========== */
         .chero {
-            height: 400vh; /* lots of scroll room for smooth animation */
+            height: 500vh; /* lots of scroll room */
             position: relative;
         }
         .chero-sticky {
@@ -92,9 +46,54 @@
             width: 100%; height: 100vh; height: 100dvh;
             overflow: hidden; background: #e8e8e8;
         }
+        /* Canvas positioned in lower portion to leave room for text at top */
         .chero-sticky canvas {
-            position: absolute; top: 0; left: 0;
-            width: 100% !important; height: 100% !important;
+            position: absolute;
+            top: 35vh; /* leaves space for text above */
+            left: 0;
+            width: 100% !important;
+            height: 65vh !important;
+        }
+
+        /* Text sits above video with margin-top that decreases via scroll */
+        .chero-text {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            z-index: 2;
+            display: flex; flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: clamp(40px, 8vh, 80px) 24px 0;
+            pointer-events: none;
+        }
+        .chero-text > * { pointer-events: auto; }
+
+        .chero-badge {
+            display: inline-flex; align-items: center; gap: 7px;
+            border-radius: 100px; padding: 5px 14px;
+            font-family: var(--font-display); font-size: 11px; font-weight: 700;
+            letter-spacing: 0.08em; text-transform: uppercase;
+            background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.18);
+            color: #EF4444; margin-bottom: 16px;
+        }
+        .chero-dot { width: 7px; height: 7px; border-radius: 50%; background: #EF4444; animation: pdot 1.5s ease-in-out infinite; }
+        @keyframes pdot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.3)} }
+
+        .chero-h1 {
+            font-family: var(--font-display); font-size: clamp(22px, 4.5vw, 38px);
+            font-weight: 800; line-height: 1.15; color: var(--text-primary);
+            letter-spacing: -0.03em; max-width: 700px; margin-bottom: 14px;
+        }
+        .chero-h1 .accent { color: var(--accent); font-style: italic; }
+
+        .chero-sub {
+            font-size: 14px; color: var(--text-muted);
+            max-width: 540px; line-height: 1.6;
+        }
+        .chero-sub strong {
+            color: #1F2937; font-weight: 600;
+            text-decoration: underline; text-decoration-color: var(--accent);
+            text-underline-offset: 3px; text-decoration-thickness: 2px;
         }
 
         /* SECTIONS */
@@ -132,11 +131,17 @@
 
         @media (hover: hover) { .btn:hover { transform: translateY(-1px) scale(1.02); } }
         @media (hover: none) { .btn:active { transform: scale(0.97); } }
-        @media (max-width: 768px) { .container { padding: 0 16px; } .section { padding: 40px 0; } .intro { min-height: 70vh; padding: 40px 16px; } }
+        @media (max-width: 768px) {
+            .container { padding: 0 16px; }
+            .section { padding: 40px 0; }
+            .chero-sticky canvas { top: 42vh; height: 58vh !important; }
+        }
         @media (max-width: 390px) {
-            .chero { height: 300vh; }
-            .intro h1 { font-size: 22px; }
-            .intro .sub { font-size: 13px; }
+            .chero { height: 400vh; }
+            .chero-h1 { font-size: 20px; }
+            .chero-sub { font-size: 13px; }
+            .chero-badge { font-size: 10px; padding: 4px 12px; }
+            .chero-sticky canvas { top: 45vh; height: 55vh !important; }
             .btn { width: 100%; font-size: 14px; padding: 14px 24px; }
             .card { padding: 16px; } .card-text { font-size: 14px; }
             .cta-card { padding: 32px 20px; border-radius: 18px; }
@@ -147,21 +152,15 @@
 
     <div class="disclaimer">Investimentos envolvem riscos e podem trazer perdas ao investidor. Resultados passados nao garantem resultados futuros.</div>
 
-    <!-- ========== INTRO (text first, before video) ========== -->
-    <section class="intro">
-        <div class="intro-badge reveal"><span class="intro-dot"></span>REPLAY DA APRESENTACAO AO VIVO</div>
-        <h1 class="reveal d1">Voce nao perdeu dinheiro porque e burro. Perdeu porque te deram a <span class="accent">ferramenta errada.</span> Isso acaba aqui.</h1>
-        <p class="sub reveal d2">Quase <strong>3 anos</strong> de desenvolvimento. <strong>R$ 4,8 milhoes</strong> investidos em pesquisa e desenvolvimento. <strong>12 especialistas</strong>. Taxa de acerto media auditada de <strong>87%</strong> em constante otimizacao.</p>
-        <div class="scroll-cue reveal d3">
-            <span>Scroll</span>
-            <div class="scroll-cue-line"></div>
-        </div>
-    </section>
-
-    <!-- ========== CANVAS HERO — FULLSCREEN, LONG SCROLL ========== -->
+    <!-- ========== CANVAS HERO WITH TEXT THAT FOLLOWS SCROLL ========== -->
     <section class="chero">
         <div class="chero-sticky">
             <canvas id="heroCanvas"></canvas>
+            <div class="chero-text" id="heroText">
+                <div class="chero-badge"><span class="chero-dot"></span>REPLAY DA APRESENTACAO AO VIVO</div>
+                <h1 class="chero-h1">Voce nao perdeu dinheiro porque e burro. Perdeu porque te deram a <span class="accent">ferramenta errada.</span> Isso acaba aqui.</h1>
+                <p class="chero-sub">Quase <strong>3 anos</strong> de desenvolvimento. <strong>R$ 4,8 milhoes</strong> investidos em pesquisa e desenvolvimento. <strong>87%</strong> de taxa de acerto auditada.</p>
+            </div>
         </div>
     </section>
 
