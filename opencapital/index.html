@@ -12,7 +12,7 @@
             --accent: #2479FB;
             --accent-soft: rgba(36,121,251,0.08);
             --accent-glow: rgba(36,121,251,0.15);
-            --bg: #ffffff;
+            --bg: #fff;
             --bg-alt: #F7F7F7;
             --text-primary: #0D0D0D;
             --text-body: #4B5563;
@@ -27,10 +27,7 @@
         body { font-family: var(--font-body); color: var(--text-body); background: var(--bg); overflow-x: hidden; line-height: 1.65; }
         ::selection { background: var(--accent); color: #fff; }
         a { color: inherit; text-decoration: none; }
-
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-        }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
 
         .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
         .reveal.active { opacity: 1; transform: translateY(0); }
@@ -39,8 +36,57 @@
         /* DISCLAIMER */
         .disclaimer { background: #72757c; padding: 7px 16px; text-align: center; font-size: 11px; color: rgba(255,255,255,0.7); position: relative; z-index: 50; }
 
-        /* ========== CANVAS HERO — FULLSCREEN ========== */
-        .chero { height: 200vh; position: relative; }
+        /* ========== INTRO TEXT (before video) ========== */
+        .intro {
+            min-height: 80vh; min-height: 80dvh;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            text-align: center; padding: 60px 24px;
+            position: relative;
+        }
+        .intro::before {
+            content: ''; position: absolute; inset: 0;
+            background-image: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+            background-size: 40px 40px; pointer-events: none;
+            mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%);
+        }
+        .intro > * { position: relative; z-index: 1; }
+        .intro-badge {
+            display: inline-flex; align-items: center; gap: 7px;
+            border-radius: 100px; padding: 5px 14px;
+            font-family: var(--font-display); font-size: 11px; font-weight: 700;
+            letter-spacing: 0.08em; text-transform: uppercase;
+            background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.18);
+            color: #EF4444; margin-bottom: 20px;
+        }
+        .intro-dot { width: 7px; height: 7px; border-radius: 50%; background: #EF4444; animation: pdot 1.5s ease-in-out infinite; }
+        @keyframes pdot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.3)} }
+        .intro h1 {
+            font-family: var(--font-display); font-size: clamp(24px, 5vw, 42px);
+            font-weight: 800; line-height: 1.15; color: var(--text-primary);
+            letter-spacing: -0.03em; max-width: 700px; margin-bottom: 20px;
+        }
+        .intro h1 .accent { color: var(--accent); font-style: italic; }
+        .intro .sub {
+            font-size: 15px; color: var(--text-muted); max-width: 580px; line-height: 1.6;
+        }
+        .intro .sub strong { color: #1F2937; font-weight: 600; text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; text-decoration-thickness: 2px; }
+
+        .scroll-cue {
+            margin-top: 40px; display: flex; flex-direction: column; align-items: center; gap: 6px;
+            color: var(--text-muted); font-size: 10px; font-family: var(--font-display);
+            font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+        }
+        .scroll-cue-line { width: 1px; height: 32px; background: rgba(0,0,0,0.12); position: relative; overflow: hidden; }
+        .scroll-cue-line::after { content: ''; position: absolute; top: -100%; left: 0; width: 100%; height: 100%; background: var(--accent); animation: sline 1.5s cubic-bezier(0.77,0,0.175,1) infinite; }
+        @keyframes sline { 0%{transform:translateY(-100%)} 100%{transform:translateY(200%)} }
+
+        /* ========== CANVAS HERO — FULLSCREEN, LONG SCROLL ========== */
+        .chero {
+            height: 400vh; /* lots of scroll room for smooth animation */
+            position: relative;
+        }
         .chero-sticky {
             position: sticky; top: 0;
             width: 100%; height: 100vh; height: 100dvh;
@@ -48,51 +94,8 @@
         }
         .chero-sticky canvas {
             position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%;
-            object-fit: cover;
+            width: 100% !important; height: 100% !important;
         }
-
-        /* Headline overlay */
-        .chero-overlay {
-            position: absolute; inset: 0; z-index: 2;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: flex-start;
-            padding-top: clamp(60px, 12vh, 120px);
-            pointer-events: none;
-            transition: opacity 0.3s, transform 0.3s;
-        }
-        .chero-overlay > * { pointer-events: auto; }
-
-        .chero-badge {
-            display: inline-flex; align-items: center; gap: 7px;
-            border-radius: 100px; padding: 5px 14px;
-            font-family: var(--font-display); font-size: 11px; font-weight: 700;
-            letter-spacing: 0.08em; text-transform: uppercase;
-            background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2);
-            color: #EF4444; backdrop-filter: blur(8px); margin-bottom: 16px;
-        }
-        .chero-dot { width: 7px; height: 7px; border-radius: 50%; background: #EF4444; animation: pdot 1.5s ease-in-out infinite; }
-        @keyframes pdot { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.4; transform:scale(1.3); } }
-
-        .chero-h1 {
-            font-family: var(--font-display);
-            font-size: clamp(20px, 4vw, 36px);
-            font-weight: 800; line-height: 1.2;
-            color: var(--text-primary); letter-spacing: -0.03em;
-            max-width: 650px; text-align: center;
-            background: rgba(255,255,255,0.85);
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border-radius: 20px; padding: 24px 32px;
-            border: 1px solid rgba(255,255,255,0.5);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
-        }
-        .chero-h1 .accent { color: var(--accent); font-style: italic; }
-        .chero-sub {
-            font-size: 13px; color: var(--text-muted); margin-top: 12px; text-align: center;
-            background: rgba(255,255,255,0.7); backdrop-filter: blur(8px);
-            padding: 6px 16px; border-radius: 8px;
-        }
-        .chero-sub strong { color: var(--text-body); font-weight: 600; }
 
         /* SECTIONS */
         .section { padding: 56px 0; }
@@ -129,11 +132,11 @@
 
         @media (hover: hover) { .btn:hover { transform: translateY(-1px) scale(1.02); } }
         @media (hover: none) { .btn:active { transform: scale(0.97); } }
-        @media (max-width: 768px) { .container { padding: 0 16px; } .section { padding: 40px 0; } }
+        @media (max-width: 768px) { .container { padding: 0 16px; } .section { padding: 40px 0; } .intro { min-height: 70vh; padding: 40px 16px; } }
         @media (max-width: 390px) {
-            .chero { height: 180vh; }
-            .chero-h1 { font-size: 18px; padding: 18px 20px; border-radius: 14px; }
-            .chero-badge { font-size: 9px; padding: 4px 10px; }
+            .chero { height: 300vh; }
+            .intro h1 { font-size: 22px; }
+            .intro .sub { font-size: 13px; }
             .btn { width: 100%; font-size: 14px; padding: 14px 24px; }
             .card { padding: 16px; } .card-text { font-size: 14px; }
             .cta-card { padding: 32px 20px; border-radius: 18px; }
@@ -144,18 +147,25 @@
 
     <div class="disclaimer">Investimentos envolvem riscos e podem trazer perdas ao investidor. Resultados passados nao garantem resultados futuros.</div>
 
-    <!-- ========== CANVAS HERO — IMAGE SEQUENCE ========== -->
-    <section class="chero">
-        <div class="chero-sticky">
-            <canvas id="heroCanvas"></canvas>
-            <div class="chero-overlay" id="heroOverlay">
-                <div class="chero-badge"><span class="chero-dot"></span>REPLAY DA APRESENTACAO AO VIVO</div>
-                <h1 class="chero-h1">Voce nao perdeu dinheiro porque e burro. Perdeu porque te deram a <span class="accent">ferramenta errada.</span> Isso acaba aqui.</h1>
-                <p class="chero-sub">Apresentacao do dia 07/04/2026. <strong>Disponivel por tempo limitado.</strong></p>
-            </div>
+    <!-- ========== INTRO (text first, before video) ========== -->
+    <section class="intro">
+        <div class="intro-badge reveal"><span class="intro-dot"></span>REPLAY DA APRESENTACAO AO VIVO</div>
+        <h1 class="reveal d1">Voce nao perdeu dinheiro porque e burro. Perdeu porque te deram a <span class="accent">ferramenta errada.</span> Isso acaba aqui.</h1>
+        <p class="sub reveal d2">Quase <strong>3 anos</strong> de desenvolvimento. <strong>R$ 4,8 milhoes</strong> investidos em pesquisa e desenvolvimento. <strong>12 especialistas</strong>. Taxa de acerto media auditada de <strong>87%</strong> em constante otimizacao.</p>
+        <div class="scroll-cue reveal d3">
+            <span>Scroll</span>
+            <div class="scroll-cue-line"></div>
         </div>
     </section>
 
+    <!-- ========== CANVAS HERO — FULLSCREEN, LONG SCROLL ========== -->
+    <section class="chero">
+        <div class="chero-sticky">
+            <canvas id="heroCanvas"></canvas>
+        </div>
+    </section>
+
+    <!-- ========== CTA ========== -->
     <section class="section" style="text-align: center; padding-top: 32px;">
         <div class="container">
             <a href="#" class="btn reveal">QUERO GARANTIR MINHA VAGA</a>
@@ -167,6 +177,7 @@
         </div>
     </section>
 
+    <!-- ========== DIAGNOSTICO ========== -->
     <section class="section">
         <div class="container">
             <div class="section-label reveal"><span></span>O diagnostico</div>
@@ -179,6 +190,7 @@
         </div>
     </section>
 
+    <!-- ========== CTA FINAL ========== -->
     <section class="section">
         <div class="container">
             <div class="cta-card reveal">
@@ -197,96 +209,74 @@
     </footer>
 
     <script>
-        // === Reveal ===
+        // Reveal
         const obs = new IntersectionObserver(entries => {
             entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('active'); obs.unobserve(e.target); } });
         }, { threshold: 0.1 });
         document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-        // === Image Sequence on Canvas ===
+        // === Image Sequence — 104 frames, smooth interpolation ===
         const canvas = document.getElementById('heroCanvas');
         const ctx = canvas.getContext('2d');
         const heroSection = document.querySelector('.chero');
-        const overlay = document.getElementById('heroOverlay');
 
-        const FRAME_COUNT = 42;
+        const FRAME_COUNT = 104;
         const frames = [];
-        let loadedCount = 0;
-        let displayIndex = 0;
-        let targetIndex = 0;
-        let allLoaded = false;
+        let loaded = 0;
+        let displayIdx = 0;
+        let targetIdx = 0;
 
-        // Preload all frames
+        // Preload
         for (let i = 1; i <= FRAME_COUNT; i++) {
             const img = new Image();
             img.src = `frames/f_${String(i).padStart(3, '0')}.jpg`;
             img.onload = () => {
-                loadedCount++;
-                if (loadedCount === 1) { resizeCanvas(); drawFrame(0); }
-                if (loadedCount === FRAME_COUNT) { allLoaded = true; drawFrame(0); }
+                loaded++;
+                if (loaded === 1) { resize(); draw(0); }
             };
             frames.push(img);
         }
 
-        function resizeCanvas() {
-            canvas.width = window.innerWidth * window.devicePixelRatio;
-            canvas.height = window.innerHeight * window.devicePixelRatio;
-            canvas.style.width = window.innerWidth + 'px';
-            canvas.style.height = window.innerHeight + 'px';
-            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        function resize() {
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            canvas.width = window.innerWidth * dpr;
+            canvas.height = window.innerHeight * dpr;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         }
 
-        function drawFrame(idx) {
+        function draw(idx) {
             idx = Math.min(Math.max(Math.round(idx), 0), FRAME_COUNT - 1);
             const img = frames[idx];
             if (!img || !img.complete) return;
 
             const cw = window.innerWidth;
             const ch = window.innerHeight;
-            ctx.clearRect(0, 0, cw, ch);
 
             // Object-fit: cover
-            const iw = img.naturalWidth;
-            const ih = img.naturalHeight;
-            const scale = Math.max(cw / iw, ch / ih);
-            const sw = iw * scale;
-            const sh = ih * scale;
+            const scale = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
+            const sw = img.naturalWidth * scale;
+            const sh = img.naturalHeight * scale;
             ctx.drawImage(img, (cw - sw) / 2, (ch - sh) / 2, sw, sh);
-            displayIndex = idx;
+            displayIdx = idx;
         }
 
-        window.addEventListener('resize', () => { resizeCanvas(); drawFrame(displayIndex); });
+        window.addEventListener('resize', () => { resize(); draw(displayIdx); });
 
-        // Smooth interpolation loop — runs independently of scroll events
-        function animationLoop() {
-            if (Math.abs(displayIndex - targetIndex) > 0.3) {
-                const next = displayIndex + (targetIndex - displayIndex) * 0.15;
-                drawFrame(Math.round(next));
+        // Smooth animation loop — lerp toward target
+        (function loop() {
+            if (Math.abs(displayIdx - targetIdx) > 0.5) {
+                draw(displayIdx + (targetIdx - displayIdx) * 0.12);
             }
-            requestAnimationFrame(animationLoop);
-        }
-        requestAnimationFrame(animationLoop);
+            requestAnimationFrame(loop);
+        })();
 
-        // Scroll just updates the target — lightweight
+        // Scroll updates target only
         window.addEventListener('scroll', () => {
             const rect = heroSection.getBoundingClientRect();
             const total = heroSection.offsetHeight - window.innerHeight;
             const scrolled = Math.max(0, -rect.top);
             const progress = Math.min(1, scrolled / total);
-
-            targetIndex = progress * (FRAME_COUNT - 1);
-
-            // Fade headline
-            if (progress < 0.15) {
-                overlay.style.opacity = '1';
-                overlay.style.transform = 'translateY(0)';
-            } else if (progress < 0.45) {
-                const fade = (progress - 0.15) / 0.3;
-                overlay.style.opacity = String(1 - fade);
-                overlay.style.transform = `translateY(${-fade * 40}px)`;
-            } else {
-                overlay.style.opacity = '0';
-            }
+            targetIdx = progress * (FRAME_COUNT - 1);
         }, { passive: true });
     </script>
 </body>
