@@ -55,21 +55,25 @@
             width: min(1200px, 92%);
             height: 100vh;
             overflow: hidden;
+            will-change: transform, opacity;
         }
         .chero-canvas-wrap canvas {
             width: 100% !important;
             height: 100% !important;
             display: block;
         }
-        /* White gradient fade at TOP of canvas area (blends into page bg) */
+        /* Gradient fade on ALL 4 sides — blends canvas into page */
         .chero-canvas-wrap::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 12%;
-            background: linear-gradient(to bottom, #fff 0%, rgba(255,255,255,0.6) 50%, transparent 100%);
+            inset: 0;
             z-index: 2;
             pointer-events: none;
+            /* Top fade (strong), sides (subtle), bottom (none needed since it's clipped) */
+            background:
+                linear-gradient(to bottom, #fff 0%, rgba(255,255,255,0.85) 4%, rgba(255,255,255,0.4) 10%, transparent 18%),
+                linear-gradient(to right, #fff 0%, rgba(255,255,255,0.6) 3%, transparent 8%),
+                linear-gradient(to left, #fff 0%, rgba(255,255,255,0.6) 3%, transparent 8%);
         }
 
         /* Text sits above video with margin-top that decreases via scroll */
@@ -282,14 +286,25 @@
             const coverScale = Math.max(cw / iw, ch / ih);
             const containScale = Math.min(cw / iw, ch / ih);
 
-            // In last 15% of animation, blend cover -> contain (reveals full frame)
-            const t = displayProgress < 0.85 ? 0 : Math.min(1, (displayProgress - 0.85) / 0.15);
-            const scale = coverScale + (containScale - coverScale) * t;
+            // 3 phases:
+            // 0-75%   : pure cover (video fills, top-aligned)
+            // 75-88%  : cover -> contain (pulls back, reveals full frame)
+            // 88-100% : contain + extra zoom-out + fade
+            let t1 = 0, t2 = 0;
+            if (displayProgress > 0.75) t1 = Math.min(1, (displayProgress - 0.75) / 0.13);
+            if (displayProgress > 0.88) t2 = Math.min(1, (displayProgress - 0.88) / 0.12);
+
+            // Base scale: cover -> contain
+            const baseScale = coverScale + (containScale - coverScale) * t1;
+            // Extra zoom-out in final phase (scales down further)
+            const extraZoom = 1 - t2 * 0.3; // up to 30% smaller
+            const scale = baseScale * extraZoom;
 
             const sw = iw * scale;
             const sh = ih * scale;
             const sx = (cw - sw) / 2;
-            const sy = 0; // TOP anchor always
+            // In final phase, also shift down slightly for natural "pushing away" feel
+            const sy = t2 * (ch * 0.05);
             ctx.drawImage(img, sx, sy, sw, sh);
             displayIdx = idx;
         }
@@ -308,7 +323,9 @@
             requestAnimationFrame(loop);
         })();
 
-        // Scroll updates target only
+        const canvasWrap = document.querySelector('.chero-canvas-wrap');
+
+        // Scroll updates target + fade wrap in final phase
         window.addEventListener('scroll', () => {
             const rect = heroSection.getBoundingClientRect();
             const total = heroSection.offsetHeight - window.innerHeight;
@@ -316,6 +333,14 @@
             const progress = Math.min(1, scrolled / total);
             progressGlobal = progress;
             targetIdx = progress * (FRAME_COUNT - 1);
+
+            // Fade out wrapper in last 8% (very end)
+            if (progress > 0.92) {
+                const fade = (progress - 0.92) / 0.08;
+                canvasWrap.style.opacity = String(1 - fade);
+            } else {
+                canvasWrap.style.opacity = '1';
+            }
         }, { passive: true });
     </script>
 </body>
