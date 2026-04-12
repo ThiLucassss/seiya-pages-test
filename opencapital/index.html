@@ -44,15 +44,32 @@
         .chero-sticky {
             position: sticky; top: 0;
             width: 100%; height: 100vh; height: 100dvh;
-            overflow: hidden; background: #e8e8e8;
+            overflow: hidden; background: #fff;
         }
-        /* Canvas is larger than visible area — only ~70% shows, rest clipped below */
-        .chero-sticky canvas {
+        /* Canvas wrapper — has max-width on desktop, full width on mobile */
+        .chero-canvas-wrap {
             position: absolute;
-            top: 28vh; /* space for text at top */
-            left: 0;
+            top: 28vh;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(1200px, 92%);
+            height: 100vh;
+            overflow: hidden;
+        }
+        .chero-canvas-wrap canvas {
             width: 100% !important;
-            height: 100vh !important; /* bigger than remaining 72vh = bottom 30% is hidden */
+            height: 100% !important;
+            display: block;
+        }
+        /* White gradient fade at TOP of canvas area (blends into page bg) */
+        .chero-canvas-wrap::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 12%;
+            background: linear-gradient(to bottom, #fff 0%, rgba(255,255,255,0.6) 50%, transparent 100%);
+            z-index: 2;
+            pointer-events: none;
         }
 
         /* Text sits above video with margin-top that decreases via scroll */
@@ -134,14 +151,14 @@
         @media (max-width: 768px) {
             .container { padding: 0 16px; }
             .section { padding: 40px 0; }
-            .chero-sticky canvas { top: 32vh; height: 100vh !important; }
+            .chero-canvas-wrap { top: 32vh; width: 100%; }
         }
         @media (max-width: 390px) {
             .chero { height: 400vh; }
             .chero-h1 { font-size: 20px; }
             .chero-sub { font-size: 13px; }
             .chero-badge { font-size: 10px; padding: 4px 12px; }
-            .chero-sticky canvas { top: 38vh; height: 100vh !important; }
+            .chero-canvas-wrap { top: 38vh; width: 100%; }
             .btn { width: 100%; font-size: 14px; padding: 14px 24px; }
             .card { padding: 16px; } .card-text { font-size: 14px; }
             .cta-card { padding: 32px 20px; border-radius: 18px; }
@@ -155,7 +172,9 @@
     <!-- ========== CANVAS HERO WITH TEXT THAT FOLLOWS SCROLL ========== -->
     <section class="chero">
         <div class="chero-sticky">
-            <canvas id="heroCanvas"></canvas>
+            <div class="chero-canvas-wrap">
+                <canvas id="heroCanvas"></canvas>
+            </div>
             <div class="chero-text" id="heroText">
                 <div class="chero-badge"><span class="chero-dot"></span>REPLAY DA APRESENTACAO AO VIVO</div>
                 <h1 class="chero-h1">Voce nao perdeu dinheiro porque e burro. Perdeu porque te deram a <span class="accent">ferramenta errada.</span> Isso acaba aqui.</h1>
@@ -224,6 +243,8 @@
         let loaded = 0;
         let displayIdx = 0;
         let targetIdx = 0;
+        let progressGlobal = 0;
+        let displayProgress = 0;
 
         // Preload
         for (let i = 1; i <= FRAME_COUNT; i++) {
@@ -238,7 +259,7 @@
 
         function resize() {
             const dpr = Math.min(window.devicePixelRatio || 1, 2);
-            const w = window.innerWidth;
+            const w = canvas.clientWidth || window.innerWidth;
             const h = canvas.clientHeight || window.innerHeight;
             canvas.width = w * dpr;
             canvas.height = h * dpr;
@@ -250,28 +271,39 @@
             const img = frames[idx];
             if (!img || !img.complete) return;
 
-            const cw = window.innerWidth;
+            const cw = canvas.clientWidth || window.innerWidth;
             const ch = canvas.clientHeight || window.innerHeight;
-
             ctx.clearRect(0, 0, cw, ch);
 
-            // Object-fit: COVER (fills width + height, no empty space)
-            // But anchored to TOP (preserves top breathing room of the video)
-            const scale = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
-            const sw = img.naturalWidth * scale;
-            const sh = img.naturalHeight * scale;
-            const sx = (cw - sw) / 2; // center horizontally
-            const sy = 0; // TOP anchor — bottom overflow gets clipped
+            const iw = img.naturalWidth;
+            const ih = img.naturalHeight;
+
+            // Cover scale (fills both dimensions) and contain scale (fits entirely)
+            const coverScale = Math.max(cw / iw, ch / ih);
+            const containScale = Math.min(cw / iw, ch / ih);
+
+            // In last 15% of animation, blend cover -> contain (reveals full frame)
+            const t = displayProgress < 0.85 ? 0 : Math.min(1, (displayProgress - 0.85) / 0.15);
+            const scale = coverScale + (containScale - coverScale) * t;
+
+            const sw = iw * scale;
+            const sh = ih * scale;
+            const sx = (cw - sw) / 2;
+            const sy = 0; // TOP anchor always
             ctx.drawImage(img, sx, sy, sw, sh);
             displayIdx = idx;
         }
 
         window.addEventListener('resize', () => { resize(); draw(displayIdx); });
 
-        // Smooth animation loop — lerp toward target
+        // Smooth animation loop — always redraws for fit transition too
         (function loop() {
-            if (Math.abs(displayIdx - targetIdx) > 0.5) {
-                draw(displayIdx + (targetIdx - displayIdx) * 0.12);
+            const diff = targetIdx - displayIdx;
+            const progDiff = progressGlobal - displayProgress;
+            if (Math.abs(diff) > 0.3 || Math.abs(progDiff) > 0.005) {
+                displayProgress += progDiff * 0.12;
+                const nextIdx = displayIdx + diff * 0.12;
+                draw(nextIdx);
             }
             requestAnimationFrame(loop);
         })();
@@ -282,6 +314,7 @@
             const total = heroSection.offsetHeight - window.innerHeight;
             const scrolled = Math.max(0, -rect.top);
             const progress = Math.min(1, scrolled / total);
+            progressGlobal = progress;
             targetIdx = progress * (FRAME_COUNT - 1);
         }, { passive: true });
     </script>
