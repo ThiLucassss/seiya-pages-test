@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenCapital — Ecossistema de IA para o Mercado Financeiro</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2/dist/iconify-icon.min.js"></script>
+
+    <style>
+        :root {
+            --color-bg: #060608;
+            --color-surface: #0c0c10;
+            --color-surface-elevated: #14141a;
+            --color-border: #1e1e28;
+            --color-border-subtle: #151520;
+            --color-text-primary: #f0f0f2;
+            --color-text-secondary: #9898a6;
+            --color-text-tertiary: #55556a;
+            --color-accent: #c9a84c;
+            --color-accent-soft: rgba(201, 168, 76, 0.12);
+            --color-accent-glow: rgba(201, 168, 76, 0.35);
+            --color-danger: #e74c3c;
+
+            --font-display: 'Space Grotesk', system-ui, sans-serif;
+            --font-body: 'Outfit', system-ui, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --section-gap: clamp(4rem, 10vw, 8rem);
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html {
+            font-size: 16px;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: var(--font-body);
+            font-weight: 400;
+            color: var(--color-text-primary);
+            background: var(--color-bg);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        ::selection { background: var(--color-accent); color: var(--color-bg); }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--color-bg); }
+        ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+
+        img, video, svg { max-width: 100%; height: auto; display: block; }
+        a { color: inherit; text-decoration: none; }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* ========== NOISE ========== */
+        .noise-overlay {
+            position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: 0.025;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        /* ========== ANIMATIONS ========== */
+        .reveal {
+            opacity: 0; transform: translateY(30px); filter: blur(12px);
+            transition: opacity 1s var(--ease-out-expo), transform 1s var(--ease-out-expo), filter 1s var(--ease-out-expo);
+        }
+        .reveal.active { opacity: 1; transform: translateY(0); filter: blur(0); }
+
+        .reveal-scale {
+            opacity: 0; transform: scale(0.92); filter: blur(8px);
+            transition: opacity 1.2s var(--ease-out-expo), transform 1.2s var(--ease-out-expo), filter 1.2s var(--ease-out-expo);
+        }
+        .reveal-scale.active { opacity: 1; transform: scale(1); filter: blur(0); }
+
+        .delay-100 { transition-delay: 0.1s; }
+        .delay-200 { transition-delay: 0.2s; }
+        .delay-300 { transition-delay: 0.3s; }
+        .delay-400 { transition-delay: 0.4s; }
+        .delay-500 { transition-delay: 0.5s; }
+        .delay-600 { transition-delay: 0.6s; }
+
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.05); }
+        }
+        .animate-pulse-glow { animation: pulse-glow 4s ease-in-out infinite; }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee { animation: marquee 30s linear infinite; }
+
+        @keyframes spin-beam { to { transform: rotate(360deg); } }
+
+        /* Scroll line hint */
+        @keyframes scroll-down {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(200%); }
+        }
+
+        /* ========== COMPONENTS ========== */
+        .badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.4rem 1rem; border: 1px solid var(--color-border);
+            border-radius: 9999px; font-family: var(--font-mono);
+            font-size: 0.65rem; letter-spacing: 0.12em;
+            text-transform: uppercase; color: var(--color-text-tertiary);
+        }
+        .badge-accent {
+            border-color: var(--color-accent-soft); color: var(--color-accent);
+            background: var(--color-accent-soft);
+        }
+
+        .btn-beam {
+            position: relative; display: inline-flex; align-items: center;
+            justify-content: center; border-radius: 9999px; overflow: hidden;
+            padding: 2px; cursor: pointer; background: var(--color-border);
+            transition: transform 0.3s var(--ease-out-expo);
+        }
+        .btn-beam::before {
+            content: ''; position: absolute; inset: -2px;
+            background: conic-gradient(from 90deg at 50% 50%, var(--color-accent) 0%, transparent 25%, transparent 75%, var(--color-accent) 100%);
+            animation: spin-beam 3s linear infinite; opacity: 0; transition: opacity 0.4s;
+        }
+        .btn-beam-inner {
+            position: relative; z-index: 1; display: inline-flex; align-items: center;
+            gap: 0.75rem; padding: 1rem 2.5rem; background: var(--color-surface);
+            border-radius: 9999px; font-family: var(--font-display); font-weight: 500;
+            font-size: 0.95rem; letter-spacing: -0.01em; color: var(--color-text-primary);
+            transition: background 0.3s;
+        }
+
+        .btn-accent {
+            display: inline-flex; align-items: center; justify-content: center;
+            gap: 0.75rem; padding: 1.1rem 3rem; background: var(--color-accent);
+            color: var(--color-bg); border-radius: 9999px; font-family: var(--font-display);
+            font-weight: 600; font-size: 1rem; letter-spacing: -0.01em;
+            cursor: pointer; border: none; transition: all 0.3s var(--ease-out-expo);
+        }
+
+        .text-outline {
+            -webkit-text-stroke: 1.5px var(--color-text-tertiary);
+            color: transparent; transition: all 0.5s var(--ease-out-expo);
+        }
+
+        /* ========== NAVBAR ========== */
+        .navbar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            padding: 1.25rem 2rem; display: flex; align-items: center;
+            justify-content: space-between; backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px); background: rgba(6, 6, 8, 0.7);
+            border-bottom: 1px solid var(--color-border-subtle);
+        }
+        .navbar-logo {
+            font-family: var(--font-display); font-weight: 700;
+            font-size: 1.15rem; letter-spacing: -0.03em;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .navbar-logo .gold { color: var(--color-accent); }
+        .navbar-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+        .navbar-links a {
+            font-family: var(--font-mono); font-size: 0.65rem;
+            letter-spacing: 0.1em; text-transform: uppercase;
+            color: var(--color-text-tertiary); transition: color 0.3s;
+        }
+        .navbar-links a:hover { color: var(--color-text-primary); }
+
+        /* ========== LAYOUT ========== */
+        section { padding: var(--section-gap) 0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+
+        /* ========== HERO ========== */
+        .hero {
+            min-height: 100vh; min-height: 100dvh;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; text-align: center;
+            padding-top: 6rem; padding-bottom: 2rem; position: relative;
+        }
+        .hero h1 {
+            font-family: var(--font-display); font-weight: 700;
+            font-size: clamp(1.75rem, 4.5vw, 3.25rem);
+            line-height: 1.1; letter-spacing: -0.04em;
+            max-width: 820px; margin-bottom: 1.5rem;
+        }
+        .hero h1 .highlight {
+            color: var(--color-accent);
+            text-decoration: underline;
+            text-decoration-color: var(--color-accent-soft);
+            text-underline-offset: 4px;
+        }
+        .hero-sub {
+            font-size: clamp(0.95rem, 1.5vw, 1.15rem); font-weight: 300;
+            color: var(--color-text-secondary); max-width: 600px;
+            line-height: 1.7; margin-bottom: 2.5rem;
+        }
+        .hero-disclaimer {
+            font-family: var(--font-mono); font-size: 0.6rem;
+            color: var(--color-text-tertiary); letter-spacing: 0.05em;
+            max-width: 500px; margin-top: 1.5rem; line-height: 1.5;
+        }
+
+        .scroll-hint {
+            position: absolute; bottom: 2rem; left: 50%;
+            transform: translateX(-50%); display: flex;
+            flex-direction: column; align-items: center;
+            gap: 0.5rem; color: var(--color-text-tertiary);
+        }
+        .scroll-hint span {
+            font-family: var(--font-mono); font-size: 0.55rem;
+            letter-spacing: 0.15em; text-transform: uppercase;
+        }
+        .scroll-line {
+            width: 1px; height: 36px; background: var(--color-border);
+            position: relative; overflow: hidden;
+        }
+        .scroll-line::after {
+            content: ''; position: absolute; top: -100%; left: 0;
+            width: 100%; height: 100%; background: var(--color-accent);
+            animation: scroll-down 1.5s cubic-bezier(0.77, 0, 0.175, 1) infinite;
+        }
+
+        /* ========== VIDEO SCRUB SECTION ========== */
+        .video-scrub-container {
+            position: relative;
+            height: 250vh;
+        }
+        .video-scrub-sticky {
+            position: sticky; top: 0;
+            height: 100vh; height: 100dvh;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        .video-scrub-sticky video {
+            width: 80%;
+            max-width: 900px;
+            border-radius: 0.5rem;
+        }
+        .video-scrub-text {
+            position: absolute;
+            bottom: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.6s var(--ease-out-expo);
+            pointer-events: none;
+        }
+        .video-scrub-text.visible { opacity: 1; pointer-events: auto; }
+        .video-scrub-text h2 {
+            font-family: var(--font-display); font-weight: 600;
+            font-size: clamp(1.25rem, 3vw, 2rem);
+            letter-spacing: -0.03em; margin-bottom: 0.5rem;
+            color: var(--color-accent);
+        }
+        .video-scrub-text p {
+            font-size: 0.95rem; color: var(--color-text-secondary);
+            font-weight: 300;
+        }
+
+        /* Glow behind video */
+        .video-glow {
+            position: absolute;
+            width: 500px; height: 300px;
+            background: var(--color-accent-glow);
+            filter: blur(150px); border-radius: 50%;
+            opacity: 0; transition: opacity 0.8s;
+            pointer-events: none;
+        }
+        .video-glow.visible { opacity: 0.5; }
+
+        /* ========== STATS ========== */
+        .stats-section {
+            border-top: 1px solid var(--color-border-subtle);
+            border-bottom: 1px solid var(--color-border-subtle);
+            padding: 3.5rem 0;
+        }
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 2rem; text-align: center;
+        }
+        .stat-value {
+            font-family: var(--font-display); font-weight: 700;
+            font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+            letter-spacing: -0.03em; color: var(--color-accent);
+            line-height: 1;
+        }
+        .stat-label {
+            font-family: var(--font-mono); font-size: 0.65rem;
+            letter-spacing: 0.1em; text-transform: uppercase;
+            color: var(--color-text-tertiary); margin-top: 0.5rem;
+        }
+        .stat-divider {
+            width: 1px; background: var(--color-border);
+            align-self: stretch; justify-self: end;
+        }
+
+        /* ========== FEATURES ========== */
+        .features-grid {
+            display: grid; grid-template-columns: 1fr 1.2fr;
+            gap: 1.5rem;
+        }
+        .features-grid-row2 {
+            display: grid; grid-template-columns: 1.2fr 1fr;
+            gap: 1.5rem; margin-top: 1.5rem;
+        }
+
+        .feature-card {
+            position: relative; background: var(--color-surface);
+            border: 1px solid var(--color-border); border-radius: 1.25rem;
+            padding: 2.5rem; overflow: hidden;
+            transition: transform 0.4s var(--ease-out-expo), border-color 0.4s;
+        }
+        .feature-card::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(500px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+                        var(--color-accent-soft), transparent 40%);
+            opacity: 0; transition: opacity 0.4s; pointer-events: none;
+        }
+        .feature-card > * { position: relative; z-index: 2; }
+
+        .feature-card-icon {
+            width: 48px; height: 48px; display: flex; align-items: center;
+            justify-content: center; background: var(--color-accent-soft);
+            border-radius: 0.75rem; margin-bottom: 1.5rem;
+            transition: transform 0.4s var(--ease-out-expo);
+        }
+        .feature-card-icon iconify-icon { font-size: 1.5rem; color: var(--color-accent); }
+
+        .feature-card h3 {
+            font-family: var(--font-display); font-size: 1.2rem;
+            font-weight: 600; letter-spacing: -0.02em; margin-bottom: 0.75rem;
+        }
+        .feature-card p {
+            color: var(--color-text-secondary); font-size: 0.9rem;
+            font-weight: 300; line-height: 1.65;
+        }
+
+        /* ========== QUOTE ========== */
+        .quote-section {
+            position: relative; padding: 5rem 0; overflow: hidden;
+        }
+        .quote-content {
+            max-width: 700px; margin: 0 auto; text-align: center;
+            position: relative; z-index: 2;
+        }
+        .quote-mark {
+            font-family: var(--font-display); font-size: 6rem;
+            color: var(--color-accent-soft); line-height: 0.5;
+            margin-bottom: 1rem; display: block;
+        }
+        .quote-text {
+            font-size: clamp(1.1rem, 2vw, 1.35rem); font-weight: 300;
+            color: var(--color-text-secondary); line-height: 1.8;
+            font-style: italic; margin-bottom: 2rem;
+        }
+        .quote-author {
+            display: flex; align-items: center; gap: 1rem;
+            justify-content: center;
+        }
+        .quote-avatar {
+            width: 48px; height: 48px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-accent-soft), var(--color-surface-elevated));
+            display: flex; align-items: center; justify-content: center;
+            font-family: var(--font-display); font-weight: 600;
+            color: var(--color-accent); font-size: 1rem;
+        }
+        .quote-name {
+            font-family: var(--font-display); font-weight: 500; font-size: 0.95rem;
+        }
+        .quote-role {
+            font-family: var(--font-mono); font-size: 0.6rem;
+            letter-spacing: 0.08em; text-transform: uppercase;
+            color: var(--color-text-tertiary);
+        }
+        .quote-glow {
+            position: absolute; width: 400px; height: 200px;
+            background: var(--color-accent-glow); filter: blur(150px);
+            border-radius: 50%; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); opacity: 0.15;
+        }
+
+        /* ========== CTA / OFERTA ========== */
+        .cta-section {
+            position: relative; padding: 5rem 0;
+            text-align: center; overflow: hidden;
+        }
+        .cta-section h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 4.5vw, 3.5rem);
+            font-weight: 700; letter-spacing: -0.04em;
+            line-height: 1; margin-bottom: 1.5rem;
+        }
+        .cta-section p {
+            color: var(--color-text-secondary); font-size: 1.05rem;
+            font-weight: 300; max-width: 520px; margin: 0 auto 2.5rem;
+            line-height: 1.7;
+        }
+
+        /* Glowing CTA card */
+        .glow-card {
+            position: relative; display: inline-block;
+            padding: 3px; border-radius: 1.5rem;
+        }
+        .glow-card-bg {
+            position: absolute; inset: 0; border-radius: 1.5rem;
+            background: conic-gradient(from 90deg at 50% 50%, var(--color-accent) 0%, transparent 25%, transparent 50%, rgba(201,168,76,0.3) 75%, var(--color-accent) 100%);
+            animation: spin-beam 6s linear infinite; opacity: 0.5;
+        }
+        .glow-card-blur {
+            position: absolute; inset: -20px; border-radius: 2rem;
+            background: conic-gradient(from 90deg at 50% 50%, var(--color-accent-glow) 0%, transparent 25%, transparent 50%, rgba(201,168,76,0.1) 75%, var(--color-accent-glow) 100%);
+            animation: spin-beam 6s linear infinite; filter: blur(30px); opacity: 0.4;
+        }
+        .glow-card-inner {
+            position: relative; z-index: 1; background: var(--color-surface);
+            border-radius: calc(1.5rem - 3px); padding: 3rem 3.5rem;
+        }
+        .glow-card-inner h3 {
+            font-family: var(--font-display); font-size: 1.5rem;
+            font-weight: 600; letter-spacing: -0.02em; margin-bottom: 0.5rem;
+        }
+        .glow-card-inner .price-tag {
+            font-family: var(--font-mono); font-size: 0.7rem;
+            color: var(--color-accent); letter-spacing: 0.1em;
+            text-transform: uppercase; margin-bottom: 1.5rem;
+        }
+        .glow-card-inner .benefits {
+            list-style: none; text-align: left; margin-bottom: 2rem;
+        }
+        .glow-card-inner .benefits li {
+            padding: 0.6rem 0; border-bottom: 1px solid var(--color-border-subtle);
+            color: var(--color-text-secondary); font-size: 0.9rem;
+            display: flex; align-items: center; gap: 0.75rem;
+        }
+        .glow-card-inner .benefits iconify-icon { color: var(--color-accent); font-size: 1.1rem; }
+
+        .cta-glow {
+            position: absolute; width: 500px; height: 200px;
+            background: var(--color-accent-glow); filter: blur(120px);
+            border-radius: 50%; bottom: -50px; left: 50%;
+            transform: translateX(-50%); opacity: 0.2;
+        }
+
+        /* ========== MARQUEE ========== */
+        .marquee-section {
+            padding: 1.25rem 0;
+            border-top: 1px solid var(--color-border-subtle);
+            border-bottom: 1px solid var(--color-border-subtle);
+            overflow: hidden;
+        }
+        .marquee-track { display: flex; align-items: center; white-space: nowrap; }
+        .marquee-item {
+            font-family: var(--font-display);
+            font-size: clamp(0.85rem, 1.5vw, 1.15rem);
+            font-weight: 500; letter-spacing: -0.02em;
+            color: var(--color-text-tertiary); padding: 0 2rem; flex-shrink: 0;
+        }
+        .marquee-item .dot {
+            display: inline-block; width: 5px; height: 5px;
+            background: var(--color-accent); border-radius: 50%;
+            margin-right: 2rem; vertical-align: middle;
+        }
+
+        /* ========== FOOTER ========== */
+        .footer {
+            border-top: 1px solid var(--color-border-subtle);
+            padding: 3rem 0 2rem;
+        }
+        .footer-inner {
+            display: flex; flex-direction: column;
+            align-items: center; gap: 1.25rem; text-align: center;
+        }
+        .footer-logo {
+            font-family: var(--font-display); font-weight: 700;
+            font-size: 1rem; letter-spacing: -0.02em;
+        }
+        .footer-logo .gold { color: var(--color-accent); }
+        .footer-legal {
+            font-family: var(--font-mono); font-size: 0.6rem;
+            color: var(--color-text-tertiary); letter-spacing: 0.03em;
+            max-width: 600px; line-height: 1.7;
+        }
+        .footer-disclaimer {
+            font-family: var(--font-mono); font-size: 0.55rem;
+            color: var(--color-text-tertiary); letter-spacing: 0.03em;
+            max-width: 550px; line-height: 1.6;
+            padding-top: 1rem; border-top: 1px solid var(--color-border-subtle);
+        }
+
+        /* ========== SECTION HEADER ========== */
+        .section-header { margin-bottom: 3.5rem; }
+        .section-header h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+            font-weight: 600; letter-spacing: -0.03em;
+            line-height: 1.05; margin-bottom: 1rem;
+        }
+        .section-header p {
+            color: var(--color-text-secondary); font-size: 1rem;
+            font-weight: 300; max-width: 500px; line-height: 1.7;
+        }
+
+        /* ========== RESPONSIVE ========== */
+
+        @media (hover: hover) {
+            .feature-card:hover { transform: translateY(-4px); border-color: var(--color-accent-soft); }
+            .feature-card:hover::before { opacity: 1; }
+            .feature-card:hover .feature-card-icon { transform: scale(1.1) rotate(-5deg); }
+            .btn-beam:hover { transform: translateY(-2px); }
+            .btn-beam:hover::before { opacity: 1; }
+            .btn-beam:hover .btn-beam-inner { background: var(--color-surface-elevated); }
+            .btn-accent:hover { transform: translateY(-2px); box-shadow: 0 12px 30px -8px var(--color-accent-glow); }
+        }
+        @media (hover: none) {
+            .feature-card:active { transform: scale(0.98); }
+            .feature-card::before { display: none; }
+            .btn-beam:active, .btn-accent:active { transform: scale(0.97); }
+        }
+
+        @media (max-height: 500px) and (orientation: landscape) {
+            .navbar { position: relative; }
+            .hero { min-height: auto; padding: 2rem 0; }
+            .scroll-hint { display: none; }
+        }
+
+        /* === TABLET (768px) === */
+        @media (max-width: 768px) {
+            :root { --section-gap: clamp(3rem, 8vw, 5rem); }
+            .container { padding: 0 1.5rem; }
+
+            .hero { padding-top: 5.5rem; }
+            .hero h1 { font-size: clamp(1.5rem, 6vw, 2.25rem); }
+            .hero-sub { font-size: 0.95rem; }
+            .scroll-hint { display: none; }
+
+            .video-scrub-sticky video { width: 92%; }
+
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 2rem 1.5rem; }
+            .stat-divider { display: none; }
+
+            .features-grid,
+            .features-grid-row2 { grid-template-columns: 1fr; }
+
+            .navbar-links { display: none; }
+
+            .glow-card-inner { padding: 2rem 1.75rem; }
+
+            .section-header h2 { font-size: clamp(1.5rem, 5vw, 2.25rem); }
+        }
+
+        /* === MOBILE (390px) === */
+        @media (max-width: 390px) {
+            :root { --section-gap: clamp(2.5rem, 6vw, 3.5rem); }
+            .container { padding: 0 1rem; }
+
+            .hero { padding-top: 5rem; }
+            .hero h1 { font-size: 1.5rem; max-width: 100%; }
+            .hero-sub { font-size: 0.9rem; }
+            .hero-disclaimer { font-size: 0.55rem; }
+
+            .video-scrub-sticky video { width: 96%; }
+            .video-scrub-container { height: 200vh; }
+            .video-scrub-text h2 { font-size: 1.1rem; }
+            .video-scrub-text p { font-size: 0.85rem; }
+
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+            .stat-value { font-size: 1.5rem; }
+            .stat-label { font-size: 0.6rem; }
+
+            .feature-card { padding: 1.75rem; border-radius: 1rem; }
+            .feature-card h3 { font-size: 1.1rem; }
+            .feature-card p { font-size: 0.85rem; }
+
+            .quote-text { font-size: 1rem; }
+
+            .btn-accent { width: 100%; }
+            .btn-beam { width: 100%; }
+            .btn-beam-inner { width: 100%; justify-content: center; }
+
+            .glow-card { width: 100%; }
+            .glow-card-inner { padding: 1.75rem 1.25rem; }
+            .glow-card-inner h3 { font-size: 1.25rem; }
+
+            .marquee-item { padding: 0 1.25rem; }
+
+            .navbar { padding: 1rem; }
+            .navbar-logo { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="noise-overlay"></div>
+
+    <!-- ========== NAVBAR ========== -->
+    <nav class="navbar">
+        <div class="navbar-logo">
+            <iconify-icon icon="solar:chart-2-bold-duotone" style="color: var(--color-accent); font-size: 1.4rem;"></iconify-icon>
+            Open<span class="gold">Capital</span>
+        </div>
+        <ul class="navbar-links">
+            <li><a href="#plataforma">Plataforma</a></li>
+            <li><a href="#resultados">Resultados</a></li>
+            <li><a href="#fundador">Fundador</a></li>
+            <li>
+                <a href="#oferta" style="color: var(--color-accent); border: 1px solid var(--color-accent-soft); padding: 0.45rem 1.1rem; border-radius: 9999px;">
+                    Quero ser membro
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- ========== HERO ========== -->
+    <section class="hero container">
+        <span class="badge badge-accent reveal">
+            <iconify-icon icon="solar:shield-check-bold" style="font-size: 0.6rem;"></iconify-icon>
+            87% de taxa de acerto auditada
+        </span>
+
+        <h1 class="reveal delay-100">
+            Voce nao perdeu dinheiro porque e burro. Perdeu porque te deram a <span class="highlight">ferramenta errada</span>. Isso acaba aqui.
+        </h1>
+
+        <p class="hero-sub reveal delay-200">
+            Ecossistema de inteligencia artificial para traders que transforma dados em decisoes estruturadas. Quase 3 anos de desenvolvimento e R$ 4,8 milhoes investidos.
+        </p>
+
+        <div class="reveal delay-300">
+            <a href="#oferta" class="btn-accent">
+                Quero ser membro fundador
+                <iconify-icon icon="solar:arrow-right-linear"></iconify-icon>
+            </a>
+        </div>
+
+        <p class="hero-disclaimer reveal delay-400">
+            Investimentos envolvem riscos e podem trazer perdas ao investidor. Resultados passados nao garantem resultados futuros.
+        </p>
+
+        <div class="scroll-hint reveal delay-600">
+            <span>Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- ========== VIDEO SCRUB (Notebook abrindo) ========== -->
+    <section class="video-scrub-container" id="plataforma">
+        <div class="video-scrub-sticky">
+            <div class="video-glow" id="videoGlow"></div>
+            <video id="scrubVideo" muted playsinline preload="auto">
+                <source src="video.webm" type="video/webm">
+                <source src="video.mp4" type="video/mp4">
+            </video>
+            <div class="video-scrub-text" id="videoText">
+                <h2>A plataforma na sua frente</h2>
+                <p>Inteligencia artificial processando mais de 280 mil analises</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== MARQUEE ========== -->
+    <div class="marquee-section">
+        <div class="marquee-track animate-marquee">
+            <span class="marquee-item"><span class="dot"></span>Inteligencia Artificial</span>
+            <span class="marquee-item"><span class="dot"></span>87% de Acerto</span>
+            <span class="marquee-item"><span class="dot"></span>280 mil Analises</span>
+            <span class="marquee-item"><span class="dot"></span>R$ 4,8M Investidos</span>
+            <span class="marquee-item"><span class="dot"></span>12 Especialistas</span>
+            <span class="marquee-item"><span class="dot"></span>3 Anos de P&D</span>
+            <span class="marquee-item"><span class="dot"></span>Inteligencia Artificial</span>
+            <span class="marquee-item"><span class="dot"></span>87% de Acerto</span>
+            <span class="marquee-item"><span class="dot"></span>280 mil Analises</span>
+            <span class="marquee-item"><span class="dot"></span>R$ 4,8M Investidos</span>
+            <span class="marquee-item"><span class="dot"></span>12 Especialistas</span>
+            <span class="marquee-item"><span class="dot"></span>3 Anos de P&D</span>
+        </div>
+    </div>
+
+    <!-- ========== STATS ========== -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="reveal">
+                    <div class="stat-value">87%</div>
+                    <div class="stat-label">Taxa de acerto auditada</div>
+                </div>
+                <div class="reveal delay-100">
+                    <div class="stat-value">280k+</div>
+                    <div class="stat-label">Analises processadas</div>
+                </div>
+                <div class="reveal delay-200">
+                    <div class="stat-value">R$ 4,8M</div>
+                    <div class="stat-label">Investidos em P&D</div>
+                </div>
+                <div class="reveal delay-300">
+                    <div class="stat-value">3 anos</div>
+                    <div class="stat-label">De desenvolvimento</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FEATURES ========== -->
+    <section id="resultados" class="container">
+        <div class="section-header reveal">
+            <span class="badge">
+                <iconify-icon icon="solar:cpu-bolt-linear" style="font-size: 0.7rem;"></iconify-icon>
+                Ecossistema completo
+            </span>
+            <h2>Solucoes para quem<br>leva dinheiro <span class="text-outline">a serio</span></h2>
+            <p>Uma plataforma de inteligencia artificial que transforma dados em decisoes estruturadas para o mercado financeiro.</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card reveal" onmousemove="updateFlashlight(event, this)">
+                <div class="feature-card-icon">
+                    <iconify-icon icon="solar:graph-up-bold-duotone"></iconify-icon>
+                </div>
+                <h3>Analise Preditiva com IA</h3>
+                <p>Algoritmos que processam milhares de variaveis em tempo real para identificar oportunidades com alta probabilidade de acerto.</p>
+            </div>
+            <div class="feature-card reveal delay-100" onmousemove="updateFlashlight(event, this)">
+                <div class="feature-card-icon">
+                    <iconify-icon icon="solar:shield-check-bold-duotone"></iconify-icon>
+                </div>
+                <h3>Gestao de Risco Inteligente</h3>
+                <p>Protecao de capital automatizada. O sistema calcula posicao, stop e alvo baseado no seu perfil de risco.</p>
+            </div>
+        </div>
+        <div class="features-grid-row2">
+            <div class="feature-card reveal delay-200" onmousemove="updateFlashlight(event, this)">
+                <div class="feature-card-icon">
+                    <iconify-icon icon="solar:chart-2-bold-duotone"></iconify-icon>
+                </div>
+                <h3>Sinais Estruturados</h3>
+                <p>Nao e robo automatico. Sao sinais claros com entrada, alvo e stop — voce decide se executa. Transparencia total.</p>
+            </div>
+            <div class="feature-card reveal delay-300" onmousemove="updateFlashlight(event, this)">
+                <div class="feature-card-icon">
+                    <iconify-icon icon="solar:users-group-rounded-bold-duotone"></iconify-icon>
+                </div>
+                <h3>12 Especialistas + IA</h3>
+                <p>Equipe de analistas, quants e engenheiros por tras de cada modelo. A IA potencializa, o humano valida.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== QUOTE ========== -->
+    <section class="quote-section" id="fundador">
+        <div class="quote-glow animate-pulse-glow"></div>
+        <div class="container">
+            <div class="quote-content reveal-scale">
+                <span class="quote-mark">"</span>
+                <p class="quote-text">Taxa de acerto media auditada de 87% apurada com base em mais de 280 mil analises processadas. Nao e promessa — e resultado documentado.</p>
+                <div class="quote-author">
+                    <div class="quote-avatar">S</div>
+                    <div style="text-align: left;">
+                        <div class="quote-name">Suriel</div>
+                        <div class="quote-role">Fundador / OpenCapital</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== CTA / OFERTA ========== -->
+    <section class="cta-section container" id="oferta">
+        <div class="cta-glow animate-pulse-glow"></div>
+
+        <div class="reveal">
+            <span class="badge badge-accent" style="margin-bottom: 1.5rem;">
+                <iconify-icon icon="solar:crown-star-bold" style="font-size: 0.7rem;"></iconify-icon>
+                Vagas limitadas
+            </span>
+        </div>
+
+        <h2 class="reveal delay-100">Membro <span style="color: var(--color-accent);">Fundador</span></h2>
+
+        <p class="reveal delay-200">100 vagas exclusivas com preco travado para sempre e garantia de 30 dias. Sem risco.</p>
+
+        <div class="reveal delay-300" style="margin-top: 1rem;">
+            <div class="glow-card">
+                <div class="glow-card-blur"></div>
+                <div class="glow-card-bg"></div>
+                <div class="glow-card-inner">
+                    <h3>Acesso Completo ao Ecossistema</h3>
+                    <div class="price-tag">100 vagas de membro fundador</div>
+                    <ul class="benefits">
+                        <li>
+                            <iconify-icon icon="solar:check-circle-bold"></iconify-icon>
+                            Plataforma de IA com sinais estruturados
+                        </li>
+                        <li>
+                            <iconify-icon icon="solar:check-circle-bold"></iconify-icon>
+                            Gestao de risco automatizada
+                        </li>
+                        <li>
+                            <iconify-icon icon="solar:check-circle-bold"></iconify-icon>
+                            Analises em tempo real 24/5
+                        </li>
+                        <li>
+                            <iconify-icon icon="solar:check-circle-bold"></iconify-icon>
+                            Preco travado para sempre
+                        </li>
+                        <li>
+                            <iconify-icon icon="solar:check-circle-bold"></iconify-icon>
+                            Garantia de 30 dias
+                        </li>
+                    </ul>
+                    <a href="#" class="btn-accent" style="width: 100%; justify-content: center;">
+                        Garantir minha vaga
+                        <iconify-icon icon="solar:arrow-right-linear"></iconify-icon>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <div class="container footer-inner">
+            <div class="footer-logo">
+                <iconify-icon icon="solar:chart-2-bold-duotone" style="color: var(--color-accent); font-size: 1.2rem; vertical-align: middle; margin-right: 0.35rem;"></iconify-icon>
+                Open<span class="gold">Capital</span>
+            </div>
+            <div class="footer-legal">
+                OpenCapital &copy; 2026 — PORTS CAPITAL LTDA<br>
+                CNPJ: 48.326.475/0001-07<br>
+                Av. Jose Silva de Azevedo Neto, 200, Bloco 1, Sala 203 — Barra da Tijuca, Rio de Janeiro/RJ<br>
+                suriel@portscapital.com.br | (21) 8430-3126
+            </div>
+            <div class="footer-disclaimer">
+                Investimentos envolvem riscos e podem trazer perdas ao investidor. Resultados passados nao garantem resultados futuros. A OpenCapital e um ecossistema de inteligencia artificial, nao um robo de trading automatico.
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========== JAVASCRIPT ========== -->
+    <script>
+        // === Intersection Observer ===
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+        document.querySelectorAll('.reveal, .reveal-scale').forEach(el => observer.observe(el));
+
+        // === Hero stagger on load ===
+        window.addEventListener('DOMContentLoaded', () => {
+            const heroReveals = document.querySelectorAll('.hero .reveal');
+            heroReveals.forEach((el, i) => {
+                setTimeout(() => el.classList.add('active'), 150 + (i * 120));
+            });
+        });
+
+        // === Video Scrub on Scroll ===
+        const scrubVideo = document.getElementById('scrubVideo');
+        const scrubContainer = document.querySelector('.video-scrub-container');
+        const videoText = document.getElementById('videoText');
+        const videoGlow = document.getElementById('videoGlow');
+
+        let videoReady = false;
+
+        scrubVideo.addEventListener('loadedmetadata', () => {
+            videoReady = true;
+        });
+
+        // Fallback: also check readyState
+        if (scrubVideo.readyState >= 1) {
+            videoReady = true;
+        }
+
+        window.addEventListener('scroll', () => {
+            if (!videoReady || !scrubContainer) return;
+
+            const rect = scrubContainer.getBoundingClientRect();
+            const containerHeight = scrubContainer.offsetHeight;
+            const scrolled = -rect.top;
+            const progress = Math.max(0, Math.min(1, scrolled / (containerHeight - window.innerHeight)));
+
+            // Set video time based on scroll progress
+            if (scrubVideo.duration) {
+                scrubVideo.currentTime = progress * scrubVideo.duration;
+            }
+
+            // Show text and glow when notebook is mostly open (>70%)
+            if (progress > 0.7) {
+                videoText.classList.add('visible');
+                videoGlow.classList.add('visible');
+            } else {
+                videoText.classList.remove('visible');
+                videoGlow.classList.remove('visible');
+            }
+        }, { passive: true });
+
+        // === Flashlight Card ===
+        function updateFlashlight(e, card) {
+            const rect = card.getBoundingClientRect();
+            card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+            card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+        }
+
+        // === Navbar scroll ===
+        const navbar = document.querySelector('.navbar');
+        window.addEventListener('scroll', () => {
+            navbar.style.background = window.scrollY > 50
+                ? 'rgba(6, 6, 8, 0.92)'
+                : 'rgba(6, 6, 8, 0.7)';
+        }, { passive: true });
+    </script>
+</body>
+</html>
