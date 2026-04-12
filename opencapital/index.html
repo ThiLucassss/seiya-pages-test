@@ -209,10 +209,12 @@
         const heroSection = document.querySelector('.chero');
         const overlay = document.getElementById('heroOverlay');
 
-        const FRAME_COUNT = 62;
+        const FRAME_COUNT = 42;
         const frames = [];
         let loadedCount = 0;
-        let currentFrame = { index: 0 };
+        let displayIndex = 0;
+        let targetIndex = 0;
+        let allLoaded = false;
 
         // Preload all frames
         for (let i = 1; i <= FRAME_COUNT; i++) {
@@ -220,75 +222,70 @@
             img.src = `frames/f_${String(i).padStart(3, '0')}.jpg`;
             img.onload = () => {
                 loadedCount++;
-                if (loadedCount === 1) {
-                    resizeCanvas();
-                    render();
-                }
-                if (loadedCount === FRAME_COUNT) render();
+                if (loadedCount === 1) { resizeCanvas(); drawFrame(0); }
+                if (loadedCount === FRAME_COUNT) { allLoaded = true; drawFrame(0); }
             };
             frames.push(img);
         }
 
         function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            canvas.width = window.innerWidth * window.devicePixelRatio;
+            canvas.height = window.innerHeight * window.devicePixelRatio;
+            canvas.style.width = window.innerWidth + 'px';
+            canvas.style.height = window.innerHeight + 'px';
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
         }
 
-        function render() {
-            const idx = Math.min(Math.max(Math.round(currentFrame.index), 0), FRAME_COUNT - 1);
+        function drawFrame(idx) {
+            idx = Math.min(Math.max(Math.round(idx), 0), FRAME_COUNT - 1);
             const img = frames[idx];
             if (!img || !img.complete) return;
 
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const cw = window.innerWidth;
+            const ch = window.innerHeight;
+            ctx.clearRect(0, 0, cw, ch);
 
-            // Draw image covering entire canvas (like object-fit: cover)
-            const cw = canvas.width;
-            const ch = canvas.height;
+            // Object-fit: cover
             const iw = img.naturalWidth;
             const ih = img.naturalHeight;
             const scale = Math.max(cw / iw, ch / ih);
             const sw = iw * scale;
             const sh = ih * scale;
-            const sx = (cw - sw) / 2;
-            const sy = (ch - sh) / 2;
-            ctx.drawImage(img, sx, sy, sw, sh);
+            ctx.drawImage(img, (cw - sw) / 2, (ch - sh) / 2, sw, sh);
+            displayIndex = idx;
         }
 
-        // Resize handler
-        window.addEventListener('resize', () => {
-            resizeCanvas();
-            render();
-        });
+        window.addEventListener('resize', () => { resizeCanvas(); drawFrame(displayIndex); });
 
-        // Scroll handler with rAF
-        let ticking = false;
+        // Smooth interpolation loop — runs independently of scroll events
+        function animationLoop() {
+            if (Math.abs(displayIndex - targetIndex) > 0.3) {
+                const next = displayIndex + (targetIndex - displayIndex) * 0.15;
+                drawFrame(Math.round(next));
+            }
+            requestAnimationFrame(animationLoop);
+        }
+        requestAnimationFrame(animationLoop);
+
+        // Scroll just updates the target — lightweight
         window.addEventListener('scroll', () => {
-            if (!ticking) {
-                requestAnimationFrame(() => {
-                    const rect = heroSection.getBoundingClientRect();
-                    const total = heroSection.offsetHeight - window.innerHeight;
-                    const scrolled = Math.max(0, -rect.top);
-                    const progress = Math.min(1, scrolled / total);
+            const rect = heroSection.getBoundingClientRect();
+            const total = heroSection.offsetHeight - window.innerHeight;
+            const scrolled = Math.max(0, -rect.top);
+            const progress = Math.min(1, scrolled / total);
 
-                    // Update frame
-                    currentFrame.index = progress * (FRAME_COUNT - 1);
-                    render();
+            targetIndex = progress * (FRAME_COUNT - 1);
 
-                    // Fade headline
-                    if (progress < 0.15) {
-                        overlay.style.opacity = '1';
-                        overlay.style.transform = 'translateY(0)';
-                    } else if (progress < 0.45) {
-                        const fade = (progress - 0.15) / 0.3;
-                        overlay.style.opacity = String(1 - fade);
-                        overlay.style.transform = `translateY(${-fade * 40}px)`;
-                    } else {
-                        overlay.style.opacity = '0';
-                    }
-
-                    ticking = false;
-                });
-                ticking = true;
+            // Fade headline
+            if (progress < 0.15) {
+                overlay.style.opacity = '1';
+                overlay.style.transform = 'translateY(0)';
+            } else if (progress < 0.45) {
+                const fade = (progress - 0.15) / 0.3;
+                overlay.style.opacity = String(1 - fade);
+                overlay.style.transform = `translateY(${-fade * 40}px)`;
+            } else {
+                overlay.style.opacity = '0';
             }
         }, { passive: true });
     </script>
