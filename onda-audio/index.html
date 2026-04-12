@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONDA — Precision Audio</title>
+
+    <!-- Fonts: Space Grotesk (display) + Outfit (body) + JetBrains Mono (utility) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Anime.js -->
+    <script src="https://cdn.jsdelivr.net/npm/animejs@4.0.0/lib/anime.iife.min.js"></script>
+
+    <!-- Iconify -->
+    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2/dist/iconify-icon.min.js"></script>
+
+    <style>
+        /* ========== DESIGN TOKENS (CSS Variables) ========== */
+        :root {
+            /* Cores — Dark Cinematic com acento amber */
+            --color-bg: #0a0a0a;
+            --color-surface: #111111;
+            --color-surface-elevated: #1a1a1a;
+            --color-border: #262626;
+            --color-border-subtle: #1c1c1c;
+            --color-text-primary: #f5f5f4;
+            --color-text-secondary: #a1a1aa;
+            --color-text-tertiary: #52525b;
+            --color-accent: #d97706;
+            --color-accent-soft: rgba(217, 119, 6, 0.15);
+            --color-accent-glow: rgba(217, 119, 6, 0.4);
+
+            /* Tipografia */
+            --font-display: 'Space Grotesk', system-ui, sans-serif;
+            --font-body: 'Outfit', system-ui, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+
+            /* Easing */
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+
+            /* Espacamento */
+            --section-gap: clamp(4rem, 10vw, 8rem);
+        }
+
+        /* ========== RESET & BASE ========== */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html {
+            font-size: 16px;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: var(--font-body);
+            font-weight: 400;
+            color: var(--color-text-primary);
+            background: var(--color-bg);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        ::selection {
+            background: var(--color-accent);
+            color: var(--color-bg);
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--color-bg); }
+        ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+
+        img, video, iframe, svg { max-width: 100%; height: auto; display: block; }
+        a { color: inherit; text-decoration: none; }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        /* ========== TYPOGRAPHY ========== */
+        .font-display { font-family: var(--font-display); }
+        .font-body { font-family: var(--font-body); }
+        .font-mono { font-family: var(--font-mono); }
+
+        /* ========== NOISE OVERLAY ========== */
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        /* ========== ANIMATIONS ========== */
+
+        /* Reveal Up with Blur */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            filter: blur(12px);
+            transition: opacity 1s var(--ease-out-expo),
+                        transform 1s var(--ease-out-expo),
+                        filter 1s var(--ease-out-expo);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+            filter: blur(0);
+        }
+
+        /* Reveal Scale */
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.92);
+            filter: blur(8px);
+            transition: opacity 1.2s var(--ease-out-expo),
+                        transform 1.2s var(--ease-out-expo),
+                        filter 1.2s var(--ease-out-expo);
+        }
+        .reveal-scale.active {
+            opacity: 1;
+            transform: scale(1);
+            filter: blur(0);
+        }
+
+        /* Text Reveal Mask */
+        .text-reveal-wrapper {
+            overflow: hidden;
+            display: inline-block;
+        }
+        .text-reveal-inner {
+            transform: translateY(110%);
+            transition: transform 1.2s var(--ease-out-expo);
+        }
+        .text-reveal-wrapper.active .text-reveal-inner {
+            transform: translateY(0);
+        }
+
+        /* Stagger delays */
+        .delay-100 { transition-delay: 0.1s; }
+        .delay-200 { transition-delay: 0.2s; }
+        .delay-300 { transition-delay: 0.3s; }
+        .delay-400 { transition-delay: 0.4s; }
+        .delay-500 { transition-delay: 0.5s; }
+        .delay-600 { transition-delay: 0.6s; }
+        .delay-700 { transition-delay: 0.7s; }
+
+        /* Float */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-16px); }
+        }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+
+        /* Pulse Glow */
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+        .animate-pulse-glow { animation: pulse-glow 4s ease-in-out infinite; }
+
+        /* Marquee */
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee { animation: marquee 25s linear infinite; }
+
+        /* Spin slow */
+        @keyframes spin-slow {
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin-slow { animation: spin-slow 20s linear infinite; }
+
+        /* Beam button */
+        .btn-beam {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            overflow: hidden;
+            padding: 2px;
+            cursor: pointer;
+            background: var(--color-border);
+            transition: transform 0.3s var(--ease-out-expo);
+        }
+        .btn-beam:hover { transform: translateY(-2px); }
+        .btn-beam::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: conic-gradient(from 90deg at 50% 50%, var(--color-accent) 0%, transparent 25%, transparent 75%, var(--color-accent) 100%);
+            animation: spin-beam 3s linear infinite;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .btn-beam:hover::before { opacity: 1; }
+        @keyframes spin-beam { to { transform: rotate(360deg); } }
+        .btn-beam-inner {
+            position: relative;
+            z-index: 1;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 2.5rem;
+            background: var(--color-surface);
+            border-radius: 9999px;
+            font-family: var(--font-display);
+            font-weight: 500;
+            font-size: 0.95rem;
+            letter-spacing: -0.01em;
+            color: var(--color-text-primary);
+            transition: background 0.3s;
+        }
+        .btn-beam:hover .btn-beam-inner { background: var(--color-surface-elevated); }
+
+        /* Secondary button */
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 2.5rem;
+            border: 1px solid var(--color-border);
+            border-radius: 9999px;
+            font-family: var(--font-display);
+            font-weight: 500;
+            font-size: 0.95rem;
+            letter-spacing: -0.01em;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            background: transparent;
+            transition: all 0.3s var(--ease-out-expo);
+        }
+        .btn-outline:hover {
+            border-color: var(--color-text-secondary);
+            color: var(--color-text-primary);
+            transform: translateY(-2px);
+        }
+
+        /* Flashlight card */
+        .flashlight-card {
+            position: relative;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 1.25rem;
+            overflow: hidden;
+            transition: transform 0.4s var(--ease-out-expo),
+                        box-shadow 0.4s var(--ease-out-expo),
+                        border-color 0.4s;
+        }
+        .flashlight-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
+            border-color: var(--color-border-subtle);
+        }
+        .flashlight-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(500px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+                        var(--color-accent-soft), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .flashlight-card:hover::before { opacity: 1; }
+        .flashlight-card > * { position: relative; z-index: 2; }
+
+        /* Text outline */
+        .text-outline {
+            -webkit-text-stroke: 1.5px var(--color-text-tertiary);
+            color: transparent;
+            transition: all 0.5s var(--ease-out-expo);
+        }
+        .text-outline:hover {
+            -webkit-text-stroke: 1.5px var(--color-accent);
+            color: var(--color-accent);
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            border: 1px solid var(--color-border);
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--color-text-tertiary);
+        }
+        .badge-accent {
+            border-color: var(--color-accent-soft);
+            color: var(--color-accent);
+            background: var(--color-accent-soft);
+        }
+
+        /* ========== NAVBAR ========== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1.25rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background: rgba(10, 10, 10, 0.7);
+            border-bottom: 1px solid var(--color-border-subtle);
+        }
+        .navbar-logo {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.25rem;
+            letter-spacing: -0.03em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .navbar-logo span { color: var(--color-accent); }
+        .navbar-links {
+            display: flex;
+            align-items: center;
+            gap: 2.5rem;
+            list-style: none;
+        }
+        .navbar-links a {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--color-text-tertiary);
+            transition: color 0.3s;
+        }
+        .navbar-links a:hover { color: var(--color-text-primary); }
+
+        /* ========== SECTIONS ========== */
+        section { padding: var(--section-gap) 0; }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* ========== HERO ========== */
+        .hero {
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            gap: 4rem;
+            padding-top: 6rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-content { position: relative; z-index: 2; }
+        .hero-visual {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .hero-badge { margin-bottom: 1.5rem; }
+        .hero h1 {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: clamp(3rem, 5.5vw, 5rem);
+            line-height: 0.9;
+            letter-spacing: -0.04em;
+            margin-bottom: 1.5rem;
+        }
+        .hero h1 .accent { color: var(--color-accent); }
+        .hero-description {
+            font-size: 1.1rem;
+            font-weight: 300;
+            color: var(--color-text-secondary);
+            max-width: 480px;
+            line-height: 1.7;
+            margin-bottom: 2.5rem;
+        }
+        .hero-buttons { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+        /* Hero visual elements */
+        .hero-product {
+            width: 420px;
+            height: 420px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, var(--color-surface-elevated), var(--color-bg));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .hero-product-icon {
+            font-size: 8rem;
+            color: var(--color-accent);
+            filter: drop-shadow(0 0 40px var(--color-accent-glow));
+        }
+        .hero-ring {
+            position: absolute;
+            inset: -20px;
+            border: 1px solid var(--color-border);
+            border-radius: 50%;
+        }
+        .hero-ring-2 {
+            position: absolute;
+            inset: -50px;
+            border: 1px dashed var(--color-border-subtle);
+            border-radius: 50%;
+        }
+        .hero-glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: var(--color-accent-glow);
+            filter: blur(120px);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        /* Hero scroll hint */
+        .scroll-hint {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--color-text-tertiary);
+        }
+        .scroll-hint span {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+        .scroll-line {
+            width: 1px;
+            height: 40px;
+            background: var(--color-border);
+            position: relative;
+            overflow: hidden;
+        }
+        .scroll-line::after {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--color-accent);
+            animation: scroll-down 1.5s cubic-bezier(0.77, 0, 0.175, 1) infinite;
+        }
+        @keyframes scroll-down {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(200%); }
+        }
+
+        /* ========== MARQUEE ========== */
+        .marquee-section {
+            padding: 1.5rem 0;
+            border-top: 1px solid var(--color-border-subtle);
+            border-bottom: 1px solid var(--color-border-subtle);
+            overflow: hidden;
+        }
+        .marquee-track {
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+        .marquee-item {
+            font-family: var(--font-display);
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            font-weight: 500;
+            letter-spacing: -0.02em;
+            color: var(--color-text-tertiary);
+            padding: 0 2rem;
+            flex-shrink: 0;
+        }
+        .marquee-item .dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: var(--color-accent);
+            border-radius: 50%;
+            margin-right: 2rem;
+            vertical-align: middle;
+        }
+
+        /* ========== FEATURES (Zig-Zag) ========== */
+        .features-section { position: relative; }
+
+        .feature-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            margin-bottom: var(--section-gap);
+        }
+        .feature-row.reversed .feature-visual { order: -1; }
+
+        .feature-visual {
+            position: relative;
+            aspect-ratio: 4/3;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .feature-visual-icon {
+            font-size: 5rem;
+            color: var(--color-text-tertiary);
+            transition: color 0.5s var(--ease-out-expo), transform 0.5s var(--ease-out-expo);
+        }
+        .feature-row:hover .feature-visual-icon {
+            color: var(--color-accent);
+            transform: scale(1.1);
+        }
+        .feature-visual-glow {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: var(--color-accent-glow);
+            filter: blur(80px);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.6s;
+        }
+        .feature-row:hover .feature-visual-glow { opacity: 0.6; }
+
+        .feature-number {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            color: var(--color-accent);
+            margin-bottom: 1rem;
+        }
+        .feature-content h3 {
+            font-family: var(--font-display);
+            font-size: clamp(1.75rem, 3vw, 2.5rem);
+            font-weight: 600;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+        }
+        .feature-content p {
+            color: var(--color-text-secondary);
+            font-weight: 300;
+            line-height: 1.7;
+            max-width: 420px;
+            margin-bottom: 1.5rem;
+        }
+        .feature-specs {
+            display: flex;
+            gap: 1.5rem;
+        }
+        .feature-spec {
+            padding: 0.75rem 1.25rem;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 0.75rem;
+        }
+        .feature-spec-value {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 1.25rem;
+            letter-spacing: -0.02em;
+        }
+        .feature-spec-label {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--color-text-tertiary);
+            margin-top: 0.25rem;
+        }
+
+        /* ========== CARDS GRID ========== */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+        .cards-grid-row2 {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .flashlight-card .card-inner {
+            padding: 2.5rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--color-accent-soft);
+            border-radius: 0.75rem;
+            margin-bottom: 1.5rem;
+            transition: transform 0.4s var(--ease-out-expo);
+        }
+        .flashlight-card:hover .card-icon { transform: scale(1.1) rotate(-5deg); }
+        .card-icon iconify-icon { font-size: 1.5rem; color: var(--color-accent); }
+
+        .card-inner h4 {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.75rem;
+        }
+        .card-inner p {
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+            font-weight: 300;
+            line-height: 1.6;
+            flex: 1;
+        }
+        .card-progress {
+            margin-top: 1.5rem;
+            height: 2px;
+            background: var(--color-border);
+            border-radius: 1px;
+            overflow: hidden;
+        }
+        .card-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--color-accent);
+            border-radius: 1px;
+            transition: width 0.8s var(--ease-out-expo);
+        }
+        .flashlight-card:hover .card-progress-bar { width: 100%; }
+
+        /* ========== SHOWCASE ========== */
+        .showcase-section {
+            position: relative;
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .showcase-bg {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--color-bg), var(--color-surface));
+        }
+        .showcase-bg-grid {
+            position: absolute;
+            inset: 0;
+            background-size: 50px 50px;
+            background-image:
+                linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+        }
+        .showcase-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 700px;
+        }
+        .showcase-glow-1 {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: var(--color-accent-glow);
+            filter: blur(150px);
+            border-radius: 50%;
+            top: 20%;
+            left: 10%;
+        }
+        .showcase-glow-2 {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(59, 130, 246, 0.2);
+            filter: blur(120px);
+            border-radius: 50%;
+            bottom: 20%;
+            right: 15%;
+        }
+        .showcase-content h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            line-height: 0.9;
+            margin-bottom: 1.5rem;
+        }
+        .showcase-content p {
+            font-size: 1.15rem;
+            font-weight: 300;
+            color: var(--color-text-secondary);
+            line-height: 1.7;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Glowing card */
+        .glow-card {
+            position: relative;
+            display: inline-block;
+            padding: 3px;
+            border-radius: 1.5rem;
+        }
+        .glow-card-bg {
+            position: absolute;
+            inset: 0;
+            border-radius: 1.5rem;
+            background: conic-gradient(from 90deg at 50% 50%, var(--color-accent) 0%, transparent 25%, transparent 50%, rgba(59,130,246,0.6) 75%, var(--color-accent) 100%);
+            animation: spin-beam 6s linear infinite;
+            opacity: 0.6;
+        }
+        .glow-card-blur {
+            position: absolute;
+            inset: -20px;
+            border-radius: 2rem;
+            background: conic-gradient(from 90deg at 50% 50%, var(--color-accent-glow) 0%, transparent 25%, transparent 50%, rgba(59,130,246,0.15) 75%, var(--color-accent-glow) 100%);
+            animation: spin-beam 6s linear infinite;
+            filter: blur(30px);
+            opacity: 0.5;
+        }
+        .glow-card-inner {
+            position: relative;
+            z-index: 1;
+            background: var(--color-surface);
+            border-radius: calc(1.5rem - 3px);
+            padding: 3rem 4rem;
+            backdrop-filter: blur(20px);
+        }
+        .glow-card-inner .price {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+        }
+        .glow-card-inner .price-period {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--color-text-tertiary);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .glow-card-inner .price-features {
+            list-style: none;
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+        .glow-card-inner .price-features li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--color-border-subtle);
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .glow-card-inner .price-features iconify-icon {
+            color: var(--color-accent);
+        }
+
+        /* ========== TESTIMONIALS ========== */
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 1.5rem;
+        }
+        .testimonials-grid-row2 {
+            display: grid;
+            grid-template-columns: 0.8fr 1.2fr;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .testimonial-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 1.25rem;
+            padding: 2.5rem;
+            transition: transform 0.4s var(--ease-out-expo),
+                        border-color 0.4s;
+        }
+        /* hover handled in responsive section via @media (hover: hover) */
+        .testimonial-quote {
+            font-size: 1.05rem;
+            font-weight: 300;
+            line-height: 1.7;
+            color: var(--color-text-secondary);
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .testimonial-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-accent-soft), var(--color-surface-elevated));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--color-accent);
+        }
+        .testimonial-name {
+            font-family: var(--font-display);
+            font-weight: 500;
+            font-size: 0.9rem;
+            letter-spacing: -0.01em;
+        }
+        .testimonial-role {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--color-text-tertiary);
+        }
+        .testimonial-stars {
+            color: var(--color-accent);
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            letter-spacing: 0.15em;
+        }
+
+        /* ========== CTA ========== */
+        .cta-section {
+            position: relative;
+            padding: 6rem 0;
+            text-align: center;
+            overflow: hidden;
+        }
+        .cta-section h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            line-height: 0.95;
+            margin-bottom: 1.25rem;
+        }
+        .cta-section p {
+            color: var(--color-text-secondary);
+            font-size: 1.1rem;
+            font-weight: 300;
+            max-width: 480px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.7;
+        }
+        .cta-glow {
+            position: absolute;
+            width: 500px;
+            height: 200px;
+            background: var(--color-accent-glow);
+            filter: blur(120px);
+            border-radius: 50%;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0.3;
+        }
+
+        /* ========== FOOTER ========== */
+        .footer {
+            border-top: 1px solid var(--color-border-subtle);
+            padding: 3rem 0;
+        }
+        .footer-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .footer-copy {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.08em;
+            color: var(--color-text-tertiary);
+        }
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        .footer-links a {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--color-text-tertiary);
+            transition: color 0.3s;
+        }
+        .footer-links a:hover { color: var(--color-accent); }
+
+        /* ========== SECTION HEADERS ========== */
+        .section-header {
+            margin-bottom: 4rem;
+        }
+        .section-header .badge { margin-bottom: 1.25rem; }
+        .section-header h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 600;
+            letter-spacing: -0.03em;
+            line-height: 1;
+            margin-bottom: 1rem;
+        }
+        .section-header p {
+            color: var(--color-text-secondary);
+            font-size: 1.05rem;
+            font-weight: 300;
+            max-width: 520px;
+            line-height: 1.7;
+        }
+
+        /* ========== RESPONSIVE ========== */
+
+        /* Hover vs Touch separation */
+        @media (hover: hover) {
+            .testimonial-card:hover {
+                transform: translateY(-2px);
+                border-color: var(--color-accent-soft);
+            }
+            .flashlight-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
+            }
+            .btn-beam:hover { transform: translateY(-2px); }
+            .btn-outline:hover {
+                border-color: var(--color-text-secondary);
+                color: var(--color-text-primary);
+                transform: translateY(-2px);
+            }
+        }
+        @media (hover: none) {
+            .testimonial-card:active,
+            .flashlight-card:active { transform: scale(0.98); }
+            .btn-beam:active, .btn-outline:active { transform: scale(0.97); }
+            /* Disable flashlight effect on touch */
+            .flashlight-card::before { display: none; }
+        }
+
+        /* Landscape mobile fix */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .navbar { position: relative; }
+            .hero { min-height: auto; padding-top: 2rem; padding-bottom: 2rem; }
+            .scroll-hint { display: none; }
+        }
+
+        /* === TABLET (391-768px) === */
+        @media (max-width: 768px) {
+            :root { --section-gap: clamp(3rem, 8vw, 5rem); }
+
+            .container { padding: 0 1.5rem; }
+
+            .hero {
+                grid-template-columns: 1fr;
+                text-align: left;
+                padding-top: 6rem;
+                gap: 2.5rem;
+            }
+            .hero-visual { order: -1; }
+            .hero-product { width: 260px; height: 260px; margin: 0 auto; }
+            .hero-product-icon { font-size: 5rem; }
+            .hero-ring-2 { inset: -30px; }
+            .hero h1 { font-size: clamp(2.5rem, 8vw, 3.5rem); }
+            .hero-description { font-size: 1rem; }
+
+            .scroll-hint { display: none; }
+
+            .feature-row,
+            .feature-row.reversed { grid-template-columns: 1fr; gap: 2rem; }
+            .feature-row.reversed .feature-visual { order: 0; }
+            .feature-visual { aspect-ratio: 16/9; }
+
+            .cards-grid,
+            .cards-grid-row2 { grid-template-columns: 1fr; }
+
+            .testimonials-grid,
+            .testimonials-grid-row2 { grid-template-columns: 1fr; }
+
+            .showcase-content { padding: 0 1rem; }
+            .showcase-content h2 { font-size: clamp(2rem, 6vw, 3rem); }
+
+            .glow-card-inner { padding: 2rem 1.75rem; }
+            .glow-card-inner .price { font-size: 2.5rem; }
+
+            .navbar-links { display: none; }
+
+            .section-header h2 { font-size: clamp(1.75rem, 5vw, 2.75rem); }
+
+            .cta-section h2 { font-size: clamp(2rem, 5vw, 3rem); }
+
+            .footer-inner { flex-direction: column; gap: 1.5rem; text-align: center; }
+            .footer-links { justify-content: center; }
+        }
+
+        /* === MOBILE (261-390px) === */
+        @media (max-width: 390px) {
+            :root { --section-gap: clamp(2.5rem, 6vw, 3.5rem); }
+
+            .container { padding: 0 1rem; }
+
+            .hero { padding-top: 5rem; gap: 2rem; }
+            .hero-product { width: 220px; height: 220px; }
+            .hero-product-icon { font-size: 4rem; }
+            .hero-ring { inset: -10px; }
+            .hero-ring-2 { inset: -25px; }
+            .hero h1 { font-size: clamp(2rem, 10vw, 2.75rem); }
+            .hero-description { font-size: 0.9375rem; margin-bottom: 2rem; }
+            .hero-buttons { flex-direction: column; }
+            .hero-buttons .btn-beam,
+            .hero-buttons .btn-outline { width: 100%; justify-content: center; }
+            .btn-beam-inner { width: 100%; justify-content: center; }
+
+            .badge { font-size: 0.625rem; padding: 0.35rem 0.75rem; }
+
+            .feature-content h3 { font-size: clamp(1.5rem, 6vw, 1.75rem); }
+            .feature-content p { font-size: 0.9375rem; }
+            .feature-specs { flex-direction: column; gap: 0.75rem; }
+            .feature-visual { aspect-ratio: 4/3; border-radius: 1rem; }
+
+            .flashlight-card { border-radius: 1rem; }
+            .card-inner { padding: 1.75rem; }
+            .card-inner h4 { font-size: 1.1rem; }
+            .card-inner p { font-size: 0.875rem; }
+
+            .testimonial-card { padding: 1.75rem; border-radius: 1rem; }
+            .testimonial-quote { font-size: 0.95rem; }
+
+            .glow-card { width: 100%; }
+            .glow-card-inner { padding: 1.75rem 1.25rem; }
+            .glow-card-inner .price { font-size: 2.25rem; }
+            .glow-card-inner .price-period { font-size: 0.65rem; }
+            .glow-card-inner .price-features li { font-size: 0.85rem; }
+
+            .showcase-section { min-height: 60vh; min-height: 60dvh; }
+
+            .cta-section p { font-size: 0.95rem; }
+            .cta-section .btn-beam,
+            .cta-section .btn-outline { width: 100%; justify-content: center; }
+            .cta-section .btn-beam-inner { width: 100%; justify-content: center; }
+
+            .marquee-item { padding: 0 1.25rem; }
+
+            .section-header { margin-bottom: 2.5rem; }
+
+            .footer-links { gap: 1.25rem; flex-wrap: wrap; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Noise Overlay -->
+    <div class="noise-overlay"></div>
+
+    <!-- ========== NAVBAR ========== -->
+    <nav class="navbar">
+        <div class="navbar-logo">
+            <iconify-icon icon="solar:headphones-round-sound-bold-duotone" style="color: var(--color-accent); font-size: 1.5rem;"></iconify-icon>
+            ONDA<span>.audio</span>
+        </div>
+        <ul class="navbar-links">
+            <li><a href="#features">Tecnologia</a></li>
+            <li><a href="#specs">Specs</a></li>
+            <li><a href="#reviews">Reviews</a></li>
+            <li>
+                <a href="#buy" style="color: var(--color-accent); border: 1px solid var(--color-accent-soft); padding: 0.5rem 1.25rem; border-radius: 9999px;">
+                    Comprar
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- ========== HERO ========== -->
+    <section class="hero container">
+        <div class="hero-content">
+            <div class="hero-badge reveal">
+                <span class="badge badge-accent">
+                    <iconify-icon icon="solar:star-bold" style="font-size: 0.6rem;"></iconify-icon>
+                    Lancamento 2026
+                </span>
+            </div>
+
+            <h1>
+                <span class="text-reveal-wrapper reveal delay-100">
+                    <span class="text-reveal-inner">Silencio</span>
+                </span>
+                <br>
+                <span class="text-reveal-wrapper reveal delay-200">
+                    <span class="text-reveal-inner">que se</span>
+                </span>
+                <br>
+                <span class="text-reveal-wrapper reveal delay-300">
+                    <span class="text-reveal-inner accent">transforma</span>
+                </span>
+            </h1>
+
+            <p class="hero-description reveal delay-400">
+                O primeiro headphone com cancelamento de ruido adaptativo que aprende com o seu ambiente. 47 horas de bateria. Zero compromisso.
+            </p>
+
+            <div class="hero-buttons reveal delay-500">
+                <div class="btn-beam">
+                    <span class="btn-beam-inner">
+                        Reservar agora
+                        <iconify-icon icon="solar:arrow-right-linear"></iconify-icon>
+                    </span>
+                </div>
+                <button class="btn-outline">
+                    <iconify-icon icon="solar:play-circle-linear"></iconify-icon>
+                    Ver demonstracao
+                </button>
+            </div>
+        </div>
+
+        <div class="hero-visual reveal-scale delay-200">
+            <div class="hero-glow animate-pulse-glow"></div>
+            <div class="hero-ring-2 animate-spin-slow"></div>
+            <div class="hero-ring"></div>
+            <div class="hero-product animate-float">
+                <iconify-icon icon="solar:headphones-round-sound-bold-duotone" class="hero-product-icon"></iconify-icon>
+            </div>
+        </div>
+
+        <div class="scroll-hint reveal delay-700">
+            <span>Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- ========== MARQUEE ========== -->
+    <div class="marquee-section">
+        <div class="marquee-track animate-marquee">
+            <span class="marquee-item"><span class="dot"></span>Cancelamento Ativo 3.0</span>
+            <span class="marquee-item"><span class="dot"></span>47h de Bateria</span>
+            <span class="marquee-item"><span class="dot"></span>Bluetooth 5.4</span>
+            <span class="marquee-item"><span class="dot"></span>Driver 50mm Titanium</span>
+            <span class="marquee-item"><span class="dot"></span>Spatial Audio</span>
+            <span class="marquee-item"><span class="dot"></span>Hi-Res Certified</span>
+            <span class="marquee-item"><span class="dot"></span>Adaptive EQ</span>
+            <span class="marquee-item"><span class="dot"></span>22g por ear cup</span>
+            <!-- Duplicado para loop seamless -->
+            <span class="marquee-item"><span class="dot"></span>Cancelamento Ativo 3.0</span>
+            <span class="marquee-item"><span class="dot"></span>47h de Bateria</span>
+            <span class="marquee-item"><span class="dot"></span>Bluetooth 5.4</span>
+            <span class="marquee-item"><span class="dot"></span>Driver 50mm Titanium</span>
+            <span class="marquee-item"><span class="dot"></span>Spatial Audio</span>
+            <span class="marquee-item"><span class="dot"></span>Hi-Res Certified</span>
+            <span class="marquee-item"><span class="dot"></span>Adaptive EQ</span>
+            <span class="marquee-item"><span class="dot"></span>22g por ear cup</span>
+        </div>
+    </div>
+
+    <!-- ========== FEATURES (Zig-Zag) ========== -->
+    <section id="features" class="features-section container">
+        <div class="section-header reveal">
+            <span class="badge">
+                <iconify-icon icon="solar:cpu-bolt-linear" style="font-size: 0.7rem;"></iconify-icon>
+                01 / Tecnologia
+            </span>
+            <h2>Engenharia que<br>voce <span class="text-outline">sente</span></h2>
+            <p>Tres anos de pesquisa em acustica computacional condensados em cada componente.</p>
+        </div>
+
+        <!-- Feature 1 -->
+        <div class="feature-row reveal">
+            <div class="feature-content">
+                <div class="feature-number">// 01</div>
+                <h3>Cancelamento Adaptativo</h3>
+                <p>Sensores de ambiente analisam 48.000 amostras por segundo e ajustam o cancelamento em tempo real. Da rua ao escritorio, sem tocar em nada.</p>
+                <div class="feature-specs">
+                    <div class="feature-spec">
+                        <div class="feature-spec-value">48kHz</div>
+                        <div class="feature-spec-label">Sample Rate</div>
+                    </div>
+                    <div class="feature-spec">
+                        <div class="feature-spec-value">-45dB</div>
+                        <div class="feature-spec-label">Reducao</div>
+                    </div>
+                </div>
+            </div>
+            <div class="feature-visual">
+                <div class="feature-visual-glow"></div>
+                <iconify-icon icon="solar:soundwave-bold-duotone" class="feature-visual-icon"></iconify-icon>
+            </div>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="feature-row reversed reveal">
+            <div class="feature-content">
+                <div class="feature-number">// 02</div>
+                <h3>Driver Titanium 50mm</h3>
+                <p>Diafragma de titanio com revestimento de grafeno. Resposta de frequencia de 4Hz a 44kHz — voce ouve harmonicos que outros headphones cortam.</p>
+                <div class="feature-specs">
+                    <div class="feature-spec">
+                        <div class="feature-spec-value">4-44k</div>
+                        <div class="feature-spec-label">Hz Range</div>
+                    </div>
+                    <div class="feature-spec">
+                        <div class="feature-spec-value">108dB</div>
+                        <div class="feature-spec-label">Sensibilidade</div>
+                    </div>
+                </div>
+            </div>
+            <div class="feature-visual">
+                <div class="feature-visual-glow"></div>
+                <iconify-icon icon="solar:tuning-2-bold-duotone" class="feature-visual-icon"></iconify-icon>
+            </div>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="feature-row reveal">
+            <div class="feature-content">
+                <div class="feature-number">// 03</div>
+                <h3>Bateria que Esquece o Carregador</h3>
+                <p>47 horas com ANC ligado. 10 minutos de carga = 8 horas de uso. Carregamento wireless Qi2 integrado na base do ear cup esquerdo.</p>
+                <div class="feature-specs">
+                    <div class="feature-spec">
+                        <div class="feature-spec-value">47h</div>
+                        <div class="feature-spec-label">Com ANC</div>
+                    </div>
+                    <div class="feature-spec">
+                        <div class="feature-spec-value">Qi2</div>
+                        <div class="feature-spec-label">Wireless</div>
+                    </div>
+                </div>
+            </div>
+            <div class="feature-visual">
+                <div class="feature-visual-glow"></div>
+                <iconify-icon icon="solar:battery-charge-bold-duotone" class="feature-visual-icon"></iconify-icon>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== CARDS GRID (Specs) ========== -->
+    <section id="specs" class="container">
+        <div class="section-header reveal">
+            <span class="badge">
+                <iconify-icon icon="solar:widget-2-linear" style="font-size: 0.7rem;"></iconify-icon>
+                02 / Diferenciais
+            </span>
+            <h2>Cada detalhe<br>e <span class="text-outline">intencional</span></h2>
+        </div>
+
+        <div class="cards-grid">
+            <div class="flashlight-card reveal" onmousemove="updateFlashlight(event, this)">
+                <div class="card-inner">
+                    <div class="card-icon">
+                        <iconify-icon icon="solar:map-point-wave-bold-duotone"></iconify-icon>
+                    </div>
+                    <h4>Spatial Audio 360</h4>
+                    <p>Head tracking com giroscopio de 6 eixos. O som fica fixo no espaco enquanto voce move a cabeca — como caixas de som invisiveis ao seu redor.</p>
+                    <div class="card-progress"><div class="card-progress-bar"></div></div>
+                </div>
+            </div>
+            <div class="flashlight-card reveal delay-100" onmousemove="updateFlashlight(event, this)">
+                <div class="card-inner">
+                    <div class="card-icon">
+                        <iconify-icon icon="solar:hand-stars-bold-duotone"></iconify-icon>
+                    </div>
+                    <h4>Touch Surface</h4>
+                    <p>Controle por gestos no ear cup direito. Deslize, toque, segure — sem botoes fisicos.</p>
+                    <div class="card-progress"><div class="card-progress-bar"></div></div>
+                </div>
+            </div>
+        </div>
+        <div class="cards-grid-row2">
+            <div class="flashlight-card reveal delay-200" onmousemove="updateFlashlight(event, this)">
+                <div class="card-inner">
+                    <div class="card-icon">
+                        <iconify-icon icon="solar:devices-bold-duotone"></iconify-icon>
+                    </div>
+                    <h4>Multipoint</h4>
+                    <p>Conectado a 3 dispositivos ao mesmo tempo. Troca automatica e instantanea.</p>
+                    <div class="card-progress"><div class="card-progress-bar"></div></div>
+                </div>
+            </div>
+            <div class="flashlight-card reveal delay-300" onmousemove="updateFlashlight(event, this)">
+                <div class="card-inner">
+                    <div class="card-icon">
+                        <iconify-icon icon="solar:microphone-3-bold-duotone"></iconify-icon>
+                    </div>
+                    <h4>6 Microfones Beamforming</h4>
+                    <p>Array de 6 microfones com beamforming adaptativo. Isola sua voz do ruido ambiente em chamadas, mesmo em cafeterias lotadas ou com vento.</p>
+                    <div class="card-progress"><div class="card-progress-bar"></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== SHOWCASE ========== -->
+    <section class="showcase-section">
+        <div class="showcase-bg">
+            <div class="showcase-bg-grid"></div>
+        </div>
+        <div class="showcase-glow-1 animate-pulse-glow"></div>
+        <div class="showcase-glow-2 animate-pulse-glow" style="animation-delay: -2s;"></div>
+
+        <div class="showcase-content reveal-scale" id="buy">
+            <span class="badge badge-accent" style="margin-bottom: 1.5rem;">
+                <iconify-icon icon="solar:tag-price-bold" style="font-size: 0.7rem;"></iconify-icon>
+                Pre-venda aberta
+            </span>
+            <h2>Pronto para<br>a <span style="color: var(--color-accent);">experiencia</span>?</h2>
+            <p>Reserve o seu ONDA Pro com desconto exclusivo de lancamento. Entrega a partir de marco 2026.</p>
+
+            <div class="glow-card">
+                <div class="glow-card-blur"></div>
+                <div class="glow-card-bg"></div>
+                <div class="glow-card-inner">
+                    <div class="price">R$ 1.890</div>
+                    <div class="price-period">Preco de lancamento — depois R$ 2.490</div>
+                    <ul class="price-features">
+                        <li>
+                            <iconify-icon icon="solar:check-circle-bold"></iconify-icon>
+                            ONDA Pro Headphone
+                        </li>
+                        <li>
+                            <iconify-icon icon="solar:check-circle-bold"></iconify-icon>
+                            Case rigido de transporte
+                        </li>
+                        <li>
+                            <iconify-icon icon="solar:check-circle-bold"></iconify-icon>
+                            Cabo USB-C / 3.5mm incluso
+                        </li>
+                        <li>
+                            <iconify-icon icon="solar:check-circle-bold"></iconify-icon>
+                            2 anos de garantia estendida
+                        </li>
+                        <li>
+                            <iconify-icon icon="solar:check-circle-bold"></iconify-icon>
+                            Atualizacoes de firmware vitalicio
+                        </li>
+                    </ul>
+                    <div class="btn-beam" style="width: 100%; justify-content: center;">
+                        <span class="btn-beam-inner" style="width: 100%; justify-content: center;">
+                            Reservar com desconto
+                            <iconify-icon icon="solar:arrow-right-linear"></iconify-icon>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== TESTIMONIALS ========== -->
+    <section id="reviews" class="container">
+        <div class="section-header reveal">
+            <span class="badge">
+                <iconify-icon icon="solar:chat-round-dots-linear" style="font-size: 0.7rem;"></iconify-icon>
+                03 / Avaliacoes
+            </span>
+            <h2>Quem testou<br><span class="text-outline">nao devolveu</span></h2>
+        </div>
+
+        <div class="testimonials-grid">
+            <div class="testimonial-card reveal">
+                <div class="testimonial-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
+                <p class="testimonial-quote">"Eu produzo musica ha 14 anos e nunca ouvi detalhes que o ONDA revelou nas minhas proprias mixagens. O spatial audio nao e gimmick — e uma ferramenta de trabalho real."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">RC</div>
+                    <div>
+                        <div class="testimonial-name">Rafael Cardoso</div>
+                        <div class="testimonial-role">Produtor Musical / SP</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card reveal delay-100">
+                <div class="testimonial-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
+                <p class="testimonial-quote">"47 horas de bateria nao e marketing. Testei em um voo de 18 horas e sobrou metade."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">ML</div>
+                    <div>
+                        <div class="testimonial-name">Marina Luz</div>
+                        <div class="testimonial-role">Designer / Nomade Digital</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="testimonials-grid-row2">
+            <div class="testimonial-card reveal delay-200">
+                <div class="testimonial-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
+                <p class="testimonial-quote">"O ANC adaptativo entende quando alguem fala comigo. Sem apertar nada."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">DT</div>
+                    <div>
+                        <div class="testimonial-name">Daniel Takahashi</div>
+                        <div class="testimonial-role">Engenheiro de Software / RJ</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card reveal delay-300">
+                <div class="testimonial-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
+                <p class="testimonial-quote">"Faco 6 horas de call por dia. O beamforming dos microfones eliminou as reclamacoes de eco da minha equipe. E o conforto — esqueco que estou usando."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">PS</div>
+                    <div>
+                        <div class="testimonial-name">Patricia Silveira</div>
+                        <div class="testimonial-role">Head of Product / Fintech</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== CTA FINAL ========== -->
+    <section class="cta-section container">
+        <div class="cta-glow animate-pulse-glow"></div>
+        <div class="reveal">
+            <span class="badge badge-accent" style="margin-bottom: 1.5rem;">
+                <iconify-icon icon="solar:shield-check-bold" style="font-size: 0.7rem;"></iconify-icon>
+                Garantia de 30 dias
+            </span>
+            <h2>Seu ouvido merece<br><span style="color: var(--color-accent);">mais</span></h2>
+            <p>Teste por 30 dias. Se nao mudar a forma como voce ouve, devolvemos cada centavo. Sem perguntas.</p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <div class="btn-beam">
+                    <span class="btn-beam-inner">
+                        Reservar ONDA Pro
+                        <iconify-icon icon="solar:arrow-right-linear"></iconify-icon>
+                    </span>
+                </div>
+                <button class="btn-outline">
+                    Falar com especialista
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <div class="container footer-inner">
+            <div class="footer-copy">
+                &copy; 2026 ONDA Audio. Todos os direitos reservados.
+            </div>
+            <ul class="footer-links">
+                <li><a href="#">Termos</a></li>
+                <li><a href="#">Privacidade</a></li>
+                <li><a href="#">Suporte</a></li>
+                <li><a href="#">Instagram</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <!-- ========== JAVASCRIPT ========== -->
+    <script>
+        // === Intersection Observer for Reveals ===
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal, .reveal-scale, .text-reveal-wrapper').forEach(el => {
+            observer.observe(el);
+        });
+
+        // === Hero stagger on load ===
+        window.addEventListener('DOMContentLoaded', () => {
+            const heroReveals = document.querySelectorAll('.hero .reveal, .hero .reveal-scale, .hero .text-reveal-wrapper');
+            heroReveals.forEach((el, index) => {
+                setTimeout(() => {
+                    el.classList.add('active');
+                }, 150 + (index * 120));
+            });
+        });
+
+        // === Flashlight Card cursor tracking ===
+        function updateFlashlight(e, card) {
+            const rect = card.getBoundingClientRect();
+            card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+            card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+        }
+
+        // === Navbar background on scroll ===
+        const navbar = document.querySelector('.navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.style.background = 'rgba(10, 10, 10, 0.9)';
+            } else {
+                navbar.style.background = 'rgba(10, 10, 10, 0.7)';
+            }
+        }, { passive: true });
+
+        // === Anime.js: Stagger cards on scroll (bonus) ===
+        if (typeof anime !== 'undefined' && anime.animate) {
+            // Use Anime.js v4 API if available
+            try {
+                const cardObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const cards = entry.target.querySelectorAll('.flashlight-card, .testimonial-card');
+                            if (cards.length > 0) {
+                                anime.animate(cards, {
+                                    translateY: [20, 0],
+                                    opacity: [0.5, 1],
+                                    delay: anime.stagger(80),
+                                    duration: 600,
+                                    ease: 'outExpo'
+                                });
+                            }
+                            cardObserver.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.2 });
+
+                document.querySelectorAll('.cards-grid, .testimonials-grid').forEach(grid => {
+                    cardObserver.observe(grid);
+                });
+            } catch(e) {
+                // Fallback: CSS reveals handle it
+            }
+        }
+    </script>
+</body>
+</html>
