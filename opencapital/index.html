@@ -62,18 +62,17 @@
             height: 100% !important;
             display: block;
         }
-        /* Gradient fade on ALL 4 sides — blends canvas into page */
+        /* Gradient fade — blends canvas edges into page background */
         .chero-canvas-wrap::before {
             content: '';
             position: absolute;
             inset: 0;
             z-index: 2;
             pointer-events: none;
-            /* Top fade (strong), sides (subtle), bottom (none needed since it's clipped) */
             background:
-                linear-gradient(to bottom, #fff 0%, rgba(255,255,255,0.85) 4%, rgba(255,255,255,0.4) 10%, transparent 18%),
-                linear-gradient(to right, #fff 0%, rgba(255,255,255,0.6) 3%, transparent 8%),
-                linear-gradient(to left, #fff 0%, rgba(255,255,255,0.6) 3%, transparent 8%);
+                linear-gradient(to bottom, #fff 0%, rgba(255,255,255,0.9) 5%, rgba(255,255,255,0.4) 12%, transparent 20%),
+                linear-gradient(to right, #fff 0%, rgba(255,255,255,0.7) 4%, transparent 12%),
+                linear-gradient(to left, #fff 0%, rgba(255,255,255,0.7) 4%, transparent 12%);
         }
 
         /* Text sits above video with margin-top that decreases via scroll */
@@ -334,9 +333,9 @@
             progressGlobal = progress;
             targetIdx = progress * (FRAME_COUNT - 1);
 
-            // Fade out wrapper in last 8% (very end)
-            if (progress > 0.92) {
-                const fade = (progress - 0.92) / 0.08;
+            // Fade out wrapper between 88% and 97% — ensures it reaches 0 before scroll ends
+            if (progress > 0.88) {
+                const fade = Math.min(1, (progress - 0.88) / 0.09);
                 canvasWrap.style.opacity = String(1 - fade);
             } else {
                 canvasWrap.style.opacity = '1';
