@@ -255,12 +255,13 @@
 
             ctx.clearRect(0, 0, cw, ch);
 
-            // Object-fit: contain (full image visible), aligned to TOP
-            const scale = Math.min(cw / img.naturalWidth, ch / img.naturalHeight);
+            // Object-fit: COVER (fills width + height, no empty space)
+            // But anchored to TOP (preserves top breathing room of the video)
+            const scale = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
             const sw = img.naturalWidth * scale;
             const sh = img.naturalHeight * scale;
             const sx = (cw - sw) / 2; // center horizontally
-            const sy = 0; // anchor to TOP
+            const sy = 0; // TOP anchor — bottom overflow gets clipped
             ctx.drawImage(img, sx, sy, sw, sh);
             displayIdx = idx;
         }
