@@ -238,8 +238,10 @@
 
         function resize() {
             const dpr = Math.min(window.devicePixelRatio || 1, 2);
-            canvas.width = window.innerWidth * dpr;
-            canvas.height = window.innerHeight * dpr;
+            const w = window.innerWidth;
+            const h = canvas.clientHeight || window.innerHeight;
+            canvas.width = w * dpr;
+            canvas.height = h * dpr;
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         }
 
@@ -249,13 +251,17 @@
             if (!img || !img.complete) return;
 
             const cw = window.innerWidth;
-            const ch = window.innerHeight;
+            const ch = canvas.clientHeight || window.innerHeight;
 
-            // Object-fit: cover
-            const scale = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
+            ctx.clearRect(0, 0, cw, ch);
+
+            // Object-fit: contain (full image visible), aligned to TOP
+            const scale = Math.min(cw / img.naturalWidth, ch / img.naturalHeight);
             const sw = img.naturalWidth * scale;
             const sh = img.naturalHeight * scale;
-            ctx.drawImage(img, (cw - sw) / 2, (ch - sh) / 2, sw, sh);
+            const sx = (cw - sw) / 2; // center horizontally
+            const sy = 0; // anchor to TOP
+            ctx.drawImage(img, sx, sy, sw, sh);
             displayIdx = idx;
         }
 
