@@ -22,262 +22,140 @@
             --font-body: 'Manrope', sans-serif;
             --ease: cubic-bezier(0.16, 1, 0.3, 1);
         }
-
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         html { font-size: 16px; -webkit-font-smoothing: antialiased; }
-        body {
-            font-family: var(--font-body); color: var(--text-body);
-            background: var(--bg); overflow-x: hidden; line-height: 1.65;
-        }
+        body { font-family: var(--font-body); color: var(--text-body); background: var(--bg); overflow-x: hidden; line-height: 1.65; }
         ::selection { background: var(--accent); color: #fff; }
-        img, video, svg { max-width: 100%; display: block; }
         a { color: inherit; text-decoration: none; }
 
         @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                transition-duration: 0.01ms !important;
-            }
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
         }
 
-        /* ========== REVEAL ========== */
-        .reveal {
-            opacity: 0; transform: translateY(16px);
-            transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
-        }
+        .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
         .reveal.active { opacity: 1; transform: translateY(0); }
-        .d1 { transition-delay: 0.1s; }
-        .d2 { transition-delay: 0.2s; }
-        .d3 { transition-delay: 0.3s; }
+        .d1 { transition-delay: 0.1s; } .d2 { transition-delay: 0.2s; } .d3 { transition-delay: 0.3s; }
 
-        /* ========== DISCLAIMER ========== */
-        .disclaimer {
-            background: #72757c; padding: 7px 16px; text-align: center;
-            font-size: 11px; color: rgba(255,255,255,0.7); position: relative; z-index: 50;
-        }
+        /* DISCLAIMER */
+        .disclaimer { background: #72757c; padding: 7px 16px; text-align: center; font-size: 11px; color: rgba(255,255,255,0.7); position: relative; z-index: 50; }
 
-        /* ========== VIDEO HERO — FULLSCREEN EDGE TO EDGE ========== */
-        .vhero {
-            height: 200vh;
-            position: relative;
+        /* ========== CANVAS HERO — FULLSCREEN ========== */
+        .chero { height: 200vh; position: relative; }
+        .chero-sticky {
+            position: sticky; top: 0;
+            width: 100%; height: 100vh; height: 100dvh;
+            overflow: hidden; background: #e8e8e8;
         }
-        .vhero-sticky {
-            position: sticky;
-            top: 0;
-            width: 100%;
-            height: 100vh;
-            height: 100dvh;
-            overflow: hidden;
-            background: #e8e8e8;
-        }
-
-        /* Video: fullscreen edge-to-edge */
-        .vhero-sticky video {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
+        .chero-sticky canvas {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
             object-fit: cover;
         }
 
         /* Headline overlay */
-        .vhero-overlay {
-            position: absolute;
-            inset: 0;
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
+        .chero-overlay {
+            position: absolute; inset: 0; z-index: 2;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: flex-start;
             padding-top: clamp(60px, 12vh, 120px);
             pointer-events: none;
+            transition: opacity 0.3s, transform 0.3s;
         }
-        .vhero-overlay > * { pointer-events: auto; }
+        .chero-overlay > * { pointer-events: auto; }
 
-        .vhero-badge {
+        .chero-badge {
             display: inline-flex; align-items: center; gap: 7px;
             border-radius: 100px; padding: 5px 14px;
             font-family: var(--font-display); font-size: 11px; font-weight: 700;
             letter-spacing: 0.08em; text-transform: uppercase;
             background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2);
-            color: #EF4444; backdrop-filter: blur(8px);
-            margin-bottom: 16px;
+            color: #EF4444; backdrop-filter: blur(8px); margin-bottom: 16px;
         }
-        .vhero-dot {
-            width: 7px; height: 7px; border-radius: 50%; background: #EF4444;
-            animation: pulse-dot 1.5s ease-in-out infinite;
-        }
-        @keyframes pulse-dot {
-            0%,100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.4; transform: scale(1.3); }
-        }
+        .chero-dot { width: 7px; height: 7px; border-radius: 50%; background: #EF4444; animation: pdot 1.5s ease-in-out infinite; }
+        @keyframes pdot { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.4; transform:scale(1.3); } }
 
-        .vhero-h1 {
+        .chero-h1 {
             font-family: var(--font-display);
             font-size: clamp(20px, 4vw, 36px);
             font-weight: 800; line-height: 1.2;
-            color: var(--text-primary);
-            letter-spacing: -0.03em;
+            color: var(--text-primary); letter-spacing: -0.03em;
             max-width: 650px; text-align: center;
-            padding: 0 24px;
-            /* Glass background for readability over video */
             background: rgba(255,255,255,0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 20px;
-            padding: 24px 32px;
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px; padding: 24px 32px;
             border: 1px solid rgba(255,255,255,0.5);
             box-shadow: 0 8px 32px rgba(0,0,0,0.08);
         }
-        .vhero-h1 .accent { color: var(--accent); font-style: italic; }
-
-        .vhero-sub {
-            font-size: 13px; color: var(--text-muted); margin-top: 12px;
-            text-align: center;
-            background: rgba(255,255,255,0.7);
-            backdrop-filter: blur(8px);
+        .chero-h1 .accent { color: var(--accent); font-style: italic; }
+        .chero-sub {
+            font-size: 13px; color: var(--text-muted); margin-top: 12px; text-align: center;
+            background: rgba(255,255,255,0.7); backdrop-filter: blur(8px);
             padding: 6px 16px; border-radius: 8px;
         }
-        .vhero-sub strong { color: var(--text-body); font-weight: 600; }
+        .chero-sub strong { color: var(--text-body); font-weight: 600; }
 
-        /* ========== SECTIONS ========== */
+        /* SECTIONS */
         .section { padding: 56px 0; }
         .container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
-
-        .section-label {
-            display: inline-flex; align-items: center; gap: 8px;
-            font-family: var(--font-display); font-size: 10px; font-weight: 700;
-            letter-spacing: 0.14em; text-transform: uppercase;
-            color: var(--accent); margin-bottom: 16px;
-        }
+        .section-label { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-display); font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
         .section-label span { width: 24px; height: 2px; background: var(--accent); border-radius: 1px; }
+        .section-title { font-family: var(--font-display); font-size: clamp(20px,3.5vw,28px); font-weight: 800; color: var(--text-primary); letter-spacing: -0.03em; line-height: 1.2; margin: 0 0 28px; }
 
-        .section-title {
-            font-family: var(--font-display);
-            font-size: clamp(20px, 3.5vw, 28px);
-            font-weight: 800; color: var(--text-primary);
-            letter-spacing: -0.03em; line-height: 1.2;
-            margin: 0 0 28px;
-        }
-
-        /* ========== CTA ========== */
         .btn {
             display: inline-flex; align-items: center; justify-content: center;
             background: var(--accent); color: #fff;
             font-family: var(--font-display); font-size: 15px; font-weight: 700;
             padding: 16px 40px; border-radius: 12px; border: none; cursor: pointer;
-            text-decoration: none; letter-spacing: 0.01em;
-            position: relative; overflow: hidden;
-            box-shadow: 0 4px 14px rgba(36,121,251,0.25);
-            transition: transform 0.2s;
+            text-decoration: none; position: relative; overflow: hidden;
+            box-shadow: 0 4px 14px rgba(36,121,251,0.25); transition: transform 0.2s;
         }
-        .btn::before {
-            content: ''; position: absolute; top: 0; left: -100%;
-            width: 200%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
-            animation: shimmer 3.5s ease-in-out infinite;
-        }
-        @keyframes shimmer { 0% { left: -100%; } 100% { left: 100%; } }
-
-        .btn-sub {
-            margin-top: 12px; font-size: 13px; color: var(--text-muted);
-            display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
-        }
+        .btn::before { content:''; position:absolute; top:0; left:-100%; width:200%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent); animation:shim 3.5s ease-in-out infinite; }
+        @keyframes shim { 0%{left:-100%} 100%{left:100%} }
+        .btn-sub { margin-top: 12px; font-size: 13px; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
         .btn-sub .dot { width: 3px; height: 3px; background: var(--text-muted); border-radius: 50%; }
 
-        /* ========== CARDS ========== */
         .cards { display: flex; flex-direction: column; gap: 10px; }
-        .card {
-            display: flex; align-items: flex-start; gap: 16px;
-            background: var(--bg-alt); border-radius: 14px; padding: 20px;
-            border: 1px solid transparent; transition: border-color 0.3s, background 0.3s;
-        }
+        .card { display: flex; align-items: flex-start; gap: 16px; background: var(--bg-alt); border-radius: 14px; padding: 20px; border: 1px solid transparent; transition: border-color 0.3s, background 0.3s; }
         .card:hover { background: #fff; border-color: var(--accent-glow); }
-        .card-num {
-            font-family: var(--font-display); font-size: 13px; font-weight: 800;
-            color: rgba(36,121,251,0.3); flex-shrink: 0;
-        }
+        .card-num { font-family: var(--font-display); font-size: 13px; font-weight: 800; color: rgba(36,121,251,0.3); flex-shrink: 0; }
         .card-text { font-size: 15px; color: #374151; line-height: 1.7; margin: 0; }
 
-        /* ========== FINAL CTA CARD ========== */
-        .cta-card {
-            background: var(--bg-alt); border-radius: 24px; padding: 48px 32px;
-            text-align: center; position: relative; overflow: hidden;
-            border: 1px solid var(--border);
-        }
-        .cta-card::after {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
-        }
-        .cta-card h2 {
-            font-family: var(--font-display); font-size: clamp(22px, 4vw, 32px);
-            font-weight: 800; color: var(--text-primary); letter-spacing: -0.03em;
-            margin: 0 0 12px; position: relative; z-index: 1;
-        }
-        .cta-card p {
-            font-size: 14px; color: var(--text-muted); max-width: 440px;
-            margin: 0 auto 24px; line-height: 1.6; position: relative; z-index: 1;
-        }
+        .cta-card { background: var(--bg-alt); border-radius: 24px; padding: 48px 32px; text-align: center; position: relative; overflow: hidden; border: 1px solid var(--border); }
+        .cta-card::after { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--accent),transparent); }
+        .cta-card h2 { font-family: var(--font-display); font-size: clamp(22px,4vw,32px); font-weight: 800; color: var(--text-primary); letter-spacing: -0.03em; margin: 0 0 12px; position: relative; z-index: 1; }
+        .cta-card p { font-size: 14px; color: var(--text-muted); max-width: 440px; margin: 0 auto 24px; line-height: 1.6; position: relative; z-index: 1; }
 
-        /* ========== FOOTER ========== */
-        .footer {
-            padding: 32px 0; text-align: center;
-            font-size: 11px; color: var(--text-muted); line-height: 1.7;
-        }
+        .footer { padding: 32px 0; text-align: center; font-size: 11px; color: var(--text-muted); line-height: 1.7; }
 
-        /* ========== RESPONSIVE ========== */
-        @media (hover: hover) {
-            .btn:hover { transform: translateY(-1px) scale(1.02); }
-        }
-        @media (hover: none) {
-            .btn:active { transform: scale(0.97); }
-        }
-        @media (max-width: 768px) {
-            .container { padding: 0 16px; }
-            .section { padding: 40px 0; }
-        }
+        @media (hover: hover) { .btn:hover { transform: translateY(-1px) scale(1.02); } }
+        @media (hover: none) { .btn:active { transform: scale(0.97); } }
+        @media (max-width: 768px) { .container { padding: 0 16px; } .section { padding: 40px 0; } }
         @media (max-width: 390px) {
-            .vhero { height: 180vh; }
-            .vhero-h1 { font-size: 18px; padding: 18px 20px; border-radius: 14px; }
-            .vhero-badge { font-size: 9px; padding: 4px 10px; }
+            .chero { height: 180vh; }
+            .chero-h1 { font-size: 18px; padding: 18px 20px; border-radius: 14px; }
+            .chero-badge { font-size: 9px; padding: 4px 10px; }
             .btn { width: 100%; font-size: 14px; padding: 14px 24px; }
-            .card { padding: 16px; }
-            .card-text { font-size: 14px; }
+            .card { padding: 16px; } .card-text { font-size: 14px; }
             .cta-card { padding: 32px 20px; border-radius: 18px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- DISCLAIMER -->
     <div class="disclaimer">Investimentos envolvem riscos e podem trazer perdas ao investidor. Resultados passados nao garantem resultados futuros.</div>
 
-    <!-- ========== VIDEO HERO — FULLSCREEN ========== -->
-    <section class="vhero">
-        <div class="vhero-sticky">
-            <video id="scrubVideo" muted playsinline preload="auto">
-                <source src="video.webm" type="video/webm">
-                <source src="video.mp4" type="video/mp4">
-            </video>
-
-            <div class="vhero-overlay" id="heroOverlay">
-                <div class="vhero-badge">
-                    <span class="vhero-dot"></span>
-                    REPLAY DA APRESENTACAO AO VIVO
-                </div>
-                <h1 class="vhero-h1">
-                    Voce nao perdeu dinheiro porque e burro. Perdeu porque te deram a <span class="accent">ferramenta errada.</span> Isso acaba aqui.
-                </h1>
-                <p class="vhero-sub">Apresentacao do dia 07/04/2026. <strong>Disponivel por tempo limitado.</strong></p>
+    <!-- ========== CANVAS HERO — IMAGE SEQUENCE ========== -->
+    <section class="chero">
+        <div class="chero-sticky">
+            <canvas id="heroCanvas"></canvas>
+            <div class="chero-overlay" id="heroOverlay">
+                <div class="chero-badge"><span class="chero-dot"></span>REPLAY DA APRESENTACAO AO VIVO</div>
+                <h1 class="chero-h1">Voce nao perdeu dinheiro porque e burro. Perdeu porque te deram a <span class="accent">ferramenta errada.</span> Isso acaba aqui.</h1>
+                <p class="chero-sub">Apresentacao do dia 07/04/2026. <strong>Disponivel por tempo limitado.</strong></p>
             </div>
         </div>
     </section>
 
-    <!-- ========== CTA RAPIDO ========== -->
     <section class="section" style="text-align: center; padding-top: 32px;">
         <div class="container">
             <a href="#" class="btn reveal">QUERO GARANTIR MINHA VAGA</a>
@@ -289,29 +167,18 @@
         </div>
     </section>
 
-    <!-- ========== O DIAGNOSTICO ========== -->
     <section class="section">
         <div class="container">
             <div class="section-label reveal"><span></span>O diagnostico</div>
             <h2 class="section-title reveal d1">O problema nunca foi voce. Foi o modelo.</h2>
             <div class="cards">
-                <div class="card reveal d1">
-                    <span class="card-num">01</span>
-                    <p class="card-text">Cursos, mentorias, robos, copy trading, sinais... Cada um prometeu ser diferente. Cada um falhou da mesma forma.</p>
-                </div>
-                <div class="card reveal d2">
-                    <span class="card-num">02</span>
-                    <p class="card-text">Voce ja sabe disso. Ja viveu isso. Ja perdeu dinheiro apostando nesses modelos.</p>
-                </div>
-                <div class="card reveal d3">
-                    <span class="card-num">03</span>
-                    <p class="card-text">A OpenCapital e o primeiro ecossistema de IA do mercado financeiro brasileiro. 87% de taxa de acerto auditada. 280 mil analises processadas.</p>
-                </div>
+                <div class="card reveal d1"><span class="card-num">01</span><p class="card-text">Cursos, mentorias, robos, copy trading, sinais... Cada um prometeu ser diferente. Cada um falhou da mesma forma.</p></div>
+                <div class="card reveal d2"><span class="card-num">02</span><p class="card-text">Voce ja sabe disso. Ja viveu isso. Ja perdeu dinheiro apostando nesses modelos.</p></div>
+                <div class="card reveal d3"><span class="card-num">03</span><p class="card-text">A OpenCapital e o primeiro ecossistema de IA do mercado financeiro brasileiro. 87% de taxa de acerto auditada. 280 mil analises processadas.</p></div>
             </div>
         </div>
     </section>
 
-    <!-- ========== CTA FINAL ========== -->
     <section class="section">
         <div class="container">
             <div class="cta-card reveal">
@@ -322,7 +189,6 @@
         </div>
     </section>
 
-    <!-- ========== FOOTER ========== -->
     <footer class="footer">
         <div class="container">
             <p>OpenCapital &copy; 2026 — PORTS CAPITAL LTDA — CNPJ: 48.326.475/0001-07</p>
@@ -330,56 +196,98 @@
         </div>
     </footer>
 
-    <!-- ========== JS ========== -->
     <script>
-        // Reveal
+        // === Reveal ===
         const obs = new IntersectionObserver(entries => {
             entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('active'); obs.unobserve(e.target); } });
         }, { threshold: 0.1 });
         document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-        // Video scrub
-        const video = document.getElementById('scrubVideo');
-        const heroSection = document.querySelector('.vhero');
+        // === Image Sequence on Canvas ===
+        const canvas = document.getElementById('heroCanvas');
+        const ctx = canvas.getContext('2d');
+        const heroSection = document.querySelector('.chero');
         const overlay = document.getElementById('heroOverlay');
-        let ready = false;
 
-        video.addEventListener('loadedmetadata', () => { ready = true; });
-        if (video.readyState >= 1) ready = true;
+        const FRAME_COUNT = 62;
+        const frames = [];
+        let loadedCount = 0;
+        let currentFrame = { index: 0 };
 
-        function onScroll() {
-            if (!ready) return;
-
-            const rect = heroSection.getBoundingClientRect();
-            const total = heroSection.offsetHeight - window.innerHeight;
-            const scrolled = Math.max(0, -rect.top);
-            const progress = Math.min(1, scrolled / total);
-
-            // Scrub video — use requestAnimationFrame for smoothness
-            const targetTime = progress * video.duration;
-            if (Math.abs(video.currentTime - targetTime) > 0.05) {
-                video.currentTime = targetTime;
-            }
-
-            // Fade headline out between 20%-50% scroll
-            if (progress < 0.2) {
-                overlay.style.opacity = '1';
-                overlay.style.transform = 'translateY(0)';
-            } else if (progress < 0.5) {
-                const fade = (progress - 0.2) / 0.3;
-                overlay.style.opacity = String(1 - fade);
-                overlay.style.transform = `translateY(${-fade * 40}px)`;
-            } else {
-                overlay.style.opacity = '0';
-                overlay.style.transform = 'translateY(-40px)';
-            }
+        // Preload all frames
+        for (let i = 1; i <= FRAME_COUNT; i++) {
+            const img = new Image();
+            img.src = `frames/f_${String(i).padStart(3, '0')}.jpg`;
+            img.onload = () => {
+                loadedCount++;
+                if (loadedCount === 1) {
+                    resizeCanvas();
+                    render();
+                }
+                if (loadedCount === FRAME_COUNT) render();
+            };
+            frames.push(img);
         }
 
-        // Use requestAnimationFrame for smoother scrubbing
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        function render() {
+            const idx = Math.min(Math.max(Math.round(currentFrame.index), 0), FRAME_COUNT - 1);
+            const img = frames[idx];
+            if (!img || !img.complete) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw image covering entire canvas (like object-fit: cover)
+            const cw = canvas.width;
+            const ch = canvas.height;
+            const iw = img.naturalWidth;
+            const ih = img.naturalHeight;
+            const scale = Math.max(cw / iw, ch / ih);
+            const sw = iw * scale;
+            const sh = ih * scale;
+            const sx = (cw - sw) / 2;
+            const sy = (ch - sh) / 2;
+            ctx.drawImage(img, sx, sy, sw, sh);
+        }
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            render();
+        });
+
+        // Scroll handler with rAF
         let ticking = false;
         window.addEventListener('scroll', () => {
             if (!ticking) {
-                requestAnimationFrame(() => { onScroll(); ticking = false; });
+                requestAnimationFrame(() => {
+                    const rect = heroSection.getBoundingClientRect();
+                    const total = heroSection.offsetHeight - window.innerHeight;
+                    const scrolled = Math.max(0, -rect.top);
+                    const progress = Math.min(1, scrolled / total);
+
+                    // Update frame
+                    currentFrame.index = progress * (FRAME_COUNT - 1);
+                    render();
+
+                    // Fade headline
+                    if (progress < 0.15) {
+                        overlay.style.opacity = '1';
+                        overlay.style.transform = 'translateY(0)';
+                    } else if (progress < 0.45) {
+                        const fade = (progress - 0.15) / 0.3;
+                        overlay.style.opacity = String(1 - fade);
+                        overlay.style.transform = `translateY(${-fade * 40}px)`;
+                    } else {
+                        overlay.style.opacity = '0';
+                    }
+
+                    ticking = false;
+                });
                 ticking = true;
             }
         }, { passive: true });
