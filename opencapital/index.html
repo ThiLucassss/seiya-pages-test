@@ -3,201 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpenCapital — Ecossistema de IA para o Mercado Financeiro</title>
-
+    <title>OpenCapital</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700;800&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
-
     <style>
         :root {
             --accent: #2479FB;
             --accent-soft: rgba(36,121,251,0.08);
-            --accent-border: rgba(36,121,251,0.15);
-            --accent-shadow: rgba(36,121,251,0.25);
+            --accent-glow: rgba(36,121,251,0.15);
             --bg: #ffffff;
             --bg-alt: #F7F7F7;
-            --bg-dark: #0A0A0A;
             --text-primary: #0D0D0D;
             --text-body: #4B5563;
-            --text-secondary: #6B7280;
             --text-muted: #9CA3AF;
             --border: rgba(0,0,0,0.07);
-            --border-hover: rgba(36,121,251,0.15);
             --font-display: 'DM Sans', sans-serif;
-            --font-body: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-body: 'Manrope', sans-serif;
             --ease: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-        html {
-            font-size: 16px;
-            -webkit-text-size-adjust: 100%;
-            text-size-adjust: 100%;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            scroll-behavior: smooth;
-        }
-
+        html { font-size: 16px; -webkit-font-smoothing: antialiased; }
         body {
-            font-family: var(--font-body);
-            font-size: 1rem;
-            line-height: 1.65;
-            color: var(--text-body);
-            background: var(--bg);
-            overflow-x: hidden;
+            font-family: var(--font-body); color: var(--text-body);
+            background: var(--bg); overflow-x: hidden; line-height: 1.65;
         }
-
         ::selection { background: var(--accent); color: #fff; }
-        img, video, svg { max-width: 100%; height: auto; display: block; }
+        img, video, svg { max-width: 100%; display: block; }
         a { color: inherit; text-decoration: none; }
 
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
                 animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
                 transition-duration: 0.01ms !important;
             }
         }
 
-        /* ========== NOISE OVERLAY (matching OpenCapital) ========== */
-        html::before {
-            content: "";
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: radial-gradient(at 20% 80%, #fff 1px, transparent 0px);
-            background-size: 3px 3px;
-            pointer-events: none; z-index: 999;
-            opacity: 0.05; mix-blend-mode: plus-lighter;
-            user-select: none;
-        }
-
-        /* ========== REVEAL ANIMATION ========== */
+        /* ========== REVEAL ========== */
         .reveal {
-            opacity: 0; transform: translateY(12px);
+            opacity: 0; transform: translateY(16px);
             transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
         }
         .reveal.active { opacity: 1; transform: translateY(0); }
-        .delay-1 { transition-delay: 0.1s; }
-        .delay-2 { transition-delay: 0.2s; }
-        .delay-3 { transition-delay: 0.3s; }
-        .delay-4 { transition-delay: 0.4s; }
+        .d1 { transition-delay: 0.1s; }
+        .d2 { transition-delay: 0.2s; }
+        .d3 { transition-delay: 0.3s; }
 
-        /* ========== DISCLAIMER BAR ========== */
-        .disclaimer-bar {
-            position: sticky; top: 0; left: 0; width: 100%; z-index: 100;
-            background: #72757c; backdrop-filter: blur(10px);
-            padding: 7px 16px; text-align: center;
-        }
-        .disclaimer-bar p {
-            font-family: var(--font-body); font-size: 11px;
-            color: rgba(255,255,255,0.7); letter-spacing: 0.01em; margin: 0;
+        /* ========== DISCLAIMER ========== */
+        .disclaimer {
+            background: #72757c; padding: 7px 16px; text-align: center;
+            font-size: 11px; color: rgba(255,255,255,0.7); position: relative; z-index: 50;
         }
 
-        /* ========== VIDEO HERO (IMMERSIVE) ========== */
-        .video-hero {
+        /* ========== VIDEO HERO — FULLSCREEN EDGE TO EDGE ========== */
+        .vhero {
+            height: 200vh;
             position: relative;
-            height: 280vh;
         }
-        .video-hero-sticky {
-            position: sticky; top: 0;
-            height: 100vh; height: 100dvh;
+        .vhero-sticky {
+            position: sticky;
+            top: 0;
             width: 100%;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
+            height: 100vh;
+            height: 100dvh;
             overflow: hidden;
-            background: #f0f0f0;
+            background: #e8e8e8;
         }
 
-        .video-hero-headline {
-            position: relative; z-index: 2;
-            text-align: center;
-            margin-bottom: 2rem;
-            padding: 0 1.5rem;
-            transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
-        }
-        .video-hero-headline h1 {
-            font-family: var(--font-display);
-            font-size: clamp(22px, 4.5vw, 38px);
-            font-weight: 800; line-height: 1.15;
-            color: var(--text-primary); letter-spacing: -0.03em;
-            max-width: 700px; margin: 0 auto;
-        }
-        .video-hero-headline h1 .accent {
-            color: var(--accent); font-style: italic;
-        }
-        .video-hero-headline .sub {
-            font-family: var(--font-body); font-size: 13px;
-            color: var(--text-muted); margin-top: 12px;
-        }
-        .video-hero-headline .sub strong {
-            color: var(--text-secondary); font-weight: 600;
+        /* Video: fullscreen edge-to-edge */
+        .vhero-sticky video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: cover;
         }
 
-        .video-hero-video {
-            position: relative; z-index: 1;
-            width: 85%; max-width: 900px;
-        }
-        .video-hero-video video {
-            width: 100%; display: block;
-            border-radius: 4px;
-        }
-
-        /* Glow under video when open */
-        .video-hero-glow {
-            position: absolute; z-index: 0;
-            width: 60%; height: 40%;
-            background: radial-gradient(ellipse at center, rgba(36,121,251,0.08) 0%, transparent 70%);
+        /* Headline overlay */
+        .vhero-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: clamp(60px, 12vh, 120px);
             pointer-events: none;
-            bottom: 10%; left: 50%; transform: translateX(-50%);
-            opacity: 0; transition: opacity 0.8s;
         }
-        .video-hero-glow.visible { opacity: 1; }
+        .vhero-overlay > * { pointer-events: auto; }
 
-        /* ========== CONTAINER ========== */
-        .container {
-            max-width: 800px; margin: 0 auto; padding: 0 24px;
-        }
-
-        /* ========== SECTION SPACING ========== */
-        .section { padding: 64px 0; }
-        .section-alt { background: var(--bg-alt); }
-
-        /* ========== LABELS ========== */
-        .section-label {
-            display: inline-flex; align-items: center; gap: 8px;
-            font-family: var(--font-display); font-size: 10px; font-weight: 700;
-            letter-spacing: 0.14em; text-transform: uppercase;
-            color: var(--accent); margin-bottom: 18px;
-        }
-        .section-label-line {
-            width: 24px; height: 2px; background: var(--accent); border-radius: 1px;
-        }
-
-        /* ========== TITLES ========== */
-        .section-title {
-            font-family: var(--font-display);
-            font-size: clamp(20px, 3.5vw, 28px);
-            font-weight: 800; color: var(--text-primary);
-            letter-spacing: -0.03em; line-height: 1.2;
-            margin: 0 0 36px;
-        }
-
-        /* ========== BADGE ========== */
-        .badge {
+        .vhero-badge {
             display: inline-flex; align-items: center; gap: 7px;
             border-radius: 100px; padding: 5px 14px;
             font-family: var(--font-display); font-size: 11px; font-weight: 700;
-            letter-spacing: 0.1em; text-transform: uppercase;
+            letter-spacing: 0.08em; text-transform: uppercase;
+            background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2);
+            color: #EF4444; backdrop-filter: blur(8px);
+            margin-bottom: 16px;
         }
-        .badge-red {
-            background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.18); color: #EF4444;
-        }
-        .badge-blue {
-            background: var(--accent-soft); border: 1px solid var(--accent-border); color: var(--accent);
-        }
-        .badge-dot {
-            width: 7px; height: 7px; border-radius: 50%;
+        .vhero-dot {
+            width: 7px; height: 7px; border-radius: 50%; background: #EF4444;
             animation: pulse-dot 1.5s ease-in-out infinite;
         }
         @keyframes pulse-dot {
@@ -205,366 +116,174 @@
             50% { opacity: 0.4; transform: scale(1.3); }
         }
 
-        /* ========== CARDS ========== */
-        .card {
-            background: var(--bg); border-radius: 16px; padding: 24px;
-            border: 1px solid var(--border);
-            transition: border-color 0.3s, background 0.3s;
+        .vhero-h1 {
+            font-family: var(--font-display);
+            font-size: clamp(20px, 4vw, 36px);
+            font-weight: 800; line-height: 1.2;
+            color: var(--text-primary);
+            letter-spacing: -0.03em;
+            max-width: 650px; text-align: center;
+            padding: 0 24px;
+            /* Glass background for readability over video */
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 24px 32px;
+            border: 1px solid rgba(255,255,255,0.5);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
         }
-        .card:hover { background: #fff; border-color: var(--border-hover); }
+        .vhero-h1 .accent { color: var(--accent); font-style: italic; }
 
-        .card-num {
-            font-family: var(--font-display); font-size: 13px; font-weight: 800;
-            color: rgba(36,121,251,0.35); letter-spacing: -0.02em;
+        .vhero-sub {
+            font-size: 13px; color: var(--text-muted); margin-top: 12px;
+            text-align: center;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(8px);
+            padding: 6px 16px; border-radius: 8px;
         }
-        .card-text {
-            font-family: var(--font-body); font-size: 15px;
-            color: #374151; line-height: 1.7; margin: 0;
-        }
+        .vhero-sub strong { color: var(--text-body); font-weight: 600; }
 
-        /* ========== GRID BACKGROUND ========== */
-        .grid-bg {
-            position: relative;
-        }
-        .grid-bg::before {
-            content: ''; position: absolute; inset: 0;
-            background-image:
-                linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-            pointer-events: none; z-index: 0;
-            mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
-        }
-        .grid-bg > * { position: relative; z-index: 1; }
+        /* ========== SECTIONS ========== */
+        .section { padding: 56px 0; }
+        .container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
 
-        /* ========== ACCENT BLOCK ========== */
-        .accent-block {
-            background: #fff; border-left: 3px solid var(--accent);
-            border-radius: 0 12px 12px 0; padding: 18px 20px; margin: 4px 0;
+        .section-label {
+            display: inline-flex; align-items: center; gap: 8px;
+            font-family: var(--font-display); font-size: 10px; font-weight: 700;
+            letter-spacing: 0.14em; text-transform: uppercase;
+            color: var(--accent); margin-bottom: 16px;
         }
-        .accent-block p { color: var(--text-primary); font-weight: 500; }
-        .accent-block .em { color: var(--accent); font-weight: 700; font-style: italic; }
+        .section-label span { width: 24px; height: 2px; background: var(--accent); border-radius: 1px; }
 
-        /* ========== SPLIT LAYOUT ========== */
-        .split {
-            display: grid; grid-template-columns: 1fr 1fr;
-            gap: 48px; align-items: start;
-        }
-
-        /* ========== FEATURE CARDS GRID ========== */
-        .features-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
-        }
-        .feature-card {
-            background: #fff; border-radius: 20px; padding: 28px;
-            border: 1px solid var(--border); display: flex; flex-direction: column; gap: 18px;
-            transition: border-color 0.3s, box-shadow 0.3s, transform 0.25s;
-        }
-        .feature-card-wide {
-            grid-column: 1 / -1; flex-direction: row; gap: 36px; align-items: flex-start;
-            border-top: 2px solid var(--accent);
-            background: linear-gradient(155deg, rgba(36,121,251,0.035) 0%, #fff 55%);
-        }
-        .feature-icon {
-            width: 40px; height: 40px; background: var(--accent-soft);
-            border-radius: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-        }
-        .feature-icon svg { width: 22px; height: 22px; }
-        .feature-title {
-            font-family: var(--font-display); font-size: clamp(14px, 2vw, 17px);
-            font-weight: 700; color: var(--text-primary); letter-spacing: -0.015em; margin: 0;
-        }
-        .feature-desc {
-            font-family: var(--font-body); font-size: clamp(12px, 1.5vw, 14px);
-            color: var(--text-secondary); line-height: 1.75; margin: 0;
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(20px, 3.5vw, 28px);
+            font-weight: 800; color: var(--text-primary);
+            letter-spacing: -0.03em; line-height: 1.2;
+            margin: 0 0 28px;
         }
 
-        /* ========== TIMELINE ========== */
-        .timeline { display: flex; flex-direction: column; position: relative; }
-        .timeline::before {
-            content: ''; position: absolute; left: 19px; top: 20px; bottom: 20px;
-            width: 1px; background: linear-gradient(to bottom, rgba(36,121,251,0.3), rgba(36,121,251,0.08));
-        }
-        .timeline-step { display: flex; align-items: flex-start; gap: 20px; padding: 0 0 28px; position: relative; }
-        .timeline-step:last-child { padding-bottom: 0; }
-        .timeline-dot {
-            width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
-            background: #fff; border: 2px solid rgba(36,121,251,0.2);
-            display: flex; align-items: center; justify-content: center;
-            font-family: var(--font-display); font-size: 11px; font-weight: 800;
-            color: var(--accent); position: relative; z-index: 1;
-            transition: border-color 0.3s, background 0.3s;
-        }
-        .timeline-step:hover .timeline-dot { background: var(--accent-soft); border-color: var(--accent); }
-        .timeline-text {
-            font-family: var(--font-body); font-size: 15px;
-            color: var(--text-body); line-height: 1.7; margin: 0; padding-top: 8px;
-        }
-
-        /* ========== CTA BUTTON ========== */
-        .btn-cta {
+        /* ========== CTA ========== */
+        .btn {
             display: inline-flex; align-items: center; justify-content: center;
             background: var(--accent); color: #fff;
-            font-family: var(--font-display); font-size: 16px; font-weight: 700;
-            padding: 18px 44px; border-radius: 12px; border: none; cursor: pointer;
-            text-decoration: none; letter-spacing: 0.015em;
+            font-family: var(--font-display); font-size: 15px; font-weight: 700;
+            padding: 16px 40px; border-radius: 12px; border: none; cursor: pointer;
+            text-decoration: none; letter-spacing: 0.01em;
             position: relative; overflow: hidden;
-            transition: transform 0.25s, box-shadow 0.25s;
-            box-shadow: 0 4px 14px var(--accent-shadow);
+            box-shadow: 0 4px 14px rgba(36,121,251,0.25);
+            transition: transform 0.2s;
         }
-        .btn-cta::before {
+        .btn::before {
             content: ''; position: absolute; top: 0; left: -100%;
             width: 200%; height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
             animation: shimmer 3.5s ease-in-out infinite;
         }
         @keyframes shimmer { 0% { left: -100%; } 100% { left: 100%; } }
-        .btn-cta-sub {
-            margin-top: 14px; font-family: var(--font-body); font-size: 13px;
-            color: var(--text-secondary); display: flex; align-items: center;
-            justify-content: center; gap: 10px; flex-wrap: wrap;
-        }
-        .btn-cta-sub .dot {
-            width: 3px; height: 3px; background: var(--text-muted); border-radius: 50%;
-        }
 
-        /* ========== DARK SECTION (OFERTA) ========== */
-        .section-dark {
-            background: var(--bg-dark); color: #fff; position: relative; overflow: hidden;
+        .btn-sub {
+            margin-top: 12px; font-size: 13px; color: var(--text-muted);
+            display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
         }
-        .section-dark .section-label { color: var(--accent); }
-        .section-dark .section-title { color: #fff; }
-        .section-dark::before {
-            content: ''; position: absolute; top: -1px; left: 0; right: 0; height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(36,121,251,0.4), transparent);
-        }
-        .dark-glow {
-            position: absolute; top: -40%; left: 50%; transform: translateX(-50%);
-            width: 60%; height: 60%; pointer-events: none;
-            background: radial-gradient(rgba(36,121,251,0.08) 0%, transparent 70%);
-        }
-        .offer-card {
-            background: #141414; border-radius: 24px; padding: 40px;
-            border: 1px solid rgba(255,255,255,0.06);
-            display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start;
-        }
-        .offer-price {
-            font-family: var(--font-display); font-size: clamp(36px, 6vw, 52px);
-            font-weight: 800; color: #fff; letter-spacing: -0.04em; line-height: 1;
-        }
-        .offer-prefix {
-            font-family: var(--font-display); font-size: clamp(16px, 3vw, 22px);
-            font-weight: 700; color: rgba(255,255,255,0.55);
-        }
-        .offer-detail { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 6px; }
-        .offer-anchor { font-size: 12px; color: rgba(255,255,255,0.3); text-decoration: line-through; }
-        .offer-scarcity {
-            display: inline-flex; align-items: center; gap: 7px;
-            font-family: var(--font-display); font-size: 11px; font-weight: 700;
-            letter-spacing: 0.08em; text-transform: uppercase;
-            background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.25);
-            color: #F87171; border-radius: 8px; padding: 6px 12px; margin-top: 16px;
-        }
-        .offer-check {
-            display: flex; align-items: flex-start; gap: 10px;
-        }
-        .offer-check-icon {
-            width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
-            background: rgba(36,121,251,0.12); display: flex; align-items: center;
-            justify-content: center; margin-top: 1px;
-        }
-        .offer-check-icon svg { width: 11px; height: 11px; }
-        .offer-check-text {
-            font-family: var(--font-body); font-size: 14px;
-            color: rgba(255,255,255,0.7); line-height: 1.5;
-        }
-        .btn-cta-dark {
-            display: block; width: 100%; text-align: center;
-            background: var(--accent); color: #fff;
-            font-family: var(--font-display); font-size: 15px; font-weight: 700;
-            padding: 17px 24px; border-radius: 12px; text-decoration: none;
-            margin-top: 24px; position: relative; overflow: hidden;
-            box-shadow: 0 4px 20px rgba(36,121,251,0.3);
-            transition: transform 0.2s;
-        }
-        .btn-cta-dark::before {
-            content: ''; position: absolute; top: 0; left: -100%;
-            width: 200%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            animation: shimmer 3s ease-in-out infinite;
-        }
+        .btn-sub .dot { width: 3px; height: 3px; background: var(--text-muted); border-radius: 50%; }
 
-        /* ========== FAQ ========== */
-        .faq-item {
-            border-radius: 14px; border: 1px solid var(--border);
-            overflow: hidden; transition: border-color 0.25s; margin-bottom: 6px;
+        /* ========== CARDS ========== */
+        .cards { display: flex; flex-direction: column; gap: 10px; }
+        .card {
+            display: flex; align-items: flex-start; gap: 16px;
+            background: var(--bg-alt); border-radius: 14px; padding: 20px;
+            border: 1px solid transparent; transition: border-color 0.3s, background 0.3s;
         }
-        .faq-item.open { border-color: var(--border-hover); }
-        .faq-head {
-            display: flex; align-items: center; justify-content: space-between;
-            gap: 16px; padding: 20px 22px; cursor: pointer; transition: background 0.2s;
+        .card:hover { background: #fff; border-color: var(--accent-glow); }
+        .card-num {
+            font-family: var(--font-display); font-size: 13px; font-weight: 800;
+            color: rgba(36,121,251,0.3); flex-shrink: 0;
         }
-        .faq-head:hover { background: #F9FAFB; }
-        .faq-q {
-            font-family: var(--font-display); font-size: 15px; font-weight: 600;
-            color: var(--text-primary); margin: 0; text-align: left; line-height: 1.4;
-        }
-        .faq-chevron {
-            width: 22px; height: 22px; flex-shrink: 0; border-radius: 50%;
-            background: rgba(0,0,0,0.05); display: flex; align-items: center;
-            justify-content: center; transition: transform 0.3s, background 0.2s;
-        }
-        .faq-item.open .faq-chevron { transform: rotate(180deg); background: var(--accent-soft); }
-        .faq-chevron svg { width: 12px; height: 12px; }
-        .faq-item.open .faq-chevron svg path { stroke: var(--accent); }
-        .faq-body { overflow: hidden; max-height: 0; transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1); }
-        .faq-item.open .faq-body { max-height: 400px; }
-        .faq-a {
-            font-family: var(--font-body); font-size: 14px;
-            color: var(--text-secondary); line-height: 1.75; padding: 0 22px 20px;
-        }
+        .card-text { font-size: 15px; color: #374151; line-height: 1.7; margin: 0; }
 
-        /* ========== FINAL CTA ========== */
-        .final-cta-card {
-            background: var(--bg-alt); border-radius: 28px; padding: 64px 48px;
-            position: relative; overflow: hidden; border: 1px solid rgba(0,0,0,0.06);
-            text-align: center;
+        /* ========== FINAL CTA CARD ========== */
+        .cta-card {
+            background: var(--bg-alt); border-radius: 24px; padding: 48px 32px;
+            text-align: center; position: relative; overflow: hidden;
+            border: 1px solid var(--border);
         }
-        .final-cta-card::before {
-            content: ''; position: absolute; inset: 0;
-            background: radial-gradient(ellipse at 50% 0%, rgba(36,121,251,0.07) 0%, transparent 60%);
-            pointer-events: none;
-        }
-        .final-cta-card::after {
+        .cta-card::after {
             content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
             background: linear-gradient(90deg, transparent, var(--accent), transparent);
         }
-        .final-cta-card > * { position: relative; z-index: 1; }
-        .final-cta-card h2 {
-            font-family: var(--font-display); font-size: clamp(24px, 4.5vw, 38px);
+        .cta-card h2 {
+            font-family: var(--font-display); font-size: clamp(22px, 4vw, 32px);
             font-weight: 800; color: var(--text-primary); letter-spacing: -0.03em;
-            line-height: 1.15; margin: 0 0 20px;
+            margin: 0 0 12px; position: relative; z-index: 1;
         }
-        .final-cta-card p {
-            font-family: var(--font-body); font-size: 15px;
-            color: var(--text-secondary); line-height: 1.65;
-            max-width: 500px; margin: 0 auto 36px;
-        }
-        .btn-final {
-            display: inline-flex; align-items: center; justify-content: center;
-            background: var(--text-primary); color: #fff;
-            font-family: var(--font-display); font-size: 15px; font-weight: 700;
-            padding: 18px 44px; border-radius: 12px; text-decoration: none;
-            position: relative; overflow: hidden;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.2);
-            transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
-        }
-        .btn-final::before {
-            content: ''; position: absolute; top: 0; left: -100%;
-            width: 200%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
-            animation: shimmer 3s ease-in-out infinite;
+        .cta-card p {
+            font-size: 14px; color: var(--text-muted); max-width: 440px;
+            margin: 0 auto 24px; line-height: 1.6; position: relative; z-index: 1;
         }
 
         /* ========== FOOTER ========== */
         .footer {
-            padding: 40px 0; text-align: center;
-        }
-        .footer-logo {
-            font-family: var(--font-display); font-size: 12px; font-weight: 800;
-            color: var(--text-muted); letter-spacing: -0.02em; margin-bottom: 16px;
-        }
-        .footer-legal {
-            font-family: var(--font-body); font-size: 11px;
-            color: var(--text-muted); line-height: 1.7; max-width: 600px; margin: 0 auto 16px;
-        }
-        .footer-disclaimer {
-            font-family: var(--font-body); font-size: 10px;
-            color: var(--text-muted); line-height: 1.6;
-            max-width: 600px; margin: 0 auto;
-            padding-top: 16px; border-top: 1px solid rgba(0,0,0,0.06);
+            padding: 32px 0; text-align: center;
+            font-size: 11px; color: var(--text-muted); line-height: 1.7;
         }
 
         /* ========== RESPONSIVE ========== */
         @media (hover: hover) {
-            .feature-card:hover { border-color: var(--border-hover); box-shadow: 0 6px 32px rgba(36,121,251,0.08); transform: translateY(-2px); }
-            .btn-cta:hover, .btn-cta-dark:hover, .btn-final:hover { transform: translateY(-1px) scale(1.02); }
-            .btn-final:hover { background: var(--accent); box-shadow: 0 6px 24px var(--accent-shadow); }
+            .btn:hover { transform: translateY(-1px) scale(1.02); }
         }
         @media (hover: none) {
-            .feature-card:active { transform: scale(0.98); }
-            .btn-cta:active, .btn-final:active { transform: scale(0.97); }
+            .btn:active { transform: scale(0.97); }
         }
-
         @media (max-width: 768px) {
-            .split { grid-template-columns: 1fr; gap: 28px; }
-            .features-grid { grid-template-columns: 1fr; }
-            .feature-card-wide { flex-direction: column; gap: 20px; }
-            .offer-card { grid-template-columns: 1fr; gap: 28px; padding: 28px; }
-            .video-hero-video { width: 92%; }
-            .section { padding: 44px 0; }
             .container { padding: 0 16px; }
+            .section { padding: 40px 0; }
         }
-
         @media (max-width: 390px) {
-            .video-hero { height: 220vh; }
-            .video-hero-video { width: 96%; }
-            .video-hero-headline h1 { font-size: 20px; }
-            .btn-cta, .btn-final { width: 100%; font-size: 14px; padding: 16px 28px; }
-            .offer-card { padding: 22px; }
-            .feature-card { padding: 20px; border-radius: 16px; }
-            .final-cta-card { padding: 40px 24px; border-radius: 20px; }
-            .faq-head { padding: 16px; }
-            .faq-q { font-size: 14px; }
-            .faq-a { font-size: 13px; padding: 0 16px 16px; }
-            .disclaimer-bar p { font-size: 10px; }
+            .vhero { height: 180vh; }
+            .vhero-h1 { font-size: 18px; padding: 18px 20px; border-radius: 14px; }
+            .vhero-badge { font-size: 9px; padding: 4px 10px; }
+            .btn { width: 100%; font-size: 14px; padding: 14px 24px; }
+            .card { padding: 16px; }
+            .card-text { font-size: 14px; }
+            .cta-card { padding: 32px 20px; border-radius: 18px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ========== DISCLAIMER BAR ========== -->
-    <div class="disclaimer-bar">
-        <p>Investimentos envolvem riscos e podem trazer perdas ao investidor. Resultados passados nao garantem resultados futuros.</p>
-    </div>
+    <!-- DISCLAIMER -->
+    <div class="disclaimer">Investimentos envolvem riscos e podem trazer perdas ao investidor. Resultados passados nao garantem resultados futuros.</div>
 
-    <!-- ========== VIDEO HERO (IMMERSIVE) ========== -->
-    <section class="video-hero">
-        <div class="video-hero-sticky">
-            <div class="video-hero-headline" id="heroHeadline">
-                <div class="badge badge-red" style="margin-bottom: 16px;">
-                    <span class="badge-dot" style="background: #EF4444;"></span>
+    <!-- ========== VIDEO HERO — FULLSCREEN ========== -->
+    <section class="vhero">
+        <div class="vhero-sticky">
+            <video id="scrubVideo" muted playsinline preload="auto">
+                <source src="video.webm" type="video/webm">
+                <source src="video.mp4" type="video/mp4">
+            </video>
+
+            <div class="vhero-overlay" id="heroOverlay">
+                <div class="vhero-badge">
+                    <span class="vhero-dot"></span>
                     REPLAY DA APRESENTACAO AO VIVO
                 </div>
-                <h1>Voce nao perdeu dinheiro porque e burro. Perdeu porque te deram a <span class="accent">ferramenta errada.</span> Isso acaba aqui.</h1>
-                <p class="sub">Apresentacao do dia 07/04/2026. <strong>Disponivel por tempo limitado.</strong></p>
+                <h1 class="vhero-h1">
+                    Voce nao perdeu dinheiro porque e burro. Perdeu porque te deram a <span class="accent">ferramenta errada.</span> Isso acaba aqui.
+                </h1>
+                <p class="vhero-sub">Apresentacao do dia 07/04/2026. <strong>Disponivel por tempo limitado.</strong></p>
             </div>
-
-            <div class="video-hero-video">
-                <video id="scrubVideo" muted playsinline preload="auto">
-                    <source src="video.webm" type="video/webm">
-                    <source src="video.mp4" type="video/mp4">
-                </video>
-            </div>
-
-            <div class="video-hero-glow" id="videoGlow"></div>
         </div>
     </section>
 
-    <!-- ========== CTA 1 ========== -->
-    <section class="section grid-bg" style="padding-top: 32px; padding-bottom: 32px;">
-        <div class="container" style="text-align: center;">
-            <div class="badge badge-blue reveal" style="margin-bottom: 16px;">
-                <span class="badge-dot" style="background: var(--accent);"></span>
-                VAGAS DE MEMBRO FUNDADOR ABERTAS
-            </div>
-            <a href="#oferta" class="btn-cta reveal delay-1">QUERO GARANTIR MINHA VAGA</a>
-            <div class="btn-cta-sub reveal delay-2">
-                <span>100 vagas de Membro Fundador</span>
-                <span class="dot"></span>
-                <span>Preco travado pra sempre</span>
-                <span class="dot"></span>
+    <!-- ========== CTA RAPIDO ========== -->
+    <section class="section" style="text-align: center; padding-top: 32px;">
+        <div class="container">
+            <a href="#" class="btn reveal">QUERO GARANTIR MINHA VAGA</a>
+            <div class="btn-sub reveal d1">
+                <span>100 vagas</span><span class="dot"></span>
+                <span>Preco travado pra sempre</span><span class="dot"></span>
                 <span>Garantia de 30 dias</span>
             </div>
         </div>
@@ -573,183 +292,32 @@
     <!-- ========== O DIAGNOSTICO ========== -->
     <section class="section">
         <div class="container">
-            <div class="section-label reveal"><span class="section-label-line"></span>O diagnostico</div>
-            <h2 class="section-title reveal delay-1">O problema nunca foi voce. Foi o modelo.</h2>
-            <div style="display: flex; flex-direction: column; gap: 14px;">
-                <div class="card reveal delay-1" style="display: flex; align-items: flex-start; gap: 18px;">
+            <div class="section-label reveal"><span></span>O diagnostico</div>
+            <h2 class="section-title reveal d1">O problema nunca foi voce. Foi o modelo.</h2>
+            <div class="cards">
+                <div class="card reveal d1">
                     <span class="card-num">01</span>
                     <p class="card-text">Cursos, mentorias, robos, copy trading, sinais... Cada um prometeu ser diferente. Cada um falhou da mesma forma.</p>
                 </div>
-                <div class="card reveal delay-2" style="display: flex; align-items: flex-start; gap: 18px;">
+                <div class="card reveal d2">
                     <span class="card-num">02</span>
                     <p class="card-text">Voce ja sabe disso. Ja viveu isso. Ja perdeu dinheiro apostando nesses modelos.</p>
                 </div>
-                <div class="card reveal delay-3" style="display: flex; align-items: flex-start; gap: 18px;">
+                <div class="card reveal d3">
                     <span class="card-num">03</span>
-                    <p class="card-text">Assista a apresentacao acima. Ou continue descendo pra entender como funciona.</p>
+                    <p class="card-text">A OpenCapital e o primeiro ecossistema de IA do mercado financeiro brasileiro. 87% de taxa de acerto auditada. 280 mil analises processadas.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ========== A SOLUCAO ========== -->
-    <section class="section section-alt">
-        <div class="container">
-            <div class="split">
-                <div>
-                    <div class="section-label reveal"><span class="section-label-line"></span>A solucao</div>
-                    <h2 class="section-title reveal delay-1">A OpenCapital e uma categoria completamente nova</h2>
-                </div>
-                <div>
-                    <p class="reveal" style="font-size: 15px; line-height: 1.75; margin-bottom: 16px;">A OpenCapital nao e curso. Nao e mentoria. Nao e robo. Nao e copy trading.</p>
-                    <p class="reveal delay-1" style="font-size: 15px; line-height: 1.75; margin-bottom: 16px;">E o primeiro ecossistema de IA do mercado financeiro brasileiro — construido para eliminar os 3 pontos onde o ser humano mais falha: emocao, lentidao e falta de dados.</p>
-                    <div class="accent-block reveal delay-2">
-                        <p>Voce tira uma foto do grafico. As IAs analisam 44 pontos de confluencia, cruzam com 328 anos de dados historicos e entregam a recomendacao completa. <span class="em">Em segundos.</span></p>
-                    </div>
-                    <p class="reveal delay-3" style="font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--text-primary); margin-top: 16px;">A decisao final e sua. Sempre.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ========== OS APLICATIVOS ========== -->
-    <section class="section section-alt" style="position: relative; overflow: hidden;">
-        <div class="container">
-            <div class="section-label reveal"><span class="section-label-line"></span>Os aplicativos</div>
-            <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; margin-bottom: 40px; flex-wrap: wrap;">
-                <h2 class="section-title reveal delay-1" style="margin-bottom: 0;">3 aplicativos de IA funcionando agora</h2>
-                <p class="reveal delay-2" style="font-size: clamp(12px,1.5vw,14px); color: var(--text-secondary); max-width: 220px; text-align: right;">Do cenario macro a execucao. Da execucao ao imposto. Tudo num unico ecossistema.</p>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card feature-card-wide reveal">
-                    <div style="flex: 1; display: flex; flex-direction: column; gap: 14px;">
-                        <span class="card-num">01</span>
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <div class="feature-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M23 6l-9.5 9.5-5-5L1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-                            </div>
-                            <h3 class="feature-title">Print & Trade</h3>
-                        </div>
-                        <p class="feature-desc">Tira foto do grafico. Recebe em segundos a recomendacao completa de multiplas IAs: direcao, entrada, stop, alvos, probabilidade, explicacao e contrapontos.</p>
-                    </div>
-                </div>
-                <div class="feature-card reveal delay-1">
-                    <span class="card-num">02</span>
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <div class="feature-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                        </div>
-                        <h3 class="feature-title">KlariFeed</h3>
-                    </div>
-                    <p class="feature-desc">Inteligencia de noticias que varre os portais financeiros mais exclusivos do mundo em tempo real, antes dos portais brasileiros publicarem.</p>
-                </div>
-                <div class="feature-card reveal delay-2">
-                    <span class="card-num">03</span>
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <div class="feature-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-                        </div>
-                        <h3 class="feature-title">LeviTax</h3>
-                    </div>
-                    <p class="feature-desc">Inteligencia fiscal que calcula em tempo real o imposto de cada operacao, compensa prejuizos automaticamente e prepara a DARF com valor exato.</p>
-                </div>
-            </div>
-            <p class="reveal delay-3" style="margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--border); text-align: center; font-family: var(--font-display); font-size: 13px; font-weight: 500; color: var(--accent);">E mais de 30 aplicativos em desenvolvimento.</p>
-        </div>
-    </section>
-
-    <!-- ========== O MECANISMO ========== -->
+    <!-- ========== CTA FINAL ========== -->
     <section class="section">
         <div class="container">
-            <div class="section-label reveal"><span class="section-label-line"></span>O mecanismo</div>
-            <h2 class="section-title reveal delay-1">O que acontece por tras do botao</h2>
-            <div class="timeline">
-                <div class="timeline-step reveal"><div class="timeline-dot">01</div><div style="padding-top: 8px;"><p class="timeline-text">No instante em que voce envia a foto, o sistema distribui a analise para multiplas IAs simultaneas.</p></div></div>
-                <div class="timeline-step reveal delay-1"><div class="timeline-dot">02</div><div style="padding-top: 8px;"><p class="timeline-text">Cada IA analisa o cenario de um angulo diferente — price action, volume, macro, sentimento, historico.</p></div></div>
-                <div class="timeline-step reveal delay-2"><div class="timeline-dot">03</div><div style="padding-top: 8px;"><p class="timeline-text">E elas debatem. Com dados. Com evidencias. Ate chegarem a um consenso.</p></div></div>
-                <div class="timeline-step reveal delay-3"><div class="timeline-dot">04</div><div style="padding-top: 8px;"><p class="timeline-text">Se nao tem consenso, elas nao entregam recomendacao. Elas avisam: sem confluencia suficiente.</p></div></div>
-                <div class="timeline-step reveal delay-4"><div class="timeline-dot">05</div><div style="padding-top: 8px;"><p class="timeline-text" style="color: var(--text-primary);">328 anos de dados historicos processados. 44 pontos de confluencia avaliados. Backtest em 4 cenarios de risco.</p></div></div>
-                <div class="timeline-step reveal"><div class="timeline-dot">06</div><div style="padding-top: 8px;"><p class="timeline-text" style="color: var(--text-primary); font-weight: 600;">Supervisionado por 2 analistas certificados (CNPI) registrados na CVM.</p></div></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ========== A OFERTA (DARK) ========== -->
-    <section class="section section-dark" id="oferta">
-        <div class="dark-glow"></div>
-        <div class="container" style="position: relative; z-index: 1;">
-            <div class="section-label reveal"><span class="section-label-line"></span>A oferta</div>
-            <h2 class="section-title reveal delay-1">Membro Fundador: uma condicao que existe uma unica vez</h2>
-            <div class="offer-card reveal delay-2">
-                <div>
-                    <div style="display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap;">
-                        <span class="offer-prefix">12x</span>
-                        <span class="offer-price">R$197,10</span>
-                    </div>
-                    <div class="offer-detail">ou R$ 1.950,00 a vista (18% off)</div>
-                    <div class="offer-anchor">Apos o lancamento: R$ 5.940/ano (R$ 495/mes)</div>
-                    <div class="offer-scarcity">&#9889; 100 vagas. Quando acabar, desaparece.</div>
-                    <a href="https://checkout.theopencapital.org/the-opencapital" class="btn-cta-dark">QUERO ACESSO A ESSA TECNOLOGIA</a>
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 12px;">
-                    <div class="offer-check"><div class="offer-check-icon"><svg viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5L9 3" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="offer-check-text">Print & Trade — IA de analise grafica</span></div>
-                    <div class="offer-check"><div class="offer-check-icon"><svg viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5L9 3" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="offer-check-text">KlariFeed — IA de noticias financeiras</span></div>
-                    <div class="offer-check"><div class="offer-check-icon"><svg viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5L9 3" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="offer-check-text">LeviTax — IA de inteligencia fiscal</span></div>
-                    <div class="offer-check"><div class="offer-check-icon"><svg viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5L9 3" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="offer-check-text">30+ aplicativos em desenvolvimento</span></div>
-                    <div class="offer-check"><div class="offer-check-icon"><svg viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5L9 3" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="offer-check-text">Preco travado para sempre</span></div>
-                    <div class="offer-check"><div class="offer-check-icon"><svg viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5L9 3" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="offer-check-text">Garantia de 30 dias</span></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ========== FAQ ========== -->
-    <section class="section">
-        <div class="container">
-            <div class="section-label reveal"><span class="section-label-line"></span>FAQ</div>
-            <h2 class="section-title reveal delay-1">Perguntas frequentes</h2>
-            <div>
-                <div class="faq-item reveal">
-                    <div class="faq-head" onclick="this.parentElement.classList.toggle('open')">
-                        <p class="faq-q">Preciso de experiencia no mercado financeiro?</p>
-                        <div class="faq-chevron"><svg viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-                    </div>
-                    <div class="faq-body"><p class="faq-a">Nao. A plataforma foi construida para eliminar a necessidade de conhecimento tecnico previo. As IAs entregam a analise completa com direcao, entrada, stop e alvos.</p></div>
-                </div>
-                <div class="faq-item reveal delay-1">
-                    <div class="faq-head" onclick="this.parentElement.classList.toggle('open')">
-                        <p class="faq-q">Meu dinheiro fica na plataforma de voces?</p>
-                        <div class="faq-chevron"><svg viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-                    </div>
-                    <div class="faq-body"><p class="faq-a">Nao. Seu capital permanece 100% na sua corretora, na sua conta, sob seu controle total. A OpenCapital nao e corretora e nao faz custodia de ativos.</p></div>
-                </div>
-                <div class="faq-item reveal delay-2">
-                    <div class="faq-head" onclick="this.parentElement.classList.toggle('open')">
-                        <p class="faq-q">O que e o preco travado pra sempre?</p>
-                        <div class="faq-chevron"><svg viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-                    </div>
-                    <div class="faq-body"><p class="faq-a">Membros Fundadores pagam R$ 162,50/mes para sempre — mesmo quando o preco publico subir para R$ 495/mes. Essa condicao nao existe depois do lancamento.</p></div>
-                </div>
-                <div class="faq-item reveal delay-3">
-                    <div class="faq-head" onclick="this.parentElement.classList.toggle('open')">
-                        <p class="faq-q">Quantas vagas restam?</p>
-                        <div class="faq-chevron"><svg viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-                    </div>
-                    <div class="faq-body"><p class="faq-a">Sao 100 vagas de Membro Fundador no total. Quando as vagas se esgotarem, essa condicao desaparece e o acesso passa a ser pelo preco publico.</p></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ========== FINAL CTA ========== -->
-    <section class="section">
-        <div class="container">
-            <div class="final-cta-card">
-                <h2 class="reveal">A evolucao humana esta nas suas maos.</h2>
-                <p class="reveal delay-1">100 vagas de Membro Fundador. R$ 197,10 por mes. Preco travado pra sempre. Garantia de 30 dias.</p>
-                <div class="reveal delay-2">
-                    <a href="https://checkout.theopencapital.org/the-opencapital" class="btn-final">SER MEMBRO FUNDADOR AGORA</a>
-                </div>
+            <div class="cta-card reveal">
+                <h2>A evolucao humana esta nas suas maos.</h2>
+                <p>100 vagas de Membro Fundador. R$ 197,10 por mes. Preco travado pra sempre. Garantia de 30 dias.</p>
+                <a href="https://checkout.theopencapital.org/the-opencapital" class="btn">SER MEMBRO FUNDADOR AGORA</a>
             </div>
         </div>
     </section>
@@ -757,77 +325,62 @@
     <!-- ========== FOOTER ========== -->
     <footer class="footer">
         <div class="container">
-            <div class="footer-logo">OpenCapital &copy; 2026</div>
-            <div class="footer-legal">
-                PORTS CAPITAL LTDA — CNPJ: 48.326.475/0001-07.<br>
-                Av. Jose Silva de Azevedo Neto, 200, Bloco 1, Sala 203 — Barra da Tijuca, Rio de Janeiro/RJ.<br>
-                suriel@portscapital.com.br | (21) 8430-3126
-            </div>
-            <div class="footer-disclaimer">
-                Este nao e um robo de trading, mas sim um ecossistema de inteligencia artificial desenvolvido para auxiliar na tomada de decisao. Os resultados passados nao garantem resultados futuros. Opere com responsabilidade.
-            </div>
+            <p>OpenCapital &copy; 2026 — PORTS CAPITAL LTDA — CNPJ: 48.326.475/0001-07</p>
+            <p style="margin-top: 8px; font-size: 10px;">Este nao e um robo de trading. Ecossistema de IA para auxiliar na tomada de decisao.</p>
         </div>
     </footer>
 
-    <!-- ========== JAVASCRIPT ========== -->
+    <!-- ========== JS ========== -->
     <script>
-        // === Reveal on scroll ===
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                    observer.unobserve(entry.target);
-                }
-            });
+        // Reveal
+        const obs = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('active'); obs.unobserve(e.target); } });
         }, { threshold: 0.1 });
-        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-        // === Video Scrub ===
+        // Video scrub
         const video = document.getElementById('scrubVideo');
-        const heroSection = document.querySelector('.video-hero');
-        const headline = document.getElementById('heroHeadline');
-        const glow = document.getElementById('videoGlow');
-        let videoReady = false;
+        const heroSection = document.querySelector('.vhero');
+        const overlay = document.getElementById('heroOverlay');
+        let ready = false;
 
-        video.addEventListener('loadedmetadata', () => { videoReady = true; });
-        if (video.readyState >= 1) videoReady = true;
+        video.addEventListener('loadedmetadata', () => { ready = true; });
+        if (video.readyState >= 1) ready = true;
 
-        window.addEventListener('scroll', () => {
-            if (!videoReady || !heroSection) return;
+        function onScroll() {
+            if (!ready) return;
 
             const rect = heroSection.getBoundingClientRect();
-            const height = heroSection.offsetHeight;
-            const scrolled = -rect.top;
-            const progress = Math.max(0, Math.min(1, scrolled / (height - window.innerHeight)));
+            const total = heroSection.offsetHeight - window.innerHeight;
+            const scrolled = Math.max(0, -rect.top);
+            const progress = Math.min(1, scrolled / total);
 
-            // Scrub video
-            if (video.duration) {
-                video.currentTime = progress * video.duration;
+            // Scrub video — use requestAnimationFrame for smoothness
+            const targetTime = progress * video.duration;
+            if (Math.abs(video.currentTime - targetTime) > 0.05) {
+                video.currentTime = targetTime;
             }
 
-            // Fade headline slightly as scroll progresses
-            if (progress < 0.3) {
-                headline.style.opacity = '1';
-                headline.style.transform = 'translateY(0)';
+            // Fade headline out between 20%-50% scroll
+            if (progress < 0.2) {
+                overlay.style.opacity = '1';
+                overlay.style.transform = 'translateY(0)';
+            } else if (progress < 0.5) {
+                const fade = (progress - 0.2) / 0.3;
+                overlay.style.opacity = String(1 - fade);
+                overlay.style.transform = `translateY(${-fade * 40}px)`;
             } else {
-                const fadeProgress = Math.min(1, (progress - 0.3) / 0.3);
-                headline.style.opacity = String(1 - fadeProgress);
-                headline.style.transform = `translateY(${-fadeProgress * 30}px)`;
+                overlay.style.opacity = '0';
+                overlay.style.transform = 'translateY(-40px)';
             }
+        }
 
-            // Glow when open
-            if (progress > 0.7) {
-                glow.classList.add('visible');
-            } else {
-                glow.classList.remove('visible');
-            }
-        }, { passive: true });
-
-        // === Navbar scroll darken (disclaimer bar) ===
-        const disclaimerBar = document.querySelector('.disclaimer-bar');
+        // Use requestAnimationFrame for smoother scrubbing
+        let ticking = false;
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                disclaimerBar.style.background = '#72757c';
+            if (!ticking) {
+                requestAnimationFrame(() => { onScroll(); ticking = false; });
+                ticking = true;
             }
         }, { passive: true });
     </script>
