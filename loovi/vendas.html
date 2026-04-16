@@ -186,22 +186,11 @@
     max-width:15ch;
     margin-bottom:1.25rem;
   }
-  .hero h1 .scramble{
+  .hero h1 em{
+    font-style:normal;
     color:var(--yellow);
     display:inline-block;
-    position:relative;
   }
-  .hero h1 .scramble::after{
-    content:"";
-    position:absolute;left:0;right:0;bottom:-.03em;
-    height:.1em;
-    background:var(--yellow);
-    opacity:.25;
-    border-radius:2px;
-    transform:scaleX(0);transform-origin:left;
-    animation:underline-in 1.2s var(--spring) .8s forwards;
-  }
-  @keyframes underline-in{to{transform:scaleX(1)}}
 
   .hero-lead{
     font-size:clamp(1rem,1.6vw,1.2rem);
@@ -1096,7 +1085,7 @@
 <!-- MAPA BRASIL -->
 <section class="coverage-map">
   <div class="map-grid">
-    <div class="map-stats reveal-stagger">
+    <div class="map-stats reveal">
       <div>
         <span class="eyebrow">Cobertura nacional</span>
         <h2 style="margin-top:1rem">A Loovi chega onde<br>o carro chega.</h2>
