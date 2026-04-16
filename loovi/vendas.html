@@ -1603,42 +1603,7 @@
   document.querySelectorAll('section .reveal, section.reveal').forEach(el => io.observe(el));
 
   // =========================
-  // 2. TEXT SCRAMBLE (palavra "renda" no hero — decodificação Matrix)
-  // =========================
-  const scramble = document.querySelector('.scramble');
-  if (scramble) {
-    const target = scramble.dataset.scramble;
-    const chars = '!<>-_\\/[]{}—=+*^?#________';
-    let frame = 0;
-    const duration = 50; // frames
-    const initial = target.split('').map(() => chars[Math.floor(Math.random() * chars.length)]).join('');
-    scramble.textContent = initial;
-
-    function update() {
-      let output = '';
-      for (let i = 0; i < target.length; i++) {
-        const progress = (frame - i * 2) / (duration - target.length * 2);
-        if (progress < 0) {
-          output += chars[Math.floor(Math.random() * chars.length)];
-        } else if (progress < 1) {
-          output += chars[Math.floor(Math.random() * chars.length)];
-        } else {
-          output += target[i];
-        }
-      }
-      scramble.textContent = output;
-      if (frame < duration) {
-        frame++;
-        requestAnimationFrame(update);
-      } else {
-        scramble.textContent = target;
-      }
-    }
-    setTimeout(() => requestAnimationFrame(update), 400);
-  }
-
-  // =========================
-  // 3. COUNT-UP do número +4000 no hero
+  // 2. COUNT-UP do número +4000 no hero
   // =========================
   const counter = document.querySelector('[data-count-to]');
   if (counter) {
