@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loovi — Seguro Auto pra Motorista de App</title>
+<meta name="description" content="Cote seu seguro auto pelo WhatsApp em 2 minutos. A partir de R$ 89/mês. Aceita qualquer carro. Regulado pela SUSEP.">
+<meta name="theme-color" content="#1E1B4B">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-sans/style.min.css" rel="stylesheet">
+<style>
+  :root{
+    --bg:#1E1B4B;
+    --bg-2:#0F0B2E;
+    --cobalt:#4F46E5;
+    --yellow:#FCD34D;
+    --yellow-dim:#F6C526;
+    --magenta:#EC4899;
+    --magenta-dark:#DB2777;
+    --text:#F5F3FF;
+    --text-soft:rgba(245,243,255,.75);
+    --text-muted:rgba(245,243,255,.5);
+    --input-bg:rgba(255,255,255,.06);
+    --input-border:rgba(255,255,255,.15);
+    --input-border-focus:#FCD34D;
+    --max:50rem;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family:"Geist",system-ui,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    font-feature-settings:"ss01","ss02","cv11";
+    overflow:hidden;
+    position:relative;
+  }
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer;border:0}
+  input{font-family:inherit}
+
+  /* Gradient radial decorativo — canto superior direito */
+  .glow-1{
+    position:fixed;
+    top:-20vh;right:-15vw;
+    width:70vw;max-width:720px;
+    aspect-ratio:1;
+    background:radial-gradient(circle, rgba(252,211,77,.18), transparent 60%);
+    pointer-events:none;
+    z-index:0;
+    animation:pulse-slow 6s ease-in-out infinite;
+  }
+  .glow-2{
+    position:fixed;
+    bottom:-25vh;left:-20vw;
+    width:60vw;max-width:600px;
+    aspect-ratio:1;
+    background:radial-gradient(circle, rgba(79,70,229,.3), transparent 65%);
+    pointer-events:none;
+    z-index:0;
+    animation:pulse-slow 8s ease-in-out infinite reverse;
+  }
+  @keyframes pulse-slow{
+    0%,100%{opacity:.9;transform:scale(1)}
+    50%{opacity:1;transform:scale(1.05)}
+  }
+
+  /* NAV minimal */
+  .nav{
+    position:absolute;
+    top:0;left:0;right:0;
+    padding:1.5rem 2rem;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    z-index:10;
+  }
+  .logo{
+    font-weight:900;
+    font-size:1.6rem;
+    letter-spacing:-.04em;
+    color:#fff;
+    display:inline-flex;
+    align-items:center;
+    gap:.1rem;
+  }
+  .logo::after{
+    content:"";
+    width:8px;height:8px;border-radius:50%;
+    background:var(--magenta);
+    display:inline-block;
+    margin-left:.1rem;
+    margin-top:.6rem;
+  }
+  .nav-aux{
+    font-family:"JetBrains Mono",monospace;
+    font-size:.7rem;
+    color:var(--text-muted);
+    letter-spacing:.14em;
+    text-transform:uppercase;
+  }
+
+  /* WRAP centralizado */
+  .wrap{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:2rem 1.5rem;
+    position:relative;
+    z-index:1;
+  }
+  .inner{
+    max-width:var(--max);
+    width:100%;
+    text-align:center;
+  }
+
+  /* EYEBROW */
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:.5rem;
+    font-family:"JetBrains Mono",monospace;
+    font-size:.75rem;
+    font-weight:500;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--yellow);
+    margin-bottom:1.75rem;
+  }
+  .eyebrow::before{
+    content:"";
+    width:28px;height:1px;
+    background:var(--yellow);
+  }
+
+  /* HEADLINE gigante */
+  h1{
+    font-family:"Geist",system-ui,sans-serif;
+    font-weight:900;
+    font-size:clamp(2.8rem, 8vw, 5.5rem);
+    letter-spacing:-.035em;
+    line-height:.95;
+    margin:0 0 1.25rem;
+    max-width:18ch;
+    margin-left:auto;
+    margin-right:auto;
+  }
+  h1 em{
+    font-style:normal;
+    color:var(--yellow);
+    position:relative;
+    display:inline-block;
+  }
+  h1 em::after{
+    content:"";
+    position:absolute;
+    left:0;right:0;bottom:-.05em;
+    height:.12em;
+    background:var(--yellow);
+    opacity:.3;
+    border-radius:2px;
+    transform:scaleX(0);
+    transform-origin:left center;
+    animation:underline-in 1s cubic-bezier(.2,.8,.2,1) 1.2s forwards;
+  }
+  @keyframes underline-in{to{transform:scaleX(1)}}
+
+  /* Proof numbers count-up */
+  .proof strong{transition:color .3s ease}
+
+  /* Logo dot pulse */
+  .logo::after{
+    animation:logo-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes logo-pulse{
+    0%,100%{opacity:1;transform:scale(1)}
+    50%{opacity:.6;transform:scale(1.15)}
+  }
+
+  /* Kinetic marquee no rodape acima do legal */
+  .marquee-strip{
+    position:absolute;
+    bottom:3.5rem;left:0;right:0;
+    overflow:hidden;
+    padding:.8rem 0;
+    border-top:1px solid rgba(255,255,255,.06);
+    border-bottom:1px solid rgba(255,255,255,.06);
+    white-space:nowrap;
+    opacity:.5;
+  }
+  .marquee-strip-track{
+    display:inline-flex;
+    gap:2rem;
+    animation:marquee-strip 28s linear infinite;
+  }
+  .marquee-strip-item{
+    font-family:"JetBrains Mono",monospace;
+    font-size:.78rem;
+    color:var(--text-muted);
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    display:inline-flex;align-items:center;gap:2rem;
+  }
+  .marquee-strip-item::after{
+    content:"";width:4px;height:4px;border-radius:50%;
+    background:var(--yellow);display:inline-block;opacity:.7;
+  }
+  @keyframes marquee-strip{
+    0%{transform:translateX(0)}
+    100%{transform:translateX(-50%)}
+  }
+
+  /* Mouse position parallax nos glows */
+  .glow-1,.glow-2{
+    transition:transform .4s cubic-bezier(.2,.8,.2,1);
+  }
+
+  /* Form input label highlight on focus */
+  .input:focus ~ label,
+  .input-wrap:focus-within label{
+    color:var(--yellow);
+    transform:translateY(-2px);
+    transition:transform .22s ease,color .22s ease;
+  }
+
+  /* Sparkle effect on success */
+  @keyframes sparkle-out{
+    0%{transform:scale(0) rotate(0);opacity:1}
+    100%{transform:scale(1.5) rotate(180deg);opacity:0}
+  }
+  .sparkle{
+    position:absolute;
+    width:8px;height:8px;
+    background:var(--yellow);
+    border-radius:50%;
+    pointer-events:none;
+  }
+
+  .lead{
+    font-size:clamp(1.05rem, 2.2vw, 1.3rem);
+    line-height:1.55;
+    color:var(--text-soft);
+    max-width:48ch;
+    margin:0 auto 2.5rem;
+    font-weight:400;
+  }
+
+  /* FORM */
+  .form{
+    display:flex;
+    gap:.6rem;
+    max-width:32rem;
+    margin:0 auto;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  .input-wrap{
+    flex:1;
+    min-width:16rem;
+    position:relative;
+  }
+  .input-wrap label{
+    position:absolute;
+    top:-.6rem;left:1rem;
+    background:var(--bg);
+    padding:0 .5rem;
+    font-family:"JetBrains Mono",monospace;
+    font-size:.7rem;
+    color:var(--yellow);
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    border-radius:2px;
+    z-index:1;
+  }
+  .input{
+    width:100%;
+    min-height:3.5rem;
+    padding:1rem 1.25rem;
+    font-size:max(1rem, 16px);
+    font-weight:500;
+    color:var(--text);
+    background:var(--input-bg);
+    border:1.5px solid var(--input-border);
+    border-radius:.75rem;
+    outline:0;
+    transition:border-color .22s ease,background .22s ease,transform .22s ease;
+  }
+  .input::placeholder{
+    color:rgba(245,243,255,.35);
+    font-weight:400;
+    transition:transform .22s ease,opacity .22s ease;
+  }
+  .input:focus{
+    border-color:var(--input-border-focus);
+    background:rgba(255,255,255,.1);
+  }
+  .input:focus::placeholder{
+    transform:translateY(-2px);
+    opacity:.6;
+  }
+
+  /* CTA */
+  .cta{
+    min-height:3.5rem;
+    padding:1rem 2rem;
+    font-size:1.05rem;
+    font-weight:700;
+    letter-spacing:-.01em;
+    color:#fff;
+    background:var(--magenta);
+    border-radius:.75rem;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:.6rem;
+    transition:transform .22s ease,background .22s ease,box-shadow .22s ease;
+    box-shadow:0 8px 24px rgba(236,72,153,.35);
+    white-space:nowrap;
+  }
+  .cta:hover{
+    transform:translateY(-2px);
+    background:var(--magenta-dark);
+    box-shadow:0 12px 32px rgba(236,72,153,.45);
+  }
+  .cta:active{transform:translateY(0)}
+  .cta .arrow{
+    transition:transform .22s ease;
+    display:inline-block;
+  }
+  .cta:hover .arrow{transform:translateX(3px)}
+
+  /* PROOF */
+  .proof{
+    margin-top:2rem;
+    font-family:"JetBrains Mono",monospace;
+    font-size:.8rem;
+    color:var(--text-muted);
+    letter-spacing:.08em;
+    display:inline-flex;
+    align-items:center;
+    gap:.8rem;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  .proof strong{color:var(--text-soft);font-weight:500}
+  .proof .sep{
+    width:3px;height:3px;border-radius:50%;
+    background:var(--text-muted);
+    display:inline-block;
+  }
+
+  /* LEGAL */
+  .legal{
+    position:absolute;
+    bottom:1.5rem;
+    left:0;right:0;
+    font-family:"JetBrains Mono",monospace;
+    font-size:.68rem;
+    color:var(--text-muted);
+    letter-spacing:.06em;
+    text-align:center;
+    padding:0 1.5rem;
+  }
+  .legal a{
+    color:var(--text-soft);
+    text-decoration:underline;
+    text-decoration-color:rgba(245,243,255,.2);
+    text-underline-offset:2px;
+  }
+  .legal a:hover{text-decoration-color:var(--yellow)}
+
+  /* REVEAL animation */
+  .reveal{
+    opacity:0;
+    transform:translateY(16px);
+    transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1);
+  }
+  .reveal.in{opacity:1;transform:none}
+  .reveal:nth-child(1){transition-delay:0s}
+  .reveal:nth-child(2){transition-delay:.08s}
+  .reveal:nth-child(3){transition-delay:.18s}
+  .reveal:nth-child(4){transition-delay:.28s}
+  .reveal:nth-child(5){transition-delay:.4s}
+
+  /* Focus visible accessible */
+  :focus-visible{
+    outline:2px solid var(--yellow);
+    outline-offset:4px;
+  }
+  .cta:focus-visible{outline-offset:6px}
+
+  /* Mobile adjustments */
+  @media (max-width:640px){
+    .nav{padding:1rem 1.25rem}
+    .logo{font-size:1.4rem}
+    .nav-aux{display:none}
+    .wrap{padding:5rem 1.25rem 4rem}
+    .form{flex-direction:column;gap:.75rem}
+    .input-wrap{min-width:0;width:100%}
+    .cta{width:100%}
+    .legal{position:relative;margin-top:2.5rem}
+    body{overflow:auto}
+  }
+
+  @media (max-width:390px){
+    .eyebrow{font-size:.7rem;letter-spacing:.16em}
+    h1{font-size:2.4rem}
+    .lead{font-size:1rem}
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion:reduce){
+    .reveal{opacity:1;transform:none;transition:none}
+    .glow-1,.glow-2{animation:none}
+    *,*::before,*::after{
+      animation-duration:.01ms !important;
+      transition-duration:.01ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-1" aria-hidden="true"></div>
+<div class="glow-2" aria-hidden="true"></div>
+
+<nav class="nav">
+  <a href="#" class="logo">Loovi</a>
+  <span class="nav-aux">Regulado pela SUSEP</span>
+</nav>
+
+<main class="wrap">
+  <div class="inner">
+    <span class="eyebrow reveal">Seguro Auto · Pra quem vive do carro</span>
+
+    <h1 class="reveal">Sua <em>renda</em> merece proteção.</h1>
+
+    <p class="lead reveal">Cota pelo WhatsApp em 2 minutos. A partir de R$ 89/mês. Aceita qualquer carro. Sem burocracia, sem vistoria presencial, sem cartão pra cotar.</p>
+
+    <form class="form reveal" method="post" action="/api/lead-capture" novalidate>
+      <div class="input-wrap">
+        <label for="whatsapp">Seu WhatsApp</label>
+        <input
+          id="whatsapp"
+          name="whatsapp"
+          type="tel"
+          class="input"
+          placeholder="(11) 99999-9999"
+          inputmode="tel"
+          autocomplete="tel-national"
+          required
+          aria-required="true">
+      </div>
+      <button type="submit" class="cta">
+        Quero meu seguro
+        <span class="arrow" aria-hidden="true">→</span>
+      </button>
+    </form>
+
+    <div class="proof reveal">
+      <span><strong>+4.000</strong> motoristas</span>
+      <span class="sep" aria-hidden="true"></span>
+      <span><strong>27</strong> estados</span>
+      <span class="sep" aria-hidden="true"></span>
+      <span>Ative em minutos</span>
+    </div>
+  </div>
+</main>
+
+<div class="marquee-strip" aria-hidden="true">
+  <div class="marquee-strip-track">
+    <span class="marquee-strip-item">+4000 motoristas</span>
+    <span class="marquee-strip-item">27 estados</span>
+    <span class="marquee-strip-item">Ativa em minutos</span>
+    <span class="marquee-strip-item">Sem cartão pra cotar</span>
+    <span class="marquee-strip-item">Regulado SUSEP</span>
+    <span class="marquee-strip-item">+4000 motoristas</span>
+    <span class="marquee-strip-item">27 estados</span>
+    <span class="marquee-strip-item">Ativa em minutos</span>
+    <span class="marquee-strip-item">Sem cartão pra cotar</span>
+    <span class="marquee-strip-item">Regulado SUSEP</span>
+  </div>
+</div>
+
+<div class="legal">
+  Loovi Technology (CW Technology Ltda.) · CNPJ 34.504.257/0001-00 · Representante de <strong>LTI Seguros S.A.</strong> · Processo SUSEP nº 15414.649321/2021-55 · <a href="#privacidade">Política de Privacidade (LGPD)</a>
+</div>
+
+<script>
+  // Stagger reveal on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    requestAnimationFrame(() => {
+      document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+    });
+  });
+
+  // Count-up animation pros números "4.000" e "27"
+  document.querySelectorAll('.proof strong').forEach(el => {
+    const text = el.textContent;
+    const match = text.match(/(\+?)(\d[\d.]*)/);
+    if (!match) return;
+    const prefix = match[1];
+    const target = parseInt(match[2].replace(/\./g, ''), 10);
+    const duration = 1400;
+    const start = performance.now() + 700;
+    el.textContent = prefix + '0';
+    function tick(now) {
+      const elapsed = now - start;
+      if (elapsed < 0) { requestAnimationFrame(tick); return; }
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 4);
+      const value = Math.floor(target * eased);
+      el.textContent = prefix + value.toLocaleString('pt-BR');
+      if (progress < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+
+  // Parallax dos glows pela posição do mouse
+  if (window.matchMedia('(hover: hover)').matches) {
+    const g1 = document.querySelector('.glow-1');
+    const g2 = document.querySelector('.glow-2');
+    document.addEventListener('mousemove', (e) => {
+      const x = (e.clientX / window.innerWidth) - 0.5;
+      const y = (e.clientY / window.innerHeight) - 0.5;
+      if (g1) g1.style.transform = `translate(${x * 30}px, ${y * 30}px)`;
+      if (g2) g2.style.transform = `translate(${x * -20}px, ${y * -20}px)`;
+    });
+  }
+
+  // Input mask simples pra WhatsApp
+  const input = document.getElementById('whatsapp');
+  input?.addEventListener('input', (e) => {
+    let v = e.target.value.replace(/\D/g,'').slice(0,11);
+    if (v.length > 6) v = v.replace(/^(\d{2})(\d{5})(\d{0,4}).*/, '($1) $2-$3');
+    else if (v.length > 2) v = v.replace(/^(\d{2})(\d{0,5}).*/, '($1) $2');
+    else if (v.length > 0) v = v.replace(/^(\d{0,2}).*/, '($1');
+    e.target.value = v;
+  });
+
+  // Magnetic button
+  const cta = document.querySelector('.cta');
+  if (cta && window.matchMedia('(hover: hover)').matches) {
+    cta.addEventListener('mousemove', (e) => {
+      const rect = cta.getBoundingClientRect();
+      const x = e.clientX - rect.left - rect.width/2;
+      const y = e.clientY - rect.top - rect.height/2;
+      cta.style.transform = `translate(${x * .15}px, ${y * .15 - 2}px)`;
+    });
+    cta.addEventListener('mouseleave', () => {
+      cta.style.transform = '';
+    });
+  }
+
+  // Sparkle on success
+  function spawnSparkles(origin) {
+    const rect = origin.getBoundingClientRect();
+    const cx = rect.left + rect.width/2;
+    const cy = rect.top + rect.height/2;
+    for (let i = 0; i < 12; i++) {
+      const s = document.createElement('div');
+      s.className = 'sparkle';
+      s.style.left = cx + 'px';
+      s.style.top = cy + 'px';
+      const angle = (Math.PI * 2 / 12) * i + Math.random() * 0.3;
+      const distance = 80 + Math.random() * 60;
+      s.style.transform = `translate(${Math.cos(angle)*distance}px, ${Math.sin(angle)*distance}px) scale(0)`;
+      s.style.animation = 'sparkle-out .8s cubic-bezier(.2,.8,.2,1) forwards';
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
+  }
+
+  // Form submit (placeholder — loading state + sparkles on success)
+  const form = document.querySelector('.form');
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    cta.innerHTML = 'Enviando... <span class="arrow">•</span>';
+    cta.style.opacity = '.7';
+    cta.disabled = true;
+    setTimeout(() => {
+      cta.innerHTML = 'Recebemos! ✓';
+      cta.style.background = '#10B981';
+      cta.style.opacity = '1';
+      spawnSparkles(cta);
+    }, 900);
+  });
+</script>
+
+</body>
+</html>
