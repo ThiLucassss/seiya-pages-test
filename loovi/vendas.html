@@ -8,26 +8,25 @@
 <meta name="theme-color" content="#0E0E1A">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-sans/style.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0E0E1A;
-    --surface:#161628;
-    --surface-2:#1C1C2F;
-    --surface-3:#0A0A14;
+    --bg:#1E1B4B;
+    --surface:#2B2854;
+    --surface-2:#373361;
+    --surface-3:#15113A;
     --yellow:#FCD34D;
     --yellow-dim:#EAB308;
     --magenta:#EC4899;
     --magenta-dark:#DB2777;
     --emerald:#10B981;
-    --text:#F0EEFF;
-    --text-2:#C4C0E0;
-    --text-3:#7A7A95;
-    --border:rgba(240,238,255,.07);
-    --border-2:rgba(240,238,255,.14);
-    --shadow-y:0 20px 40px -15px rgba(252,211,77,.08);
-    --shadow-m:0 12px 40px rgba(236,72,153,.25);
+    --text:#F5F3FF;
+    --text-2:#D4D2EE;
+    --text-3:#9894C4;
+    --border:rgba(245,243,255,.08);
+    --border-2:rgba(245,243,255,.16);
+    --shadow-y:0 20px 40px -15px rgba(252,211,77,.1);
+    --shadow-m:0 12px 40px rgba(236,72,153,.3);
     --max:1400px;
     --spring:cubic-bezier(.2,.8,.2,1);
   }
@@ -35,13 +34,13 @@
   html{scroll-behavior:smooth}
   body{
     margin:0;
-    font-family:"Geist",system-ui,sans-serif;
+    font-family:"Manrope",system-ui,sans-serif;
+    font-variant-numeric:tabular-nums;
     background:var(--bg);
     color:var(--text);
     line-height:1.55;
     -webkit-font-smoothing:antialiased;
     text-rendering:optimizeLegibility;
-    font-feature-settings:"ss01","cv11";
     overflow-x:hidden;
   }
   img{max-width:100%;display:block}
@@ -90,6 +89,45 @@
   .wrap{max-width:var(--max);margin:0 auto;padding:0 1.5rem;position:relative;z-index:1}
   @media (min-width:1024px){.wrap{padding:0 3rem}}
 
+  /* Image utilities */
+  .img-atmospheric{
+    position:absolute;inset:0;
+    width:100%;height:100%;
+    object-fit:cover;
+    opacity:.18;
+    pointer-events:none;
+    z-index:0;
+    filter:saturate(.9) contrast(1.05);
+  }
+  .img-hero-driver{
+    width:100%;
+    aspect-ratio:4/5;
+    object-fit:cover;
+    border-radius:1rem;
+    border:1px solid var(--border-2);
+    filter:brightness(.92) saturate(1.05);
+    transition:transform .6s var(--spring),filter .6s var(--spring);
+  }
+  .img-hero-driver:hover{filter:brightness(1) saturate(1.15)}
+  .img-city-banner{
+    width:100%;
+    aspect-ratio:21/9;
+    object-fit:cover;
+    border-radius:.75rem;
+    filter:saturate(.85);
+    margin-bottom:2rem;
+    max-height:180px;
+  }
+  .section-with-bg{position:relative;overflow:hidden}
+  .section-with-bg > *{position:relative;z-index:1}
+  .img-overlay::after{
+    content:"";
+    position:absolute;inset:0;
+    background:linear-gradient(180deg, transparent 0%, var(--bg) 95%);
+    z-index:1;
+    pointer-events:none;
+  }
+
   /* NAV */
   .nav{
     position:sticky;top:0;z-index:50;
@@ -113,7 +151,7 @@
     background:var(--magenta);display:inline-block;
   }
   .nav-meta{
-    font-family:"JetBrains Mono",monospace;
+    font-family:"Manrope",system-ui,sans-serif;font-variant-numeric:tabular-nums;
     font-size:.7rem;color:var(--text-3);
     letter-spacing:.14em;text-transform:uppercase;
   }
@@ -134,7 +172,7 @@
 
   .eyebrow{
     display:inline-flex;align-items:center;gap:.6rem;
-    font-family:"JetBrains Mono",monospace;
+    font-family:"Manrope",system-ui,sans-serif;font-variant-numeric:tabular-nums;
     font-size:.7rem;font-weight:500;
     letter-spacing:.2em;text-transform:uppercase;
     color:var(--yellow);
@@ -205,7 +243,46 @@
   }
   .cta-ghost:hover{color:var(--yellow);border-color:var(--yellow)}
 
-  /* Hero NUMERO gigante + PHONE MOCKUP (right side) */
+  /* Hero visual (image + floating badge) */
+  .hero-visual{
+    position:relative;
+    width:100%;
+  }
+  .hero-visual .img-hero-driver{
+    width:100%;
+    max-width:32rem;
+    margin-left:auto;
+    display:block;
+  }
+  .hero-badge{
+    position:absolute;
+    bottom:-1.5rem;left:-1.5rem;
+    background:var(--surface);
+    border:1px solid var(--border-2);
+    border-radius:1rem;
+    padding:1.25rem 1.5rem;
+    box-shadow:0 20px 40px rgba(0,0,0,.3);
+    min-width:12rem;
+    backdrop-filter:blur(14px);
+  }
+  .hero-badge-n{
+    font-weight:800;
+    font-size:clamp(2rem,4.5vw,3rem);
+    color:var(--yellow);
+    line-height:.95;
+    letter-spacing:-.03em;
+    display:block;
+    font-variant-numeric:tabular-nums;
+  }
+  .hero-badge-l{
+    font-size:.78rem;
+    color:var(--text-3);
+    letter-spacing:.06em;
+    margin-top:.4rem;
+    display:flex;align-items:center;gap:.25rem;
+    font-weight:500;
+  }
+  /* Legacy hero-number (nao usado mais mas mantem pra safety) */
   .hero-number{
     text-align:right;
     position:relative;
@@ -213,7 +290,7 @@
     display:flex;flex-direction:column;align-items:flex-end;gap:2rem;
   }
   .hero-number .n{
-    font-family:"JetBrains Mono",monospace;
+    font-family:"Manrope",system-ui,sans-serif;font-variant-numeric:tabular-nums;
     font-weight:500;
     font-size:clamp(3.5rem,9vw,7rem);
     color:var(--yellow);
@@ -222,7 +299,7 @@
     display:block;
   }
   .hero-number .label{
-    font-family:"JetBrains Mono",monospace;
+    font-family:"Manrope",system-ui,sans-serif;font-variant-numeric:tabular-nums;
     font-size:.7rem;
     letter-spacing:.2em;
     text-transform:uppercase;
@@ -360,7 +437,7 @@
     display:flex;flex-direction:column;gap:2rem;
   }
   .map-stat .n{
-    font-family:"JetBrains Mono",monospace;
+    font-family:"Manrope",system-ui,sans-serif;font-variant-numeric:tabular-nums;
     font-weight:500;
     font-size:clamp(2.5rem,5vw,3.6rem);
     color:var(--yellow);
@@ -369,7 +446,7 @@
     display:block;
   }
   .map-stat .l{
-    font-family:"JetBrains Mono",monospace;
+    font-family:"Manrope",system-ui,sans-serif;font-variant-numeric:tabular-nums;
     font-size:.75rem;
     letter-spacing:.16em;text-transform:uppercase;
     color:var(--text-3);
@@ -417,7 +494,7 @@
     gap:3rem;
   }
   .marquee-item{
-    font-family:"JetBrains Mono",monospace;
+    font-family:"Manrope",system-ui,sans-serif;font-variant-numeric:tabular-nums;
     font-size:clamp(1.6rem,3.5vw,2.6rem);
     font-weight:500;
     color:var(--text);
@@ -480,7 +557,7 @@
     border-right:1px solid var(--border);
   }
   .split-col .label{
-    font-family:"JetBrains Mono",monospace;
+    font-family:"Manrope",system-ui,sans-serif;font-variant-numeric:tabular-nums;
     font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;
     color:var(--text-3);
     margin-bottom:1rem;
@@ -509,7 +586,7 @@
   .step:last-child{border-right:0}
   .step:hover{background:var(--surface-2)}
   .step-n{
-    font-family:"JetBrains Mono",monospace;
+    font-family:"Manrope",system-ui,sans-serif;font-variant-numeric:tabular-nums;
     font-size:3rem;font-weight:500;
     color:var(--yellow);line-height:1;
     margin-bottom:1rem;display:block;
@@ -536,7 +613,7 @@
   }
   .bento-cell:hover{background:var(--surface-2)}
   .bento-cell .num{
-    font-family:"JetBrains Mono",monospace;
+    font-family:"Manrope",system-ui,sans-serif;font-variant-numeric:tabular-nums;
     font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
     color:var(--text-3);
     margin-bottom:1rem;
@@ -587,7 +664,7 @@
 
   .testi-tag{
     display:inline-flex;align-items:center;gap:.5rem;
-    font-family:"JetBrains Mono",monospace;
+    font-family:"Manrope",system-ui,sans-serif;font-variant-numeric:tabular-nums;
     font-size:.72rem;font-weight:500;
     letter-spacing:.1em;text-transform:uppercase;
     padding:.4rem .85rem;
@@ -610,7 +687,7 @@
   }
   .testi-author strong{font-weight:600;font-size:1rem;color:var(--text)}
   .testi-author span{
-    font-family:"JetBrains Mono",monospace;
+    font-family:"Manrope",system-ui,sans-serif;font-variant-numeric:tabular-nums;
     font-size:.75rem;color:var(--text-3);letter-spacing:.06em;
   }
 
@@ -633,7 +710,7 @@
 
   .testi-note{
     margin-top:2rem;
-    font-family:"JetBrains Mono",monospace;font-size:.7rem;
+    font-family:"Manrope",system-ui,sans-serif;font-variant-numeric:tabular-nums;font-size:.7rem;
     color:var(--text-3);font-style:italic;letter-spacing:.06em;
   }
 
@@ -653,7 +730,7 @@
   .compare-col.good{background:var(--surface-2)}
   .compare-col.bad{background:var(--surface)}
   .compare-col .label{
-    font-family:"JetBrains Mono",monospace;
+    font-family:"Manrope",system-ui,sans-serif;font-variant-numeric:tabular-nums;
     font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;
     color:var(--text-3);margin-bottom:.8rem;
   }
@@ -669,11 +746,11 @@
   .compare-col li:last-child{border-bottom:0}
   .compare-col.good li::before{
     content:"+";color:var(--yellow);font-weight:700;flex-shrink:0;
-    font-family:"JetBrains Mono",monospace;
+    font-family:"Manrope",system-ui,sans-serif;font-variant-numeric:tabular-nums;
   }
   .compare-col.bad li::before{
     content:"−";color:var(--text-3);font-weight:700;flex-shrink:0;
-    font-family:"JetBrains Mono",monospace;
+    font-family:"Manrope",system-ui,sans-serif;font-variant-numeric:tabular-nums;
   }
   .compare-col.good li{color:var(--text)}
   .compare-col.bad li{color:var(--text-3)}
@@ -682,7 +759,7 @@
     margin-top:2rem;padding:1.5rem 2rem;
     background:var(--surface);border:1px solid var(--border);
     border-radius:.75rem;
-    font-family:"JetBrains Mono",monospace;
+    font-family:"Manrope",system-ui,sans-serif;font-variant-numeric:tabular-nums;
     font-size:.78rem;line-height:1.8;color:var(--text-3);
     letter-spacing:.04em;text-align:center;
   }
@@ -713,7 +790,7 @@
   details.faq-item summary::-webkit-details-marker{display:none}
   details.faq-item summary::after{
     content:"+";
-    font-family:"JetBrains Mono",monospace;
+    font-family:"Manrope",system-ui,sans-serif;font-variant-numeric:tabular-nums;
     font-size:1.5rem;font-weight:300;color:var(--yellow);
     transition:transform .3s var(--spring);flex-shrink:0;line-height:0;
   }
@@ -743,21 +820,21 @@
   .final p{color:var(--text-2);font-size:1.08rem;line-height:1.55;max-width:42ch;margin-bottom:2.25rem}
   .final-micro{
     margin-top:1.25rem;
-    font-family:"JetBrains Mono",monospace;font-size:.7rem;
+    font-family:"Manrope",system-ui,sans-serif;font-variant-numeric:tabular-nums;font-size:.7rem;
     letter-spacing:.12em;color:var(--text-3);text-transform:uppercase;
   }
   .final-n{
     text-align:right;
   }
   .final-n .n{
-    font-family:"JetBrains Mono",monospace;
+    font-family:"Manrope",system-ui,sans-serif;font-variant-numeric:tabular-nums;
     font-size:clamp(2.8rem,6vw,5rem);
     color:var(--yellow);
     line-height:.85;letter-spacing:-.04em;
     font-weight:500;display:block;
   }
   .final-n .l{
-    font-family:"JetBrains Mono",monospace;
+    font-family:"Manrope",system-ui,sans-serif;font-variant-numeric:tabular-nums;
     font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;
     color:var(--text-3);margin-top:.6rem;display:block;
   }
@@ -766,7 +843,7 @@
   footer{
     padding:2.5rem 1.5rem;
     background:var(--surface-3);
-    font-family:"JetBrains Mono",monospace;font-size:.72rem;
+    font-family:"Manrope",system-ui,sans-serif;font-variant-numeric:tabular-nums;font-size:.72rem;
     color:var(--text-3);line-height:1.8;
     letter-spacing:.04em;
     text-align:center;
@@ -802,10 +879,12 @@
 
   /* Responsive */
   @media (max-width:960px){
-    .hero-grid,.split,.final-in,.faq-split,.testi-layout{
+    .hero-grid,.split,.final-in,.faq-split,.testi-layout,.map-grid{
       grid-template-columns:1fr !important;
       gap:2rem;
     }
+    .hero-visual .img-hero-driver{max-width:100%;margin:0 auto}
+    .hero-badge{left:1rem;bottom:1rem}
     .split-col:first-child{border-right:0;border-bottom:1px solid var(--border)}
     .steps-grid{grid-template-columns:1fr 1fr}
     .step{border-right:0;border-bottom:1px solid var(--border);padding:2rem 1.5rem}
@@ -871,47 +950,17 @@
       </div>
     </div>
     <div class="hero-number reveal">
-      <div class="nwrap">
-        <span class="n" data-count-to="4000">0</span>
-        <span class="label"><span class="live-dot" aria-hidden="true"></span>Motoristas ativos agora</span>
-      </div>
-      <div class="phone-mockup" aria-hidden="true">
-        <svg viewBox="0 0 240 480" xmlns="http://www.w3.org/2000/svg">
-          <!-- Phone frame -->
-          <rect x="8" y="8" width="224" height="464" rx="32" fill="#0A0A14" stroke="#3A3A4F" stroke-width="1.5"/>
-          <rect x="16" y="16" width="208" height="448" rx="26" fill="#161628"/>
-          <!-- Notch -->
-          <rect x="95" y="20" width="50" height="14" rx="7" fill="#0A0A14"/>
-          <!-- Screen content: Loovi logo top -->
-          <text x="28" y="72" font-family="Geist, sans-serif" font-size="14" font-weight="900" fill="#F0EEFF" letter-spacing="-0.5">Loovi<tspan fill="#EC4899">.</tspan></text>
-          <!-- Greeting -->
-          <text x="28" y="110" font-family="JetBrains Mono, monospace" font-size="8" fill="#7A7A95" letter-spacing="1.5">OLA, MOTORISTA</text>
-          <!-- Headline -->
-          <text x="28" y="140" font-family="Geist, sans-serif" font-size="16" font-weight="700" fill="#F0EEFF">Seu seguro</text>
-          <text x="28" y="160" font-family="Geist, sans-serif" font-size="16" font-weight="700" fill="#FCD34D">em 2 minutos.</text>
-          <!-- Plate input -->
-          <rect x="28" y="180" width="184" height="40" rx="10" fill="rgba(255,255,255,.04)" stroke="#FCD34D" stroke-width="1.5"/>
-          <text x="42" y="205" font-family="JetBrains Mono, monospace" font-size="13" font-weight="600" fill="#F0EEFF">ABC-1234</text>
-          <rect x="178" y="192" width="24" height="16" rx="2" fill="#FCD34D"/>
-          <!-- Card: Cotacao -->
-          <rect x="28" y="240" width="184" height="72" rx="12" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.08)"/>
-          <text x="42" y="262" font-family="JetBrains Mono, monospace" font-size="7" fill="#7A7A95" letter-spacing="1">MENSALIDADE</text>
-          <text x="42" y="290" font-family="JetBrains Mono, monospace" font-size="22" font-weight="600" fill="#FCD34D">R$ 127<tspan font-size="12" fill="#C4C0E0">/mes</tspan></text>
-          <!-- Feature list -->
-          <g font-family="Geist, sans-serif" font-size="9" fill="#C4C0E0">
-            <circle cx="34" cy="338" r="2" fill="#10B981"/>
-            <text x="44" y="341">Cobertura completa</text>
-            <circle cx="34" cy="358" r="2" fill="#10B981"/>
-            <text x="44" y="361">Carro reserva 7 dias</text>
-            <circle cx="34" cy="378" r="2" fill="#10B981"/>
-            <text x="44" y="381">Assistencia 24h</text>
-          </g>
-          <!-- CTA button -->
-          <rect x="28" y="398" width="184" height="44" rx="10" fill="#EC4899"/>
-          <text x="120" y="425" font-family="Geist, sans-serif" font-size="13" font-weight="700" fill="#fff" text-anchor="middle">Ativar agora →</text>
-          <!-- Bottom nav line -->
-          <rect x="90" y="452" width="60" height="4" rx="2" fill="#3A3A4F"/>
-        </svg>
+      <div class="hero-visual">
+        <img
+          class="img-hero-driver"
+          src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=900&q=85&auto=format&fit=crop"
+          alt="Motorista de aplicativo dirigindo com o celular no painel"
+          loading="eager"
+          width="600" height="750">
+        <div class="hero-badge">
+          <span class="hero-badge-n" data-count-to="4000">0</span>
+          <span class="hero-badge-l"><span class="live-dot" aria-hidden="true"></span>Motoristas ativos agora</span>
+        </div>
       </div>
     </div>
   </div>
@@ -932,7 +981,13 @@
 </div>
 
 <!-- PROBLEMA -->
-<section class="section problem">
+<section class="section problem section-with-bg">
+  <img
+    class="img-atmospheric"
+    src="https://images.unsplash.com/photo-1553830591-d8632a99e6ff?w=1600&q=80&auto=format&fit=crop"
+    alt=""
+    aria-hidden="true"
+    loading="lazy">
   <div class="wrap">
     <div class="section-title">
       <span class="eyebrow">A realidade</span>
@@ -1241,7 +1296,14 @@
 </section>
 
 <!-- FINAL CTA -->
-<section class="final">
+<section class="final section-with-bg">
+  <img
+    class="img-atmospheric"
+    src="https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=1600&q=80&auto=format&fit=crop"
+    alt=""
+    aria-hidden="true"
+    loading="lazy"
+    style="opacity:.12">
   <div class="final-in">
     <div>
       <span class="eyebrow">Última parada</span>
