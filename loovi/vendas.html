@@ -305,13 +305,15 @@
   }
 
   .hero h1{
-    max-width:15ch;
+    max-width:16ch;
     margin-bottom:1.25rem;
+    text-wrap:balance;
   }
   .hero h1 em{
     font-style:normal;
     color:var(--yellow);
     display:inline-block;
+    white-space:nowrap;
   }
 
   .hero-lead{
@@ -521,17 +523,31 @@
     border-bottom:1px solid var(--border);
   }
   .map-grid{
-    display:grid;
-    grid-template-columns:1fr 1.3fr;
-    gap:3rem;
-    align-items:center;
     max-width:var(--max);
     margin:0 auto;
     padding:0 1.5rem;
+    text-align:center;
   }
   @media (min-width:1024px){.map-grid{padding:0 3rem}}
+  .map-head{
+    max-width:42rem;margin:0 auto 3rem;
+  }
+  .map-head .eyebrow{justify-content:center}
   .map-stats{
-    display:flex;flex-direction:column;gap:2rem;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:2rem;
+    max-width:46rem;
+    margin:0 auto;
+  }
+  .map-stat{
+    padding:1.75rem 1rem;
+    border:1px solid var(--border);
+    border-radius:.75rem;
+    background:var(--surface-2);
+  }
+  @media (max-width:640px){
+    .map-stats{grid-template-columns:1fr;gap:1rem}
   }
   .map-stat .n{
     font-family:"Manrope",system-ui,sans-serif;font-variant-numeric:tabular-nums;
@@ -617,6 +633,12 @@
     margin-bottom:2.5rem;
   }
   .section-title .eyebrow{margin-bottom:1rem}
+  .section-title-center{
+    max-width:38rem;
+    margin-left:auto;margin-right:auto;
+    text-align:center;
+  }
+  .section-title-center .eyebrow{justify-content:center}
 
   /* PROBLEMA — 2 col assimetrico: texto + imagem */
   .problem{background:var(--bg)}
@@ -891,6 +913,10 @@
     border-radius:1rem;
     overflow:hidden;
   }
+  @media (max-width:760px){
+    .compare-stack{grid-template-columns:1fr}
+    .compare-col + .compare-col{border-top:1px solid var(--border)}
+  }
   .compare-col{
     padding:2.5rem 2rem;
   }
@@ -1121,29 +1147,39 @@
     outline-offset:-1px;
   }
   body[data-inspect="on"] [data-tipo="organismo"]{outline-color:rgba(236,72,153,.7);outline-style:solid}
-  body[data-inspect="on"] [data-tipo="molecula"]{outline-color:rgba(252,211,77,.55)}
-  body[data-inspect="on"] [data-tipo="atomo"]{outline-color:rgba(16,185,129,.55)}
+  body[data-inspect="on"] [data-tipo="molecula"]{outline-color:rgba(252,211,77,.6)}
+  body[data-inspect="on"] [data-tipo="atomo"]{outline-color:rgba(16,185,129,.6)}
+  body[data-inspect="on"] [data-tipo="texto"]{outline-color:rgba(139,211,255,.6);outline-style:dotted}
   body[data-inspect="on"] [data-element]::before{
     content:attr(data-tipo) " · " attr(data-element);
     position:absolute;top:0;left:0;
     background:#0B0A26;color:#FCD34D;
     font-family:"Manrope",system-ui,sans-serif;font-variant-numeric:tabular-nums;
-    font-size:.62rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
-    padding:3px 7px;
-    border-bottom-right-radius:6px;
+    font-size:.58rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+    padding:2px 6px;
+    border-bottom-right-radius:5px;
     pointer-events:none;
     z-index:50;
     white-space:nowrap;
-    opacity:0;transition:opacity .15s ease;
+    opacity:1;
+    line-height:1.3;
   }
   body[data-inspect="on"] [data-tipo="organismo"]::before{background:#EC4899;color:#fff}
   body[data-inspect="on"] [data-tipo="molecula"]::before{background:#FCD34D;color:#0E0A1F}
   body[data-inspect="on"] [data-tipo="atomo"]::before{background:#10B981;color:#0E0A1F}
-  body[data-inspect="on"] [data-element]:hover::before,
-  body[data-inspect="on"] [data-element].is-focus::before{opacity:1}
+  body[data-inspect="on"] [data-tipo="texto"]::before{
+    background:#8BD3FF;color:#0E0A1F;
+    top:auto;bottom:100%;left:0;
+    border-radius:5px 5px 5px 0;
+    margin-bottom:2px;
+  }
   body[data-inspect="on"] [data-element]:hover{
     outline-width:2px;
     box-shadow:0 0 0 4px rgba(252,211,77,.12);
+  }
+  body[data-inspect="on"] [data-element]:hover::before{
+    z-index:51;transform:scale(1.08);transform-origin:top left;
+    transition:transform .2s var(--spring);
   }
   body[data-inspect="on"] [data-element].is-focus{
     animation:inspect-flash 1.2s ease;
@@ -1198,6 +1234,8 @@
   .inspector-group[data-tipo="molecula"] .inspector-group-title .chip{background:#FCD34D}
   .inspector-group[data-tipo="atomo"] .inspector-group-title{color:#10B981}
   .inspector-group[data-tipo="atomo"] .inspector-group-title .chip{background:#10B981}
+  .inspector-group[data-tipo="texto"] .inspector-group-title{color:#8BD3FF}
+  .inspector-group[data-tipo="texto"] .inspector-group-title .chip{background:#8BD3FF}
   .inspector-group ul{list-style:none;padding:0;margin:0}
   .inspector-item{
     display:block;width:100%;text-align:left;
@@ -1280,9 +1318,9 @@
 <header class="hero" data-element="hero" data-tipo="organismo">
   <div class="hero-grid">
     <div>
-      <span class="eyebrow reveal">Seguro Auto · Motorista de App</span>
-      <h1 class="reveal">Seu carro é sua <em>renda</em>.<br>Proteja os dois.</h1>
-      <p class="hero-lead reveal">Aceita qualquer modelo, paga por mês, ativa em minutos. Sem burocracia, sem vistoria presencial, sem surpresa no fim do ano.</p>
+      <span class="eyebrow reveal" data-element="eyebrow-hero" data-tipo="texto">Seguro Auto · Motorista de App</span>
+      <h1 class="reveal" data-element="headline-hero" data-tipo="texto">Seu carro é sua <em>renda.</em><br>Proteja os dois.</h1>
+      <p class="hero-lead reveal" data-element="lead-hero" data-tipo="texto">Aceita qualquer modelo, paga por mês, ativa em minutos. Sem burocracia, sem vistoria presencial, sem surpresa no fim do ano.</p>
       <div class="hero-cta-row reveal">
         <a href="https://loovi.com.br/cotacao" class="cta-primary" data-magnetic data-element="cta-primario-hero" data-tipo="molecula">
           Cotar meu seguro
@@ -1325,16 +1363,16 @@
 <!-- PROBLEMA -->
 <section class="section problem" data-element="problema" data-tipo="organismo">
   <div class="wrap">
-    <div class="section-title">
-      <span class="eyebrow">A realidade</span>
-      <h2>Um dia ruim trava meses da sua vida.</h2>
+    <div class="section-title section-title-center">
+      <span class="eyebrow" data-element="eyebrow-problema" data-tipo="texto">A realidade</span>
+      <h2 data-element="headline-problema" data-tipo="texto">Um dia ruim trava meses da sua vida.</h2>
     </div>
     <div class="problem-grid">
       <div class="problem-body reveal">
-        <p>Você acorda cedo. Liga o app. Roda 10, 12, 14 horas. Sol, chuva, madrugada. O carro é o que paga aluguel, comida, escola do filho.</p>
-        <p class="problem-kicker">Agora imagina perder tudo numa noite.</p>
-        <p>Um roubo no semáforo. Uma batida voltando pra casa. Um furto enquanto você descansa. Sem seguro, você perde o carro. E <strong>junto com ele, perde a renda</strong>.</p>
-        <p>Sem carro, zero corrida. Sem corrida, zero renda. Sem renda, zero carro novo. O ciclo trava — e desandar pode levar meses. Ou anos.</p>
+        <p data-element="paragrafo-problema-1" data-tipo="texto">Você acorda cedo. Liga o app. Roda 10, 12, 14 horas. Sol, chuva, madrugada. O carro é o que paga aluguel, comida, escola do filho.</p>
+        <p class="problem-kicker" data-element="kicker-problema" data-tipo="texto">Agora imagina perder tudo numa noite.</p>
+        <p data-element="paragrafo-problema-2" data-tipo="texto">Um roubo no semáforo. Uma batida voltando pra casa. Um furto enquanto você descansa. Sem seguro, você perde o carro. E <strong>junto com ele, perde a renda</strong>.</p>
+        <p data-element="paragrafo-problema-3" data-tipo="texto">Sem carro, zero corrida. Sem corrida, zero renda. Sem renda, zero carro novo. O ciclo trava — e desandar pode levar meses. Ou anos.</p>
       </div>
       <figure class="problem-image reveal" data-element="imagem-problema" data-tipo="molecula">
         <img src="https://images.pexels.com/photos/7144242/pexels-photo-7144242.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -1350,14 +1388,14 @@
 <section class="villain" data-element="vilao-comparacao" data-tipo="organismo">
   <div class="split">
     <div class="split-col">
-      <span class="label">Seguradora tradicional</span>
-      <h3>"Seu carro não se enquadra no perfil."</h3>
-      <p>Cotou na Porto, Bradesco, Azul. Ou recusaram. Ou pediram R$ 4 mil de uma vez. Ou mandaram pra vistoria presencial do outro lado da cidade. Para quem usa o carro pra trabalhar, elas só têm recusa.</p>
+      <span class="label" data-element="label-vilao-tradicional" data-tipo="texto">Seguradora tradicional</span>
+      <h3 data-element="headline-vilao-tradicional" data-tipo="texto">"Seu carro não se enquadra no perfil."</h3>
+      <p data-element="paragrafo-vilao-tradicional" data-tipo="texto">Cotou na Porto, Bradesco, Azul. Ou recusaram. Ou pediram R$ 4 mil de uma vez. Ou mandaram pra vistoria presencial do outro lado da cidade. Para quem usa o carro pra trabalhar, elas só têm recusa.</p>
     </div>
     <div class="split-col">
-      <span class="label">Loovi</span>
-      <h3>"Seu carro rodou? A gente aceita."</h3>
-      <p>Insurtech autorizada pela SUSEP que fez o que as tradicionais não quiseram: criar um seguro que cabe no bolso de quem vive da rua. Rebaixado, leilão, carro de 10 anos — cota pelo app em 2 minutos.</p>
+      <span class="label" data-element="label-vilao-loovi" data-tipo="texto">Loovi</span>
+      <h3 data-element="headline-vilao-loovi" data-tipo="texto">"Seu carro rodou? A gente aceita."</h3>
+      <p data-element="paragrafo-vilao-loovi" data-tipo="texto">Insurtech autorizada pela SUSEP que fez o que as tradicionais não quiseram: criar um seguro que cabe no bolso de quem vive da rua. Rebaixado, leilão, carro de 10 anos — cota pelo app em 2 minutos.</p>
     </div>
   </div>
 </section>
@@ -1366,30 +1404,30 @@
 <section class="section solution" id="como-funciona" data-element="solucao-passos" data-tipo="organismo">
   <div class="wrap">
     <div class="section-title">
-      <span class="eyebrow">Como funciona</span>
-      <h2>Ativa em minutos.<br>Como pedir uma corrida.</h2>
+      <span class="eyebrow" data-element="eyebrow-solucao" data-tipo="texto">Como funciona</span>
+      <h2 data-element="headline-solucao" data-tipo="texto">Ativa em minutos.<br>Como pedir uma corrida.</h2>
     </div>
   </div>
   <div class="steps-grid">
     <div class="step">
-      <span class="step-n">01</span>
-      <h3>Cota pelo app</h3>
-      <p>Coloca a placa, responde 3 perguntas, vê o preço na hora.</p>
+      <span class="step-n" data-element="numero-passo" data-tipo="texto">01</span>
+      <h3 data-element="titulo-passo-1" data-tipo="texto">Cota pelo app</h3>
+      <p data-element="descricao-passo-1" data-tipo="texto">Coloca a placa, responde 3 perguntas, vê o preço na hora.</p>
     </div>
     <div class="step">
-      <span class="step-n">02</span>
-      <h3>Escolhe o plano</h3>
-      <p>Monta coberturas que fazem sentido pra você. Paga só pelo que usa.</p>
+      <span class="step-n" data-element="numero-passo" data-tipo="texto">02</span>
+      <h3 data-element="titulo-passo-2" data-tipo="texto">Escolhe o plano</h3>
+      <p data-element="descricao-passo-2" data-tipo="texto">Monta coberturas que fazem sentido pra você. Paga só pelo que usa.</p>
     </div>
     <div class="step">
-      <span class="step-n">03</span>
-      <h3>Vistoria digital</h3>
-      <p>Fotos do carro pelo celular. Sem sair de casa, sem ir em oficina.</p>
+      <span class="step-n" data-element="numero-passo" data-tipo="texto">03</span>
+      <h3 data-element="titulo-passo-3" data-tipo="texto">Vistoria digital</h3>
+      <p data-element="descricao-passo-3" data-tipo="texto">Fotos do carro pelo celular. Sem sair de casa, sem ir em oficina.</p>
     </div>
     <div class="step">
-      <span class="step-n">04</span>
-      <h3>Começa a rodar</h3>
-      <p>Seguro ativo. Paga mensal. Cancela quando quiser, sem multa.</p>
+      <span class="step-n" data-element="numero-passo" data-tipo="texto">04</span>
+      <h3 data-element="titulo-passo-4" data-tipo="texto">Começa a rodar</h3>
+      <p data-element="descricao-passo-4" data-tipo="texto">Seguro ativo. Paga mensal. Cancela quando quiser, sem multa.</p>
     </div>
   </div>
 </section>
@@ -1398,105 +1436,71 @@
 <section class="section coverage" id="coberturas" data-element="coberturas-bento" data-tipo="organismo">
   <div class="wrap">
     <div class="section-title">
-      <span class="eyebrow">O que está incluso</span>
-      <h2>Você monta.<br>Paga só pelo que precisa.</h2>
+      <span class="eyebrow" data-element="eyebrow-coberturas" data-tipo="texto">O que está incluso</span>
+      <h2 data-element="headline-coberturas" data-tipo="texto">Você monta.<br>Paga só pelo que precisa.</h2>
     </div>
     <div class="bento">
       <div class="bento-cell lg">
-        <span class="num">01 · Risco principal</span>
+        <span class="num" data-element="label-cobertura-1" data-tipo="texto">01 · Risco principal</span>
         <div>
-          <h3>Roubo e furto</h3>
-          <p>Roubaram seu carro? Você recebe o valor. Em até 30 dias após documentação entregue.</p>
+          <h3 data-element="titulo-cobertura-1" data-tipo="texto">Roubo e furto</h3>
+          <p data-element="descricao-cobertura-1" data-tipo="texto">Roubaram seu carro? Você recebe o valor. Em até 30 dias após documentação entregue.</p>
         </div>
       </div>
       <div class="bento-cell lg">
-        <span class="num">02 · Risco principal</span>
+        <span class="num" data-element="label-cobertura-2" data-tipo="texto">02 · Risco principal</span>
         <div>
-          <h3>Colisão</h3>
-          <p>Bateu? A Loovi cobre o conserto. Perda total? Paga o valor do carro.</p>
+          <h3 data-element="titulo-cobertura-2" data-tipo="texto">Colisão</h3>
+          <p data-element="descricao-cobertura-2" data-tipo="texto">Bateu? A Loovi cobre o conserto. Perda total? Paga o valor do carro.</p>
         </div>
       </div>
       <div class="bento-cell md">
-        <span class="num">03 · Assistência</span>
-        <div><h3>24/7</h3><p>Reboque, pneu, bateria, chaveiro.</p></div>
+        <span class="num" data-element="label-cobertura-3" data-tipo="texto">03 · Assistência</span>
+        <div><h3 data-element="titulo-cobertura-3" data-tipo="texto">24/7</h3><p data-element="descricao-cobertura-3" data-tipo="texto">Reboque, pneu, bateria, chaveiro.</p></div>
       </div>
       <div class="bento-cell md">
-        <span class="num">04 · Continuidade</span>
-        <div><h3>Carro reserva</h3><p>Oficina? Pega emprestado e roda.</p></div>
+        <span class="num" data-element="label-cobertura-4" data-tipo="texto">04 · Continuidade</span>
+        <div><h3 data-element="titulo-cobertura-4" data-tipo="texto">Carro reserva</h3><p data-element="descricao-cobertura-4" data-tipo="texto">Oficina? Pega emprestado e roda.</p></div>
       </div>
       <div class="bento-cell md">
-        <span class="num">05 · Reparo</span>
-        <div><h3>Vidros e faróis</h3><p>Para-brisa trincado? Troca coberta.</p></div>
+        <span class="num" data-element="label-cobertura-5" data-tipo="texto">05 · Reparo</span>
+        <div><h3 data-element="titulo-cobertura-5" data-tipo="texto">Vidros e faróis</h3><p data-element="descricao-cobertura-5" data-tipo="texto">Para-brisa trincado? Troca coberta.</p></div>
       </div>
       <div class="bento-cell lg">
-        <span class="num">06 · Proteção</span>
-        <div><h3>Terceiros + Incêndio</h3><p>Bateu no carro do outro, curto-circuito, fogo — tudo coberto.</p></div>
+        <span class="num" data-element="label-cobertura-6" data-tipo="texto">06 · Proteção</span>
+        <div><h3 data-element="titulo-cobertura-6" data-tipo="texto">Terceiros + Incêndio</h3><p data-element="descricao-cobertura-6" data-tipo="texto">Bateu no carro do outro, curto-circuito, fogo — tudo coberto.</p></div>
       </div>
       <div class="bento-cell feature" data-element="bento-feature" data-tipo="molecula">
-        <span class="num">07 · Sua escolha</span>
+        <span class="num" data-element="label-cobertura-7" data-tipo="texto">07 · Sua escolha</span>
         <div>
-          <h3>Você monta o plano</h3>
-          <p>Sem pacote fechado. Escolhe as coberturas, paga só pelo que precisa. Transparente.</p>
+          <h3 data-element="titulo-cobertura-7" data-tipo="texto">Você monta o plano</h3>
+          <p data-element="descricao-cobertura-7" data-tipo="texto">Sem pacote fechado. Escolhe as coberturas, paga só pelo que precisa. Transparente.</p>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- MAPA BRASIL -->
+<!-- COBERTURA NACIONAL -->
 <section class="coverage-map" id="cobertura-nacional" data-element="cobertura-nacional" data-tipo="organismo">
   <div class="map-grid">
+    <div class="map-head reveal">
+      <span class="eyebrow" data-element="eyebrow-cobertura" data-tipo="texto">Cobertura nacional</span>
+      <h2 style="margin-top:1rem" data-element="headline-cobertura" data-tipo="texto">A Loovi chega onde<br>o carro chega.</h2>
+    </div>
     <div class="map-stats reveal">
-      <div>
-        <span class="eyebrow">Cobertura nacional</span>
-        <h2 style="margin-top:1rem">A Loovi chega onde<br>o carro chega.</h2>
-      </div>
-      <div class="map-stat">
+      <div class="map-stat" data-element="stat-estados" data-tipo="molecula">
         <span class="n" data-count-to="27">0</span>
         <span class="l">Estados atendidos</span>
       </div>
-      <div class="map-stat">
+      <div class="map-stat" data-element="stat-municipios" data-tipo="molecula">
         <span class="n" data-count-to="5570">0</span>
-        <span class="l">Municipios atendidos</span>
+        <span class="l">Municípios atendidos</span>
       </div>
-      <div class="map-stat">
+      <div class="map-stat" data-element="stat-assistencia" data-tipo="molecula">
         <span class="n"><span class="live-dot"></span>24h</span>
-        <span class="l">Assistencia ativa</span>
+        <span class="l">Assistência ativa</span>
       </div>
-    </div>
-    <div class="brasil-map reveal">
-      <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg" aria-label="Mapa do Brasil com 27 estados atendidos">
-        <path class="brasil-outline" d="M165,25 C190,20 220,30 250,28 C285,25 315,35 340,50 C370,65 400,85 420,115 C440,150 450,190 445,230 C440,275 420,315 395,350 C375,380 345,400 315,420 C290,440 265,455 240,455 C215,450 195,430 180,405 C165,375 150,340 140,300 C130,255 120,210 125,165 C130,120 140,80 150,55 C155,40 158,30 165,25 Z" opacity=".18" fill="#F5F3FF"/>
-        <g class="state-dots">
-          <circle class="state-dot" cx="167" cy="28" r="4.5" style="animation-delay:.05s"/>
-          <circle class="state-dot" cx="286" cy="63" r="4.5" style="animation-delay:.1s"/>
-          <circle class="state-dot" cx="319" cy="83" r="4.5" style="animation-delay:.15s"/>
-          <circle class="state-dot" cx="371" cy="96" r="4.5" style="animation-delay:.2s"/>
-          <circle class="state-dot" cx="175" cy="104" r="4.5" style="animation-delay:.25s"/>
-          <circle class="state-dot" cx="443" cy="111" r="4.5" style="animation-delay:.3s"/>
-          <circle class="state-dot" cx="390" cy="129" r="4.5" style="animation-delay:.35s"/>
-          <circle class="state-dot" cx="485" cy="138" r="4.5" style="animation-delay:.4s"/>
-          <circle class="state-dot" cx="489" cy="155" r="4.5" style="animation-delay:.45s"/>
-          <circle class="state-dot" cx="488" cy="167" r="4.5" style="animation-delay:.5s"/>
-          <circle class="state-dot" cx="126" cy="176" r="4.5" style="animation-delay:.55s"/>
-          <circle class="state-dot" cx="478" cy="186" r="4.5" style="animation-delay:.6s"/>
-          <circle class="state-dot" cx="77" cy="192" r="4.5" style="animation-delay:.65s"/>
-          <circle class="state-dot" cx="321" cy="194" r="4.5" style="animation-delay:.7s"/>
-          <circle class="state-dot" cx="461" cy="204" r="4.5" style="animation-delay:.75s"/>
-          <circle class="state-dot" cx="443" cy="230" r="4.5" style="animation-delay:.8s"/>
-          <circle class="state-dot" cx="224" cy="264" r="4.5" style="animation-delay:.85s"/>
-          <circle class="state-dot" cx="326" cy="266" r="5.5" style="animation-delay:.9s"/>
-          <circle class="state-dot" cx="310" cy="278" r="4.5" style="animation-delay:.95s"/>
-          <circle class="state-dot" cx="376" cy="319" r="4.5" style="animation-delay:1s"/>
-          <circle class="state-dot" cx="421" cy="324" r="4.5" style="animation-delay:1.05s"/>
-          <circle class="state-dot" cx="242" cy="327" r="4.5" style="animation-delay:1.1s"/>
-          <circle class="state-dot pulse" cx="342" cy="365" r="6" style="animation-delay:1.15s"/>
-          <circle class="state-dot pulse" cx="386" cy="357" r="5.5" style="animation-delay:1.2s"/>
-          <circle class="state-dot" cx="309" cy="390" r="4.5" style="animation-delay:1.25s"/>
-          <circle class="state-dot" cx="318" cy="418" r="4.5" style="animation-delay:1.3s"/>
-          <circle class="state-dot" cx="284" cy="449" r="4.5" style="animation-delay:1.35s"/>
-        </g>
-      </svg>
     </div>
   </div>
 </section>
@@ -1505,18 +1509,18 @@
 <section class="section testimonials" id="depoimentos" data-element="depoimentos" data-tipo="organismo">
   <div class="wrap">
     <div class="section-title">
-      <span class="eyebrow">Prova · Sinistros pagos</span>
-      <h2>Histórias de quem já precisou.</h2>
+      <span class="eyebrow" data-element="eyebrow-depoimentos" data-tipo="texto">Prova · Sinistros pagos</span>
+      <h2 data-element="headline-depoimentos" data-tipo="texto">Histórias de quem já precisou.</h2>
     </div>
     <div class="testi-layout">
       <article class="testi-feature" data-tilt data-element="depoimento-feature" data-tipo="molecula">
-        <span class="testi-tag">✓ R$ 38.000 em 28 dias</span>
-        <p class="testi-quote">Todo mundo falava <em>'esse seguro baratinho não vai pagar'</em>. Quando roubaram meu carro, em 28 dias caiu o valor. Comprei outro carro e voltei a rodar.</p>
+        <span class="testi-tag" data-element="tag-depoimento" data-tipo="texto">✓ R$ 38.000 em 28 dias</span>
+        <p class="testi-quote" data-element="quote-depoimento-feature" data-tipo="texto">Todo mundo falava <em>'esse seguro baratinho não vai pagar'</em>. Quando roubaram meu carro, em 28 dias caiu o valor. Comprei outro carro e voltei a rodar.</p>
         <div class="testi-author">
           <img class="avatar" src="https://picsum.photos/seed/carlos-uber-sp/120/120" alt="Carlos Eduardo" loading="lazy">
           <div class="testi-author-text">
-            <strong>Carlos Eduardo, 34</strong>
-            <span>Uber · Guarulhos/SP</span>
+            <strong data-element="nome-depoente" data-tipo="texto">Carlos Eduardo, 34</strong>
+            <span data-element="contexto-depoente" data-tipo="texto">Uber · Guarulhos/SP</span>
           </div>
         </div>
       </article>
@@ -1553,8 +1557,8 @@
 <section class="section trust" id="credibilidade" data-element="credibilidade" data-tipo="organismo">
   <div class="wrap">
     <div class="section-title">
-      <span class="eyebrow">Credibilidade</span>
-      <h2>Seguro de verdade,<br>não proteção veicular.</h2>
+      <span class="eyebrow" data-element="eyebrow-credibilidade" data-tipo="texto">Credibilidade</span>
+      <h2 data-element="headline-credibilidade" data-tipo="texto">Seguro de verdade,<br>não proteção veicular.</h2>
     </div>
     <figure class="trust-banner reveal" data-element="banner-credibilidade" data-tipo="molecula">
       <img src="https://images.pexels.com/photos/7144176/pexels-photo-7144176.jpeg?auto=compress&cs=tinysrgb&w=1800"
@@ -1568,8 +1572,8 @@
     </figure>
     <div class="compare-stack" data-element="tabela-comparacao" data-tipo="molecula">
       <div class="compare-col good">
-        <span class="label">Loovi · Seguro regulado</span>
-        <h3>O que você ganha</h3>
+        <span class="label" data-element="label-loovi" data-tipo="texto">Loovi · Seguro regulado</span>
+        <h3 data-element="titulo-loovi-ganha" data-tipo="texto">O que você ganha</h3>
         <ul>
           <li>Regulada pela SUSEP</li>
           <li>Obrigada a pagar por lei</li>
@@ -1579,8 +1583,8 @@
         </ul>
       </div>
       <div class="compare-col bad">
-        <span class="label">Proteção veicular · Associação</span>
-        <h3>O que falta</h3>
+        <span class="label" data-element="label-protecao-veicular" data-tipo="texto">Proteção veicular · Associação</span>
+        <h3 data-element="titulo-protecao-veicular" data-tipo="texto">O que falta</h3>
         <ul>
           <li>Não é regulada</li>
           <li>Não é obrigada a pagar</li>
@@ -1590,7 +1594,7 @@
         </ul>
       </div>
     </div>
-    <div class="trust-facts">
+    <div class="trust-facts" data-element="aviso-legal-trust" data-tipo="texto">
       LTI Seguros S.A. · CNPJ 47.006.254/0001-80 · Processo SUSEP nº 15414.649321/2021-55 · Sandbox Regulatório SUSEP 2ª edição
     </div>
   </div>
@@ -1601,41 +1605,41 @@
   <div class="wrap">
     <div class="faq-split">
       <div class="faq-left">
-        <span class="eyebrow">Dúvidas</span>
-        <h2 style="margin-top:.8rem">Perguntas que todo motorista faz.</h2>
+        <span class="eyebrow" data-element="eyebrow-faq" data-tipo="texto">Dúvidas</span>
+        <h2 style="margin-top:.8rem" data-element="headline-faq" data-tipo="texto">Perguntas que todo motorista faz.</h2>
       </div>
       <div class="faq-items">
         <details class="faq-item" open>
-          <summary>Aceita qualquer carro?</summary>
-          <p>Sim. Inclusive rebaixado, de leilão, e carros que outras seguradoras recusam. Cote pelo app e descubra na hora se o seu é aceito.</p>
+          <summary data-element="pergunta-faq-1" data-tipo="texto">Aceita qualquer carro?</summary>
+          <p data-element="resposta-faq-1" data-tipo="texto">Sim. Inclusive rebaixado, de leilão, e carros que outras seguradoras recusam. Cote pelo app e descubra na hora se o seu é aceito.</p>
         </details>
         <details class="faq-item">
-          <summary>Quanto custa?</summary>
-          <p>Depende do carro, cidade e coberturas que você escolher. Pagamento é mensal — sem parcela anual. Cote em 2 minutos.</p>
+          <summary data-element="pergunta-faq-2" data-tipo="texto">Quanto custa?</summary>
+          <p data-element="resposta-faq-2" data-tipo="texto">Depende do carro, cidade e coberturas que você escolher. Pagamento é mensal — sem parcela anual. Cote em 2 minutos.</p>
         </details>
         <details class="faq-item">
-          <summary>Posso cancelar quando quiser?</summary>
-          <p>Sim. Sem multa, sem fidelidade. Pagou o mês, tá coberto. Não quer mais, cancela pelo app.</p>
+          <summary data-element="pergunta-faq-3" data-tipo="texto">Posso cancelar quando quiser?</summary>
+          <p data-element="resposta-faq-3" data-tipo="texto">Sim. Sem multa, sem fidelidade. Pagou o mês, tá coberto. Não quer mais, cancela pelo app.</p>
         </details>
         <details class="faq-item">
-          <summary>Cobre Uber, 99 e iFood?</summary>
-          <p>Sim. Motoristas de aplicativo são bem-vindos. O seguro cobre o carro independente do uso (lazer ou trabalho).</p>
+          <summary data-element="pergunta-faq-4" data-tipo="texto">Cobre Uber, 99 e iFood?</summary>
+          <p data-element="resposta-faq-4" data-tipo="texto">Sim. Motoristas de aplicativo são bem-vindos. O seguro cobre o carro independente do uso (lazer ou trabalho).</p>
         </details>
         <details class="faq-item">
-          <summary>Guincho de madrugada funciona?</summary>
-          <p>Sim. Assistência 24h, 7 dias por semana, inclusive feriados. Aciona pelo app ou pelo 0800.</p>
+          <summary data-element="pergunta-faq-5" data-tipo="texto">Guincho de madrugada funciona?</summary>
+          <p data-element="resposta-faq-5" data-tipo="texto">Sim. Assistência 24h, 7 dias por semana, inclusive feriados. Aciona pelo app ou pelo 0800.</p>
         </details>
         <details class="faq-item">
-          <summary>Quanto tempo pra receber indenização?</summary>
-          <p>Até 30 dias após entrega da documentação. Tudo digital — você acompanha pelo app.</p>
+          <summary data-element="pergunta-faq-6" data-tipo="texto">Quanto tempo pra receber indenização?</summary>
+          <p data-element="resposta-faq-6" data-tipo="texto">Até 30 dias após entrega da documentação. Tudo digital — você acompanha pelo app.</p>
         </details>
         <details class="faq-item">
-          <summary>Precisa fazer vistoria presencial?</summary>
-          <p>Não. A vistoria é digital. Você tira fotos e vídeos do carro pelo celular.</p>
+          <summary data-element="pergunta-faq-7" data-tipo="texto">Precisa fazer vistoria presencial?</summary>
+          <p data-element="resposta-faq-7" data-tipo="texto">Não. A vistoria é digital. Você tira fotos e vídeos do carro pelo celular.</p>
         </details>
         <details class="faq-item">
-          <summary>Qual a diferença pra proteção veicular?</summary>
-          <p>Loovi é seguro regulado pela SUSEP — a seguradora é obrigada por lei a pagar. Proteção veicular é associação sem regulação — se não pagar, você não tem a quem recorrer.</p>
+          <summary data-element="pergunta-faq-8" data-tipo="texto">Qual a diferença pra proteção veicular?</summary>
+          <p data-element="resposta-faq-8" data-tipo="texto">Loovi é seguro regulado pela SUSEP — a seguradora é obrigada por lei a pagar. Proteção veicular é associação sem regulação — se não pagar, você não tem a quem recorrer.</p>
         </details>
       </div>
     </div>
@@ -1646,9 +1650,9 @@
 <section class="final" data-element="cta-final" data-tipo="organismo">
   <div class="final-in">
     <div>
-      <span class="eyebrow">Última parada</span>
-      <h2 style="margin-top:1rem">Você já sabe<br>que <em>precisa</em>.</h2>
-      <p>Cada dia rodando sem seguro é um dia de risco. Cota em 2 minutos. Vê o preço. Decide sem pressão.</p>
+      <span class="eyebrow" data-element="eyebrow-cta-final" data-tipo="texto">Última parada</span>
+      <h2 style="margin-top:1rem" data-element="headline-cta-final" data-tipo="texto">Você já sabe<br>que <em>precisa</em>.</h2>
+      <p data-element="lead-cta-final" data-tipo="texto">Cada dia rodando sem seguro é um dia de risco. Cota em 2 minutos. Vê o preço. Decide sem pressão.</p>
       <a href="https://loovi.com.br/cotacao" class="cta-primary" data-magnetic>
         Cotar meu seguro
         <span class="arrow" aria-hidden="true">→</span>
@@ -1930,12 +1934,12 @@
     const count = document.getElementById('inspector-count');
     if (!toggle || !panel || !body) return;
 
-    const TYPE_ORDER = ['organismo','molecula','atomo'];
-    const TYPE_LABEL = {organismo:'Organismos',molecula:'Moléculas',atomo:'Átomos'};
+    const TYPE_ORDER = ['organismo','molecula','atomo','texto'];
+    const TYPE_LABEL = {organismo:'Organismos',molecula:'Moléculas',atomo:'Átomos',texto:'Textos'};
 
     function buildPanel(){
       const nodes = document.querySelectorAll('[data-element]');
-      const groups = {organismo:[],molecula:[],atomo:[]};
+      const groups = {organismo:[],molecula:[],atomo:[],texto:[]};
       nodes.forEach((el,i) => {
         const tipo = el.dataset.tipo || 'molecula';
         if (!groups[tipo]) groups[tipo] = [];
