@@ -1085,6 +1085,135 @@
     .problem-grid{grid-template-columns:1fr;gap:2.5rem}
   }
 
+  /* =========================
+     INSPECTOR (mapa dos elementos) — opt-in via botão flutuante
+     ========================= */
+  .inspector-toggle{
+    position:fixed;left:1.25rem;bottom:1.25rem;z-index:9999;
+    display:inline-flex;align-items:center;gap:.5rem;
+    padding:.75rem 1rem;
+    background:#0B0A26;color:#F5F3FF;
+    border:1px solid rgba(245,243,255,.18);
+    border-radius:999px;
+    font-family:"Manrope",system-ui,sans-serif;
+    font-size:.78rem;font-weight:600;letter-spacing:.04em;
+    cursor:pointer;
+    box-shadow:0 10px 30px rgba(0,0,0,.4);
+    transition:background .2s ease,border-color .2s ease,transform .2s var(--spring);
+  }
+  .inspector-toggle:hover{background:#141233;border-color:rgba(252,211,77,.4);transform:translateY(-2px)}
+  .inspector-toggle .dot{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--text-3);transition:background .2s ease;
+  }
+  body[data-inspect="on"] .inspector-toggle{
+    background:#FCD34D;color:#0E0A1F;border-color:#FCD34D;
+  }
+  body[data-inspect="on"] .inspector-toggle .dot{background:#10B981}
+  @media (max-width:640px){
+    .inspector-toggle{font-size:.7rem;padding:.6rem .85rem;bottom:5.5rem}
+  }
+
+  /* Inspector outlines — só quando ativo */
+  body[data-inspect="on"] [data-element]{
+    position:relative;
+    outline:1px dashed rgba(252,211,77,.55);
+    outline-offset:-1px;
+  }
+  body[data-inspect="on"] [data-tipo="organismo"]{outline-color:rgba(236,72,153,.7);outline-style:solid}
+  body[data-inspect="on"] [data-tipo="molecula"]{outline-color:rgba(252,211,77,.55)}
+  body[data-inspect="on"] [data-tipo="atomo"]{outline-color:rgba(16,185,129,.55)}
+  body[data-inspect="on"] [data-element]::before{
+    content:attr(data-tipo) " · " attr(data-element);
+    position:absolute;top:0;left:0;
+    background:#0B0A26;color:#FCD34D;
+    font-family:"Manrope",system-ui,sans-serif;font-variant-numeric:tabular-nums;
+    font-size:.62rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+    padding:3px 7px;
+    border-bottom-right-radius:6px;
+    pointer-events:none;
+    z-index:50;
+    white-space:nowrap;
+    opacity:0;transition:opacity .15s ease;
+  }
+  body[data-inspect="on"] [data-tipo="organismo"]::before{background:#EC4899;color:#fff}
+  body[data-inspect="on"] [data-tipo="molecula"]::before{background:#FCD34D;color:#0E0A1F}
+  body[data-inspect="on"] [data-tipo="atomo"]::before{background:#10B981;color:#0E0A1F}
+  body[data-inspect="on"] [data-element]:hover::before,
+  body[data-inspect="on"] [data-element].is-focus::before{opacity:1}
+  body[data-inspect="on"] [data-element]:hover{
+    outline-width:2px;
+    box-shadow:0 0 0 4px rgba(252,211,77,.12);
+  }
+  body[data-inspect="on"] [data-element].is-focus{
+    animation:inspect-flash 1.2s ease;
+  }
+  @keyframes inspect-flash{
+    0%{box-shadow:0 0 0 0 rgba(236,72,153,.6)}
+    50%{box-shadow:0 0 0 12px rgba(236,72,153,.25)}
+    100%{box-shadow:0 0 0 0 rgba(236,72,153,0)}
+  }
+
+  /* Painel lateral do inspector */
+  .inspector-panel{
+    position:fixed;right:1.25rem;bottom:1.25rem;top:1.25rem;
+    width:min(22rem,calc(100vw - 2.5rem));
+    background:#0B0A26;
+    border:1px solid rgba(245,243,255,.12);
+    border-radius:1rem;
+    z-index:9998;
+    display:none;
+    flex-direction:column;
+    overflow:hidden;
+    box-shadow:0 30px 60px rgba(0,0,0,.5);
+    font-family:"Manrope",system-ui,sans-serif;
+  }
+  body[data-inspect="on"] .inspector-panel{display:flex}
+  .inspector-panel-head{
+    padding:1rem 1.25rem;
+    border-bottom:1px solid rgba(245,243,255,.08);
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .inspector-panel-head h4{
+    margin:0;font-size:.88rem;font-weight:700;color:#F5F3FF;letter-spacing:-.01em;
+  }
+  .inspector-panel-head .count{
+    font-size:.7rem;color:#FCD34D;font-variant-numeric:tabular-nums;letter-spacing:.08em;
+  }
+  .inspector-panel-body{
+    padding:.5rem 0 1rem;
+    overflow:auto;flex:1;
+  }
+  .inspector-group{padding:.75rem 1.25rem .25rem}
+  .inspector-group-title{
+    font-size:.62rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;
+    margin:0 0 .5rem;display:flex;align-items:center;gap:.5rem;
+  }
+  .inspector-group-title .chip{
+    width:8px;height:8px;border-radius:2px;display:inline-block;
+  }
+  .inspector-group[data-tipo="organismo"] .inspector-group-title{color:#EC4899}
+  .inspector-group[data-tipo="organismo"] .inspector-group-title .chip{background:#EC4899}
+  .inspector-group[data-tipo="molecula"] .inspector-group-title{color:#FCD34D}
+  .inspector-group[data-tipo="molecula"] .inspector-group-title .chip{background:#FCD34D}
+  .inspector-group[data-tipo="atomo"] .inspector-group-title{color:#10B981}
+  .inspector-group[data-tipo="atomo"] .inspector-group-title .chip{background:#10B981}
+  .inspector-group ul{list-style:none;padding:0;margin:0}
+  .inspector-item{
+    display:block;width:100%;text-align:left;
+    padding:.55rem .75rem;
+    background:transparent;border:0;border-radius:.5rem;
+    color:#D4D2EE;font-size:.78rem;font-weight:500;
+    cursor:pointer;margin-bottom:2px;
+    font-family:inherit;
+    transition:background .15s ease,color .15s ease;
+  }
+  .inspector-item:hover{background:rgba(245,243,255,.06);color:#F5F3FF}
+  .inspector-item .idx{
+    color:#7A7A95;font-variant-numeric:tabular-nums;
+    font-size:.68rem;margin-right:.5rem;letter-spacing:.06em;
+  }
+
   /* Reduced motion */
   @media (prefers-reduced-motion:reduce){
     .reveal,.reveal-stagger > *{opacity:1;transform:none;transition:none}
@@ -1100,11 +1229,25 @@
 <body>
 
 <div class="scroll-progress" aria-hidden="true"></div>
+
+<!-- INSPECTOR OVERLAY — mapa dos elementos -->
+<button id="inspector-toggle" class="inspector-toggle" type="button" aria-pressed="false" aria-label="Alternar mapa dos elementos">
+  <span class="dot" aria-hidden="true"></span>
+  <span class="label">Mapa dos elementos</span>
+</button>
+<aside id="inspector-panel" class="inspector-panel" aria-hidden="true">
+  <div class="inspector-panel-head">
+    <h4>Mapa dos elementos</h4>
+    <span class="count" id="inspector-count">0</span>
+  </div>
+  <div class="inspector-panel-body" id="inspector-panel-body"></div>
+</aside>
+<!-- /INSPECTOR OVERLAY -->
 <div class="blob blob-1" aria-hidden="true"></div>
 <div class="blob blob-2" aria-hidden="true"></div>
 <div class="particles" aria-hidden="true" id="particles"></div>
 
-<nav class="nav">
+<nav class="nav" data-element="nav-principal" data-tipo="organismo">
   <div class="nav-in">
     <a href="#" class="logo" aria-label="Loovi — início">Loovi</a>
     <ul class="nav-menu">
@@ -1134,18 +1277,18 @@
 </div>
 
 <!-- HERO asymmetric -->
-<header class="hero">
+<header class="hero" data-element="hero" data-tipo="organismo">
   <div class="hero-grid">
     <div>
       <span class="eyebrow reveal">Seguro Auto · Motorista de App</span>
       <h1 class="reveal">Seu carro é sua <em>renda</em>.<br>Proteja os dois.</h1>
       <p class="hero-lead reveal">Aceita qualquer modelo, paga por mês, ativa em minutos. Sem burocracia, sem vistoria presencial, sem surpresa no fim do ano.</p>
       <div class="hero-cta-row reveal">
-        <a href="https://loovi.com.br/cotacao" class="cta-primary" data-magnetic>
+        <a href="https://loovi.com.br/cotacao" class="cta-primary" data-magnetic data-element="cta-primario-hero" data-tipo="molecula">
           Cotar meu seguro
           <span class="arrow" aria-hidden="true">→</span>
         </a>
-        <a href="#como-funciona" class="cta-ghost">Como funciona</a>
+        <a href="#como-funciona" class="cta-ghost" data-element="cta-secundario-hero" data-tipo="molecula">Como funciona</a>
       </div>
     </div>
     <div class="hero-number reveal">
@@ -1156,7 +1299,7 @@
              loading="eager"
              fetchpriority="high"
              width="1400" height="1750">
-        <div class="hero-badge">
+        <div class="hero-badge" data-element="hero-badge-contador" data-tipo="molecula">
           <span class="hero-badge-n" data-count-to="4000">0</span>
           <span class="hero-badge-l"><span class="live-dot" aria-hidden="true"></span>Motoristas ativos agora</span>
         </div>
@@ -1166,7 +1309,7 @@
 </header>
 
 <!-- KINETIC MARQUEE -->
-<div class="marquee" aria-hidden="true">
+<div class="marquee" aria-hidden="true" data-element="marquee-cinetico" data-tipo="organismo">
   <div class="marquee-track">
     <span class="marquee-item"><span class="y">+4000</span> motoristas protegidos</span>
     <span class="marquee-item">27 estados</span>
@@ -1180,7 +1323,7 @@
 </div>
 
 <!-- PROBLEMA -->
-<section class="section problem">
+<section class="section problem" data-element="problema" data-tipo="organismo">
   <div class="wrap">
     <div class="section-title">
       <span class="eyebrow">A realidade</span>
@@ -1193,7 +1336,7 @@
         <p>Um roubo no semáforo. Uma batida voltando pra casa. Um furto enquanto você descansa. Sem seguro, você perde o carro. E <strong>junto com ele, perde a renda</strong>.</p>
         <p>Sem carro, zero corrida. Sem corrida, zero renda. Sem renda, zero carro novo. O ciclo trava — e desandar pode levar meses. Ou anos.</p>
       </div>
-      <figure class="problem-image reveal">
+      <figure class="problem-image reveal" data-element="imagem-problema" data-tipo="molecula">
         <img src="https://images.pexels.com/photos/7144242/pexels-photo-7144242.jpeg?auto=compress&cs=tinysrgb&w=1200"
              alt="Motorista pensativa dentro do carro"
              loading="lazy"
@@ -1204,7 +1347,7 @@
 </section>
 
 <!-- VILAO split -->
-<section class="villain">
+<section class="villain" data-element="vilao-comparacao" data-tipo="organismo">
   <div class="split">
     <div class="split-col">
       <span class="label">Seguradora tradicional</span>
@@ -1220,7 +1363,7 @@
 </section>
 
 <!-- SOLUCAO -->
-<section class="section solution" id="como-funciona">
+<section class="section solution" id="como-funciona" data-element="solucao-passos" data-tipo="organismo">
   <div class="wrap">
     <div class="section-title">
       <span class="eyebrow">Como funciona</span>
@@ -1252,7 +1395,7 @@
 </section>
 
 <!-- COBERTURAS — bento asymmetric -->
-<section class="section coverage" id="coberturas">
+<section class="section coverage" id="coberturas" data-element="coberturas-bento" data-tipo="organismo">
   <div class="wrap">
     <div class="section-title">
       <span class="eyebrow">O que está incluso</span>
@@ -1289,7 +1432,7 @@
         <span class="num">06 · Proteção</span>
         <div><h3>Terceiros + Incêndio</h3><p>Bateu no carro do outro, curto-circuito, fogo — tudo coberto.</p></div>
       </div>
-      <div class="bento-cell feature">
+      <div class="bento-cell feature" data-element="bento-feature" data-tipo="molecula">
         <span class="num">07 · Sua escolha</span>
         <div>
           <h3>Você monta o plano</h3>
@@ -1301,7 +1444,7 @@
 </section>
 
 <!-- MAPA BRASIL -->
-<section class="coverage-map" id="cobertura-nacional">
+<section class="coverage-map" id="cobertura-nacional" data-element="cobertura-nacional" data-tipo="organismo">
   <div class="map-grid">
     <div class="map-stats reveal">
       <div>
@@ -1359,14 +1502,14 @@
 </section>
 
 <!-- DEPOIMENTOS -->
-<section class="section testimonials" id="depoimentos">
+<section class="section testimonials" id="depoimentos" data-element="depoimentos" data-tipo="organismo">
   <div class="wrap">
     <div class="section-title">
       <span class="eyebrow">Prova · Sinistros pagos</span>
       <h2>Histórias de quem já precisou.</h2>
     </div>
     <div class="testi-layout">
-      <article class="testi-feature" data-tilt>
+      <article class="testi-feature" data-tilt data-element="depoimento-feature" data-tipo="molecula">
         <span class="testi-tag">✓ R$ 38.000 em 28 dias</span>
         <p class="testi-quote">Todo mundo falava <em>'esse seguro baratinho não vai pagar'</em>. Quando roubaram meu carro, em 28 dias caiu o valor. Comprei outro carro e voltei a rodar.</p>
         <div class="testi-author">
@@ -1407,13 +1550,13 @@
 </section>
 
 <!-- TRUST / COMPARACAO -->
-<section class="section trust" id="credibilidade">
+<section class="section trust" id="credibilidade" data-element="credibilidade" data-tipo="organismo">
   <div class="wrap">
     <div class="section-title">
       <span class="eyebrow">Credibilidade</span>
       <h2>Seguro de verdade,<br>não proteção veicular.</h2>
     </div>
-    <figure class="trust-banner reveal">
+    <figure class="trust-banner reveal" data-element="banner-credibilidade" data-tipo="molecula">
       <img src="https://images.pexels.com/photos/7144176/pexels-photo-7144176.jpeg?auto=compress&cs=tinysrgb&w=1800"
            alt="Equipe Loovi em reunião"
            loading="lazy"
@@ -1423,7 +1566,7 @@
         <h3>Contrato formal. Respaldo jurídico. Obrigação legal de indenizar.</h3>
       </figcaption>
     </figure>
-    <div class="compare-stack">
+    <div class="compare-stack" data-element="tabela-comparacao" data-tipo="molecula">
       <div class="compare-col good">
         <span class="label">Loovi · Seguro regulado</span>
         <h3>O que você ganha</h3>
@@ -1454,7 +1597,7 @@
 </section>
 
 <!-- FAQ split -->
-<section class="section faq" id="faq">
+<section class="section faq" id="faq" data-element="faq" data-tipo="organismo">
   <div class="wrap">
     <div class="faq-split">
       <div class="faq-left">
@@ -1500,7 +1643,7 @@
 </section>
 
 <!-- FINAL CTA -->
-<section class="final">
+<section class="final" data-element="cta-final" data-tipo="organismo">
   <div class="final-in">
     <div>
       <span class="eyebrow">Última parada</span>
@@ -1527,7 +1670,7 @@
   </a>
 </div>
 
-<footer>
+<footer data-element="rodape" data-tipo="organismo">
   <div>Loovi Technology · CW Technology Ltda. · CNPJ 34.504.257/0001-00</div>
   <div>Representante de <strong>LTI Seguros S.A.</strong> · CNPJ 47.006.254/0001-80</div>
   <div>Processo SUSEP nº 15414.649321/2021-55 · Sandbox Regulatório SUSEP</div>
@@ -1776,6 +1919,80 @@
     });
   }, { threshold: 0.3 });
   document.querySelectorAll('[data-count-to]').forEach(el => countIO.observe(el));
+
+  // =========================
+  // 11. INSPECTOR (mapa dos elementos)
+  // =========================
+  (function initInspector(){
+    const toggle = document.getElementById('inspector-toggle');
+    const panel = document.getElementById('inspector-panel');
+    const body = document.getElementById('inspector-panel-body');
+    const count = document.getElementById('inspector-count');
+    if (!toggle || !panel || !body) return;
+
+    const TYPE_ORDER = ['organismo','molecula','atomo'];
+    const TYPE_LABEL = {organismo:'Organismos',molecula:'Moléculas',atomo:'Átomos'};
+
+    function buildPanel(){
+      const nodes = document.querySelectorAll('[data-element]');
+      const groups = {organismo:[],molecula:[],atomo:[]};
+      nodes.forEach((el,i) => {
+        const tipo = el.dataset.tipo || 'molecula';
+        if (!groups[tipo]) groups[tipo] = [];
+        groups[tipo].push({el,name:el.dataset.element,idx:i+1});
+      });
+      count.textContent = nodes.length;
+      body.innerHTML = '';
+      TYPE_ORDER.forEach(tipo => {
+        const items = groups[tipo];
+        if (!items || !items.length) return;
+        const g = document.createElement('div');
+        g.className = 'inspector-group';
+        g.dataset.tipo = tipo;
+        g.innerHTML = `<div class="inspector-group-title"><span class="chip"></span>${TYPE_LABEL[tipo]} <span style="margin-left:auto;opacity:.6">${items.length}</span></div><ul></ul>`;
+        const ul = g.querySelector('ul');
+        items.forEach(it => {
+          const li = document.createElement('li');
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'inspector-item';
+          btn.innerHTML = `<span class="idx">${String(it.idx).padStart(2,'0')}</span>${it.name}`;
+          btn.addEventListener('click', () => {
+            it.el.scrollIntoView({behavior:'smooth',block:'center'});
+            document.querySelectorAll('[data-element].is-focus').forEach(n => n.classList.remove('is-focus'));
+            it.el.classList.add('is-focus');
+            setTimeout(() => it.el.classList.remove('is-focus'), 1400);
+          });
+          li.appendChild(btn);
+          ul.appendChild(li);
+        });
+        body.appendChild(g);
+      });
+    }
+
+    let built = false;
+    toggle.addEventListener('click', () => {
+      const active = document.body.dataset.inspect === 'on';
+      if (active){
+        document.body.removeAttribute('data-inspect');
+        toggle.setAttribute('aria-pressed','false');
+        panel.setAttribute('aria-hidden','true');
+      } else {
+        if (!built){ buildPanel(); built = true; }
+        document.body.dataset.inspect = 'on';
+        toggle.setAttribute('aria-pressed','true');
+        panel.setAttribute('aria-hidden','false');
+      }
+    });
+
+    // Atalho teclado: "I" alterna
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'i' && !e.ctrlKey && !e.metaKey && !e.altKey
+        && !['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){
+        toggle.click();
+      }
+    });
+  })();
 </script>
 
 </body>
