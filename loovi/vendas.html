@@ -1111,146 +1111,7 @@
     .problem-grid{grid-template-columns:1fr;gap:2.5rem}
   }
 
-  /* =========================
-     INSPECTOR (mapa dos elementos) — opt-in via botão flutuante
-     ========================= */
-  .inspector-toggle{
-    position:fixed;left:1.25rem;bottom:1.25rem;z-index:9999;
-    display:inline-flex;align-items:center;gap:.5rem;
-    padding:.75rem 1rem;
-    background:#0B0A26;color:#F5F3FF;
-    border:1px solid rgba(245,243,255,.18);
-    border-radius:999px;
-    font-family:"Manrope",system-ui,sans-serif;
-    font-size:.78rem;font-weight:600;letter-spacing:.04em;
-    cursor:pointer;
-    box-shadow:0 10px 30px rgba(0,0,0,.4);
-    transition:background .2s ease,border-color .2s ease,transform .2s var(--spring);
-  }
-  .inspector-toggle:hover{background:#141233;border-color:rgba(252,211,77,.4);transform:translateY(-2px)}
-  .inspector-toggle .dot{
-    width:8px;height:8px;border-radius:50%;
-    background:var(--text-3);transition:background .2s ease;
-  }
-  body[data-inspect="on"] .inspector-toggle{
-    background:#FCD34D;color:#0E0A1F;border-color:#FCD34D;
-  }
-  body[data-inspect="on"] .inspector-toggle .dot{background:#10B981}
-  @media (max-width:640px){
-    .inspector-toggle{font-size:.7rem;padding:.6rem .85rem;bottom:5.5rem}
-  }
-
-  /* Inspector outlines — só quando ativo */
-  body[data-inspect="on"] [data-element]{
-    position:relative;
-    outline:1px dashed rgba(252,211,77,.55);
-    outline-offset:-1px;
-  }
-  body[data-inspect="on"] [data-tipo="organismo"]{outline-color:rgba(236,72,153,.7);outline-style:solid}
-  body[data-inspect="on"] [data-tipo="molecula"]{outline-color:rgba(252,211,77,.6)}
-  body[data-inspect="on"] [data-tipo="atomo"]{outline-color:rgba(16,185,129,.6)}
-  body[data-inspect="on"] [data-tipo="texto"]{outline-color:rgba(139,211,255,.6);outline-style:dotted}
-  body[data-inspect="on"] [data-element]::before{
-    content:attr(data-tipo) " · " attr(data-element);
-    position:absolute;top:0;left:0;
-    background:#0B0A26;color:#FCD34D;
-    font-family:"Manrope",system-ui,sans-serif;font-variant-numeric:tabular-nums;
-    font-size:.58rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
-    padding:2px 6px;
-    border-bottom-right-radius:5px;
-    pointer-events:none;
-    z-index:50;
-    white-space:nowrap;
-    opacity:1;
-    line-height:1.3;
-  }
-  body[data-inspect="on"] [data-tipo="organismo"]::before{background:#EC4899;color:#fff}
-  body[data-inspect="on"] [data-tipo="molecula"]::before{background:#FCD34D;color:#0E0A1F}
-  body[data-inspect="on"] [data-tipo="atomo"]::before{background:#10B981;color:#0E0A1F}
-  body[data-inspect="on"] [data-tipo="texto"]::before{
-    background:#8BD3FF;color:#0E0A1F;
-    top:auto;bottom:100%;left:0;
-    border-radius:5px 5px 5px 0;
-    margin-bottom:2px;
-  }
-  body[data-inspect="on"] [data-element]:hover{
-    outline-width:2px;
-    box-shadow:0 0 0 4px rgba(252,211,77,.12);
-  }
-  body[data-inspect="on"] [data-element]:hover::before{
-    z-index:51;transform:scale(1.08);transform-origin:top left;
-    transition:transform .2s var(--spring);
-  }
-  body[data-inspect="on"] [data-element].is-focus{
-    animation:inspect-flash 1.2s ease;
-  }
-  @keyframes inspect-flash{
-    0%{box-shadow:0 0 0 0 rgba(236,72,153,.6)}
-    50%{box-shadow:0 0 0 12px rgba(236,72,153,.25)}
-    100%{box-shadow:0 0 0 0 rgba(236,72,153,0)}
-  }
-
-  /* Painel lateral do inspector */
-  .inspector-panel{
-    position:fixed;right:1.25rem;bottom:1.25rem;top:1.25rem;
-    width:min(22rem,calc(100vw - 2.5rem));
-    background:#0B0A26;
-    border:1px solid rgba(245,243,255,.12);
-    border-radius:1rem;
-    z-index:9998;
-    display:none;
-    flex-direction:column;
-    overflow:hidden;
-    box-shadow:0 30px 60px rgba(0,0,0,.5);
-    font-family:"Manrope",system-ui,sans-serif;
-  }
-  body[data-inspect="on"] .inspector-panel{display:flex}
-  .inspector-panel-head{
-    padding:1rem 1.25rem;
-    border-bottom:1px solid rgba(245,243,255,.08);
-    display:flex;align-items:center;justify-content:space-between;
-  }
-  .inspector-panel-head h4{
-    margin:0;font-size:.88rem;font-weight:700;color:#F5F3FF;letter-spacing:-.01em;
-  }
-  .inspector-panel-head .count{
-    font-size:.7rem;color:#FCD34D;font-variant-numeric:tabular-nums;letter-spacing:.08em;
-  }
-  .inspector-panel-body{
-    padding:.5rem 0 1rem;
-    overflow:auto;flex:1;
-  }
-  .inspector-group{padding:.75rem 1.25rem .25rem}
-  .inspector-group-title{
-    font-size:.62rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;
-    margin:0 0 .5rem;display:flex;align-items:center;gap:.5rem;
-  }
-  .inspector-group-title .chip{
-    width:8px;height:8px;border-radius:2px;display:inline-block;
-  }
-  .inspector-group[data-tipo="organismo"] .inspector-group-title{color:#EC4899}
-  .inspector-group[data-tipo="organismo"] .inspector-group-title .chip{background:#EC4899}
-  .inspector-group[data-tipo="molecula"] .inspector-group-title{color:#FCD34D}
-  .inspector-group[data-tipo="molecula"] .inspector-group-title .chip{background:#FCD34D}
-  .inspector-group[data-tipo="atomo"] .inspector-group-title{color:#10B981}
-  .inspector-group[data-tipo="atomo"] .inspector-group-title .chip{background:#10B981}
-  .inspector-group[data-tipo="texto"] .inspector-group-title{color:#8BD3FF}
-  .inspector-group[data-tipo="texto"] .inspector-group-title .chip{background:#8BD3FF}
-  .inspector-group ul{list-style:none;padding:0;margin:0}
-  .inspector-item{
-    display:block;width:100%;text-align:left;
-    padding:.55rem .75rem;
-    background:transparent;border:0;border-radius:.5rem;
-    color:#D4D2EE;font-size:.78rem;font-weight:500;
-    cursor:pointer;margin-bottom:2px;
-    font-family:inherit;
-    transition:background .15s ease,color .15s ease;
-  }
-  .inspector-item:hover{background:rgba(245,243,255,.06);color:#F5F3FF}
-  .inspector-item .idx{
-    color:#7A7A95;font-variant-numeric:tabular-nums;
-    font-size:.68rem;margin-right:.5rem;letter-spacing:.06em;
-  }
+  /* Inspector: CSS carregado via snippet canonico (antes do </body>) */
 
   /* Reduced motion */
   @media (prefers-reduced-motion:reduce){
@@ -1268,19 +1129,6 @@
 
 <div class="scroll-progress" aria-hidden="true"></div>
 
-<!-- INSPECTOR OVERLAY — mapa dos elementos -->
-<button id="inspector-toggle" class="inspector-toggle" type="button" aria-pressed="false" aria-label="Alternar mapa dos elementos">
-  <span class="dot" aria-hidden="true"></span>
-  <span class="label">Mapa dos elementos</span>
-</button>
-<aside id="inspector-panel" class="inspector-panel" aria-hidden="true">
-  <div class="inspector-panel-head">
-    <h4>Mapa dos elementos</h4>
-    <span class="count" id="inspector-count">0</span>
-  </div>
-  <div class="inspector-panel-body" id="inspector-panel-body"></div>
-</aside>
-<!-- /INSPECTOR OVERLAY -->
 <div class="blob blob-1" aria-hidden="true"></div>
 <div class="blob blob-2" aria-hidden="true"></div>
 <div class="particles" aria-hidden="true" id="particles"></div>
@@ -1923,81 +1771,132 @@
     });
   }, { threshold: 0.3 });
   document.querySelectorAll('[data-count-to]').forEach(el => countIO.observe(el));
-
-  // =========================
-  // 11. INSPECTOR (mapa dos elementos)
-  // =========================
-  (function initInspector(){
-    const toggle = document.getElementById('inspector-toggle');
-    const panel = document.getElementById('inspector-panel');
-    const body = document.getElementById('inspector-panel-body');
-    const count = document.getElementById('inspector-count');
-    if (!toggle || !panel || !body) return;
-
-    const TYPE_ORDER = ['organismo','molecula','atomo','texto'];
-    const TYPE_LABEL = {organismo:'Organismos',molecula:'Moléculas',atomo:'Átomos',texto:'Textos'};
-
-    function buildPanel(){
-      const nodes = document.querySelectorAll('[data-element]');
-      const groups = {organismo:[],molecula:[],atomo:[],texto:[]};
-      nodes.forEach((el,i) => {
-        const tipo = el.dataset.tipo || 'molecula';
-        if (!groups[tipo]) groups[tipo] = [];
-        groups[tipo].push({el,name:el.dataset.element,idx:i+1});
-      });
-      count.textContent = nodes.length;
-      body.innerHTML = '';
-      TYPE_ORDER.forEach(tipo => {
-        const items = groups[tipo];
-        if (!items || !items.length) return;
-        const g = document.createElement('div');
-        g.className = 'inspector-group';
-        g.dataset.tipo = tipo;
-        g.innerHTML = `<div class="inspector-group-title"><span class="chip"></span>${TYPE_LABEL[tipo]} <span style="margin-left:auto;opacity:.6">${items.length}</span></div><ul></ul>`;
-        const ul = g.querySelector('ul');
-        items.forEach(it => {
-          const li = document.createElement('li');
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = 'inspector-item';
-          btn.innerHTML = `<span class="idx">${String(it.idx).padStart(2,'0')}</span>${it.name}`;
-          btn.addEventListener('click', () => {
-            it.el.scrollIntoView({behavior:'smooth',block:'center'});
-            document.querySelectorAll('[data-element].is-focus').forEach(n => n.classList.remove('is-focus'));
-            it.el.classList.add('is-focus');
-            setTimeout(() => it.el.classList.remove('is-focus'), 1400);
-          });
-          li.appendChild(btn);
-          ul.appendChild(li);
-        });
-        body.appendChild(g);
-      });
-    }
-
-    let built = false;
-    toggle.addEventListener('click', () => {
-      const active = document.body.dataset.inspect === 'on';
-      if (active){
-        document.body.removeAttribute('data-inspect');
-        toggle.setAttribute('aria-pressed','false');
-        panel.setAttribute('aria-hidden','true');
-      } else {
-        if (!built){ buildPanel(); built = true; }
-        document.body.dataset.inspect = 'on';
-        toggle.setAttribute('aria-pressed','true');
-        panel.setAttribute('aria-hidden','false');
-      }
-    });
-
-    // Atalho teclado: "I" alterna
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'i' && !e.ctrlKey && !e.metaKey && !e.altKey
-        && !['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){
-        toggle.click();
-      }
-    });
-  })();
 </script>
+
+<!-- SEIYA INSPECTOR OVERLAY (snippet canonico — cores neutras do sistema) -->
+<style id="seiya-inspector-css">
+  :root{
+    --si-bg:#111118;
+    --si-surface:#1A1A24;
+    --si-border:rgba(255,255,255,.12);
+    --si-text:#E5E5F0;
+    --si-text-2:#8888A0;
+    --si-org:#F472B6;
+    --si-mol:#FBBF24;
+    --si-atm:#34D399;
+    --si-txt:#93C5FD;
+    --si-font:system-ui,-apple-system,sans-serif;
+    --si-mono:ui-monospace,monospace;
+    --si-spring:cubic-bezier(.2,.8,.2,1);
+  }
+  .si-toggle{
+    position:fixed;left:1.25rem;bottom:1.25rem;z-index:99999;
+    display:inline-flex;align-items:center;gap:.5rem;
+    padding:.7rem 1rem;
+    background:var(--si-bg);color:var(--si-text);
+    border:1px solid var(--si-border);
+    border-radius:999px;
+    font-family:var(--si-font);
+    font-size:.72rem;font-weight:600;letter-spacing:.04em;
+    cursor:pointer;
+    box-shadow:0 8px 24px rgba(0,0,0,.5);
+    transition:background .2s ease,border-color .2s ease,transform .2s var(--si-spring);
+  }
+  .si-toggle:hover{background:var(--si-surface);border-color:rgba(255,255,255,.22);transform:translateY(-2px)}
+  .si-toggle .si-dot{width:7px;height:7px;border-radius:50%;background:var(--si-text-2);transition:background .2s ease}
+  body[data-inspect="on"] .si-toggle{background:var(--si-org);color:#fff;border-color:var(--si-org)}
+  body[data-inspect="on"] .si-toggle .si-dot{background:#fff}
+  @media (max-width:640px){.si-toggle{font-size:.65rem;padding:.55rem .8rem;bottom:5.5rem}}
+  body[data-inspect="on"] [data-element]{position:relative;outline:1px dashed var(--si-mol);outline-offset:-1px}
+  body[data-inspect="on"] [data-tipo="organismo"]{outline-color:var(--si-org);outline-style:solid}
+  body[data-inspect="on"] [data-tipo="molecula"]{outline-color:var(--si-mol)}
+  body[data-inspect="on"] [data-tipo="atomo"]{outline-color:var(--si-atm)}
+  body[data-inspect="on"] [data-tipo="texto"]{outline-color:var(--si-txt);outline-style:dotted}
+  body[data-inspect="on"] [data-element]::before{
+    content:attr(data-tipo) " · " attr(data-element);
+    position:absolute;top:0;left:0;
+    background:var(--si-bg);color:var(--si-mol);
+    font-family:var(--si-mono);font-size:.55rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+    padding:2px 6px;border-bottom-right-radius:4px;pointer-events:none;z-index:500;white-space:nowrap;opacity:1;line-height:1.4;
+  }
+  body[data-inspect="on"] [data-tipo="organismo"]::before{background:var(--si-org);color:#fff}
+  body[data-inspect="on"] [data-tipo="molecula"]::before{background:var(--si-mol);color:#111}
+  body[data-inspect="on"] [data-tipo="atomo"]::before{background:var(--si-atm);color:#111}
+  body[data-inspect="on"] [data-tipo="texto"]::before{background:var(--si-txt);color:#111;top:auto;bottom:100%;left:0;border-radius:4px 4px 4px 0;margin-bottom:2px}
+  body[data-inspect="on"] [data-element]:hover{outline-width:2px;box-shadow:0 0 0 4px rgba(244,114,182,.15)}
+  body[data-inspect="on"] [data-element]:hover::before{z-index:501;transform:scale(1.08);transform-origin:top left;transition:transform .2s var(--si-spring)}
+  body[data-inspect="on"] [data-element].si-flash{animation:si-flash 1.2s ease}
+  @keyframes si-flash{0%{box-shadow:0 0 0 0 rgba(244,114,182,.6)}50%{box-shadow:0 0 0 12px rgba(244,114,182,.2)}100%{box-shadow:0 0 0 0 rgba(244,114,182,0)}}
+  .si-panel{position:fixed;right:1.25rem;bottom:1.25rem;top:1.25rem;width:min(22rem,calc(100vw - 2.5rem));background:var(--si-bg);border:1px solid var(--si-border);border-radius:1rem;z-index:99998;display:none;flex-direction:column;overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,.6);font-family:var(--si-font)}
+  body[data-inspect="on"] .si-panel{display:flex}
+  .si-panel-head{padding:1rem 1.25rem;border-bottom:1px solid var(--si-border);display:flex;align-items:center;justify-content:space-between}
+  .si-panel-head h4{margin:0;font-size:.85rem;font-weight:700;color:var(--si-text)}
+  .si-panel-head .si-count{font-family:var(--si-mono);font-size:.68rem;color:var(--si-org)}
+  .si-panel-body{padding:.5rem 0 1rem;overflow:auto;flex:1}
+  .si-group{padding:.75rem 1.25rem .25rem}
+  .si-group-title{font-size:.6rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;margin:0 0 .5rem;display:flex;align-items:center;gap:.5rem}
+  .si-chip{width:8px;height:8px;border-radius:2px;display:inline-block}
+  .si-group[data-tipo="organismo"] .si-group-title{color:var(--si-org)} .si-group[data-tipo="organismo"] .si-chip{background:var(--si-org)}
+  .si-group[data-tipo="molecula"] .si-group-title{color:var(--si-mol)} .si-group[data-tipo="molecula"] .si-chip{background:var(--si-mol)}
+  .si-group[data-tipo="atomo"] .si-group-title{color:var(--si-atm)} .si-group[data-tipo="atomo"] .si-chip{background:var(--si-atm)}
+  .si-group[data-tipo="texto"] .si-group-title{color:var(--si-txt)} .si-group[data-tipo="texto"] .si-chip{background:var(--si-txt)}
+  .si-group ul{list-style:none;padding:0;margin:0}
+  .si-item{display:block;width:100%;text-align:left;padding:.5rem .75rem;background:transparent;border:0;border-radius:.4rem;color:var(--si-text);font-size:.74rem;font-weight:500;cursor:pointer;margin-bottom:2px;font-family:inherit;transition:background .15s ease}
+  .si-item:hover{background:rgba(255,255,255,.06);color:#fff}
+  .si-item .si-idx{color:var(--si-text-2);font-family:var(--si-mono);font-size:.62rem;margin-right:.5rem}
+</style>
+<button id="si-toggle" class="si-toggle" type="button" aria-pressed="false" aria-label="Alternar mapa dos elementos">
+  <span class="si-dot" aria-hidden="true"></span>
+  <span>Mapa dos elementos</span>
+</button>
+<aside id="si-panel" class="si-panel" aria-hidden="true">
+  <div class="si-panel-head">
+    <h4>Mapa dos elementos</h4>
+    <span class="si-count" id="si-count">0</span>
+  </div>
+  <div class="si-panel-body" id="si-panel-body"></div>
+</aside>
+<script id="seiya-inspector-js">
+(function(){
+  var toggle=document.getElementById('si-toggle'),panel=document.getElementById('si-panel'),
+      body=document.getElementById('si-panel-body'),count=document.getElementById('si-count');
+  if(!toggle||!panel||!body)return;
+  var TYPES=['organismo','molecula','atomo','texto'];
+  var LABELS={organismo:'Organismos',molecula:'Moléculas',atomo:'Átomos',texto:'Textos'};
+  function buildPanel(){
+    var nodes=document.querySelectorAll('[data-element]'),groups={};
+    TYPES.forEach(function(t){groups[t]=[]});
+    nodes.forEach(function(el,i){var t=el.dataset.tipo||'molecula';if(!groups[t])groups[t]=[];groups[t].push({el:el,name:el.dataset.element,idx:i+1})});
+    count.textContent=nodes.length+' elementos';body.innerHTML='';
+    TYPES.forEach(function(tipo){
+      var items=groups[tipo];if(!items||!items.length)return;
+      var g=document.createElement('div');g.className='si-group';g.dataset.tipo=tipo;
+      g.innerHTML='<div class="si-group-title"><span class="si-chip"></span>'+LABELS[tipo]+' <span style="margin-left:auto;opacity:.5">'+items.length+'</span></div><ul></ul>';
+      var ul=g.querySelector('ul');
+      items.forEach(function(it){
+        var li=document.createElement('li'),btn=document.createElement('button');
+        btn.type='button';btn.className='si-item';
+        btn.innerHTML='<span class="si-idx">'+String(it.idx).padStart(2,'0')+'</span>'+it.name;
+        btn.addEventListener('click',function(){
+          it.el.scrollIntoView({behavior:'smooth',block:'center'});
+          document.querySelectorAll('.si-flash').forEach(function(n){n.classList.remove('si-flash')});
+          it.el.classList.add('si-flash');setTimeout(function(){it.el.classList.remove('si-flash')},1400);
+        });li.appendChild(btn);ul.appendChild(li);
+      });body.appendChild(g);
+    });
+  }
+  var built=false;
+  toggle.addEventListener('click',function(){
+    var active=document.body.dataset.inspect==='on';
+    if(active){document.body.removeAttribute('data-inspect');toggle.setAttribute('aria-pressed','false');panel.setAttribute('aria-hidden','true')}
+    else{if(!built){buildPanel();built=true}document.body.dataset.inspect='on';toggle.setAttribute('aria-pressed','true');panel.setAttribute('aria-hidden','false')}
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='i'&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)&&!document.activeElement.isContentEditable)toggle.click();
+  });
+})();
+</script>
+<!-- /SEIYA INSPECTOR -->
 
 </body>
 </html>
