@@ -131,7 +131,7 @@
   /* NAV */
   .nav{
     position:sticky;top:0;z-index:50;
-    background:rgba(14,14,26,.8);
+    background:rgba(30,27,75,.82);
     backdrop-filter:blur(14px);
     -webkit-backdrop-filter:blur(14px);
     border-bottom:1px solid var(--border);
@@ -140,21 +140,141 @@
     max-width:var(--max);margin:0 auto;
     padding:1.1rem 1.5rem;
     display:flex;justify-content:space-between;align-items:center;
+    gap:2rem;
   }
   @media (min-width:1024px){.nav-in{padding:1.1rem 3rem}}
   .logo{
     font-weight:900;font-size:1.5rem;letter-spacing:-.04em;
     display:inline-flex;align-items:baseline;gap:.1rem;
+    flex-shrink:0;
   }
   .logo::after{
     content:"";width:7px;height:7px;border-radius:50%;
     background:var(--magenta);display:inline-block;
   }
+
+  .nav-menu{
+    display:flex;gap:2rem;list-style:none;padding:0;margin:0;
+    flex:1;justify-content:center;
+  }
+  .nav-menu a{
+    color:var(--text-2);
+    font-size:.92rem;
+    font-weight:500;
+    position:relative;
+    transition:color .2s ease;
+    padding:.25rem 0;
+  }
+  .nav-menu a:hover{color:var(--yellow)}
+  .nav-menu a::after{
+    content:"";
+    position:absolute;left:0;right:0;bottom:-.35rem;
+    height:1.5px;
+    background:var(--yellow);
+    transform:scaleX(0);transform-origin:center;
+    transition:transform .25s var(--spring);
+  }
+  .nav-menu a:hover::after,
+  .nav-menu a.active::after{transform:scaleX(1)}
+  .nav-menu a.active{color:var(--yellow)}
+
+  .nav-right{display:flex;align-items:center;gap:1.25rem;flex-shrink:0}
   .nav-meta{
     font-family:"Manrope",system-ui,sans-serif;font-variant-numeric:tabular-nums;
     font-size:.7rem;color:var(--text-3);
     letter-spacing:.14em;text-transform:uppercase;
   }
+  .nav-cta{
+    padding:.55rem 1rem;
+    background:transparent;
+    border:1px solid var(--border-2);
+    border-radius:.5rem;
+    font-size:.85rem;font-weight:600;
+    color:var(--yellow);
+    transition:background .2s ease,border-color .2s ease,transform .2s ease;
+    white-space:nowrap;
+  }
+  .nav-cta:hover{background:var(--yellow);color:var(--bg);border-color:var(--yellow);transform:translateY(-1px)}
+
+  /* Hamburger button */
+  .hamburger{
+    display:none;
+    width:40px;height:40px;
+    background:transparent;
+    position:relative;
+    cursor:pointer;
+    padding:0;
+    border:1px solid var(--border);
+    border-radius:.5rem;
+    transition:background .2s;
+  }
+  .hamburger:hover{background:var(--surface)}
+  .hamburger span{
+    position:absolute;left:10px;right:10px;
+    height:2px;background:var(--text);
+    border-radius:1px;
+    transition:all .35s var(--spring);
+  }
+  .hamburger span:nth-child(1){top:13px}
+  .hamburger span:nth-child(2){top:19px}
+  .hamburger span:nth-child(3){top:25px}
+  .hamburger[aria-expanded="true"] span:nth-child(1){top:19px;transform:rotate(45deg)}
+  .hamburger[aria-expanded="true"] span:nth-child(2){opacity:0;transform:translateX(-10px)}
+  .hamburger[aria-expanded="true"] span:nth-child(3){top:19px;transform:rotate(-45deg)}
+
+  /* Mobile overlay menu */
+  .nav-mobile{
+    position:fixed;top:0;left:0;right:0;bottom:0;
+    background:var(--bg);
+    z-index:45;
+    padding:6rem 2rem 2.5rem;
+    display:flex;flex-direction:column;gap:.25rem;
+    opacity:0;pointer-events:none;
+    transition:opacity .3s ease;
+    overflow-y:auto;
+  }
+  .nav-mobile.open{opacity:1;pointer-events:auto}
+  .nav-mobile a{
+    font-size:1.5rem;font-weight:600;
+    padding:1.25rem 0;
+    border-bottom:1px solid var(--border);
+    color:var(--text);
+    transition:color .2s,transform .2s;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .nav-mobile a::after{
+    content:"→";color:var(--yellow);opacity:.3;font-size:1.2rem;
+    transition:transform .25s,opacity .25s;
+  }
+  .nav-mobile a:hover{color:var(--yellow)}
+  .nav-mobile a:hover::after{transform:translateX(4px);opacity:1}
+  .nav-mobile .mobile-cta{
+    margin-top:1.5rem;
+    padding:1.25rem 1.5rem;
+    background:var(--magenta);
+    color:#fff;
+    border:0;
+    border-bottom:0;
+    border-radius:.75rem;
+    justify-content:center;
+    box-shadow:0 12px 32px rgba(236,72,153,.3);
+    font-weight:700;
+  }
+  .nav-mobile .mobile-cta::after{color:#fff;opacity:1}
+  .nav-mobile .mobile-cta:hover{background:var(--magenta-dark)}
+  .nav-mobile .mobile-meta{
+    margin-top:2rem;padding-top:1.5rem;
+    border-top:1px solid var(--border);
+    border-bottom:0;
+    font-size:.75rem;color:var(--text-3);
+    letter-spacing:.12em;text-transform:uppercase;
+    padding-bottom:0;
+    font-weight:500;
+  }
+  .nav-mobile .mobile-meta::after{display:none}
+
+  /* Anchor scroll-margin (compensa nav sticky) */
+  section[id]{scroll-margin-top:5rem}
 
   /* HERO — asymmetric left-aligned, variance 8 */
   .hero{
@@ -890,9 +1010,14 @@
     .final-n{text-align:left}
     .final-n::after{left:0;right:auto}
   }
+  @media (max-width:900px){
+    .nav-menu{display:none}
+    .nav-meta{display:none}
+    .nav-cta{display:none}
+    .hamburger{display:block}
+  }
   @media (max-width:640px){
     body{font-size:15.5px}
-    .nav-meta{display:none}
     .sticky-m{display:block}
     footer{padding-bottom:5rem}
   }
@@ -918,10 +1043,32 @@
 
 <nav class="nav">
   <div class="nav-in">
-    <a href="#" class="logo">Loovi</a>
-    <span class="nav-meta">Regulado pela SUSEP</span>
+    <a href="#" class="logo" aria-label="Loovi — início">Loovi</a>
+    <ul class="nav-menu">
+      <li><a href="#como-funciona">Como funciona</a></li>
+      <li><a href="#coberturas">Coberturas</a></li>
+      <li><a href="#depoimentos">Depoimentos</a></li>
+      <li><a href="#faq">Perguntas</a></li>
+    </ul>
+    <div class="nav-right">
+      <span class="nav-meta">Regulado pela SUSEP</span>
+      <a href="https://loovi.com.br/cotacao" class="nav-cta">Cotar agora</a>
+      <button class="hamburger" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav-mobile">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </div>
 </nav>
+<div class="nav-mobile" id="nav-mobile" aria-hidden="true">
+  <a href="#como-funciona">Como funciona</a>
+  <a href="#coberturas">Coberturas</a>
+  <a href="#cobertura-nacional">Onde atendemos</a>
+  <a href="#depoimentos">Depoimentos</a>
+  <a href="#credibilidade">Credibilidade</a>
+  <a href="#faq">Perguntas</a>
+  <a href="https://loovi.com.br/cotacao" class="mobile-cta">Cotar meu seguro</a>
+  <span class="mobile-meta">Regulado pela SUSEP · Processo 15414.649321/2021-55</span>
+</div>
 
 <!-- HERO asymmetric -->
 <header class="hero">
@@ -1034,7 +1181,7 @@
 </section>
 
 <!-- COBERTURAS — bento asymmetric -->
-<section class="section coverage">
+<section class="section coverage" id="coberturas">
   <div class="wrap">
     <div class="section-title">
       <span class="eyebrow">O que está incluso</span>
@@ -1083,7 +1230,7 @@
 </section>
 
 <!-- MAPA BRASIL -->
-<section class="coverage-map">
+<section class="coverage-map" id="cobertura-nacional">
   <div class="map-grid">
     <div class="map-stats reveal">
       <div>
@@ -1148,7 +1295,7 @@
 </section>
 
 <!-- DEPOIMENTOS -->
-<section class="section testimonials">
+<section class="section testimonials" id="depoimentos">
   <div class="wrap">
     <div class="section-title">
       <span class="eyebrow">Prova · Sinistros pagos</span>
@@ -1196,7 +1343,7 @@
 </section>
 
 <!-- TRUST / COMPARACAO -->
-<section class="section trust">
+<section class="section trust" id="credibilidade">
   <div class="wrap">
     <div class="section-title">
       <span class="eyebrow">Credibilidade</span>
@@ -1233,7 +1380,7 @@
 </section>
 
 <!-- FAQ split -->
-<section class="section faq">
+<section class="section faq" id="faq">
   <div class="wrap">
     <div class="faq-split">
       <div class="faq-left">
@@ -1313,6 +1460,59 @@
 </footer>
 
 <script>
+  // =========================
+  // 0. HAMBURGER / MOBILE MENU + ACTIVE LINK ON SCROLL
+  // =========================
+  const hamburger = document.querySelector('.hamburger');
+  const navMobile = document.getElementById('nav-mobile');
+  const navMenuLinks = document.querySelectorAll('.nav-menu a, .nav-mobile a');
+
+  function closeMenu() {
+    if (!navMobile) return;
+    navMobile.classList.remove('open');
+    hamburger?.setAttribute('aria-expanded', 'false');
+    hamburger?.setAttribute('aria-label', 'Abrir menu');
+    navMobile.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+  function openMenu() {
+    if (!navMobile) return;
+    navMobile.classList.add('open');
+    hamburger?.setAttribute('aria-expanded', 'true');
+    hamburger?.setAttribute('aria-label', 'Fechar menu');
+    navMobile.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  hamburger?.addEventListener('click', () => {
+    const isOpen = navMobile.classList.contains('open');
+    if (isOpen) closeMenu(); else openMenu();
+  });
+
+  // Fechar menu ao clicar em qualquer link
+  navMobile?.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', closeMenu);
+  });
+
+  // ESC fecha menu
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMenu();
+  });
+
+  // Active link ao scrollar (scroll-spy)
+  const sections = document.querySelectorAll('section[id]');
+  const spyIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        document.querySelectorAll('.nav-menu a').forEach(a => {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  sections.forEach(s => spyIO.observe(s));
+
   // =========================
   // 1. SCROLL-TRIGGERED REVEALS (via IntersectionObserver, não scroll listener)
   // =========================
