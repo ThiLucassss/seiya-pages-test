@@ -427,20 +427,6 @@
     background:var(--magenta);
   }
 
-  /* Phone mockup SVG */
-  .phone-mockup{
-    width:min(18rem,100%);
-    aspect-ratio:9/18;
-    position:relative;
-    transform:rotate(-2deg);
-    transition:transform .6s cubic-bezier(.2,.8,.2,1);
-    animation:phone-float 5s ease-in-out infinite;
-  }
-  @keyframes phone-float{
-    0%,100%{transform:rotate(-2deg) translateY(0)}
-    50%{transform:rotate(-1deg) translateY(-10px)}
-  }
-  .phone-mockup svg{width:100%;height:auto;display:block;filter:drop-shadow(0 20px 40px rgba(0,0,0,.4))}
 
   /* Floating particles (ambient) */
   .particles{
@@ -630,11 +616,38 @@
   }
   .section-title .eyebrow{margin-bottom:1rem}
 
-  /* PROBLEMA — 1 col left-aligned */
+  /* PROBLEMA — 2 col assimetrico: texto + imagem */
   .problem{background:var(--bg)}
-  .problem-body{max-width:32rem;color:var(--text-2);font-size:1.08rem;line-height:1.65}
+  .problem-grid{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:clamp(2rem,5vw,5rem);
+    align-items:center;
+  }
+  .problem-body{max-width:34rem;color:var(--text-2);font-size:1.08rem;line-height:1.65}
   .problem-body p{margin-bottom:1.1em}
   .problem-body strong{color:var(--text);font-weight:600}
+  .problem-image{
+    position:relative;
+    width:100%;
+    aspect-ratio:4/5;
+    border-radius:1rem;
+    overflow:hidden;
+    border:1px solid var(--border-2);
+  }
+  .problem-image img{
+    width:100%;height:100%;
+    object-fit:cover;
+    filter:brightness(.85) saturate(.9) contrast(1.05);
+    transition:transform .8s var(--spring),filter .6s ease;
+  }
+  .problem-image:hover img{transform:scale(1.03);filter:brightness(.95) saturate(1.05)}
+  .problem-image::after{
+    content:"";
+    position:absolute;inset:0;
+    background:linear-gradient(170deg,transparent 40%,rgba(30,27,75,.5) 100%);
+    pointer-events:none;
+  }
   .problem-kicker{
     font-size:clamp(1.5rem,2.8vw,2rem);
     font-weight:700;color:var(--yellow);
@@ -825,6 +838,43 @@
 
   /* COMPARACAO — sticky scroll stack */
   .trust{background:var(--bg)}
+  .trust-banner{
+    position:relative;
+    width:100%;
+    aspect-ratio:21/8;
+    border-radius:1rem;
+    overflow:hidden;
+    margin-bottom:2.5rem;
+    border:1px solid var(--border-2);
+  }
+  .trust-banner img{
+    width:100%;height:100%;object-fit:cover;
+    filter:saturate(.92) contrast(1.03);
+    transition:transform 1s var(--spring);
+  }
+  .trust-banner:hover img{transform:scale(1.02)}
+  .trust-banner::after{
+    content:"";
+    position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(30,27,75,.1) 40%,rgba(30,27,75,.85) 100%);
+    pointer-events:none;
+  }
+  .trust-banner-caption{
+    position:absolute;left:clamp(1.5rem,3vw,2.5rem);bottom:clamp(1.25rem,2.5vw,2rem);
+    max-width:36rem;z-index:2;
+  }
+  .trust-banner-caption .eyebrow{
+    display:inline-block;margin-bottom:.6rem;color:var(--yellow);
+    font-family:"Manrope",system-ui,sans-serif;font-variant-numeric:tabular-nums;
+    font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;font-weight:600;
+  }
+  .trust-banner-caption h3{
+    margin:0;color:var(--text);font-size:clamp(1.2rem,2.6vw,1.85rem);
+    letter-spacing:-.02em;line-height:1.15;font-weight:700;
+  }
+  @media (max-width:640px){
+    .trust-banner{aspect-ratio:4/3}
+  }
   .compare-stack{
     display:grid;
     grid-template-columns:1fr 1fr;
@@ -1020,6 +1070,11 @@
     body{font-size:15.5px}
     .sticky-m{display:block}
     footer{padding-bottom:5rem}
+    .problem-grid{grid-template-columns:1fr;gap:2rem}
+    .problem-image{aspect-ratio:4/3;order:-1}
+  }
+  @media (max-width:900px){
+    .problem-grid{grid-template-columns:1fr;gap:2.5rem}
   }
 
   /* Reduced motion */
@@ -1087,12 +1142,12 @@
     </div>
     <div class="hero-number reveal">
       <div class="hero-visual">
-        <img
-          class="img-hero-driver"
-          src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=900&q=85&auto=format&fit=crop"
-          alt="Motorista de aplicativo dirigindo com o celular no painel"
-          loading="eager"
-          width="600" height="750">
+        <img class="img-hero-driver"
+             src="https://images.pexels.com/photos/6182096/pexels-photo-6182096.jpeg?auto=compress&cs=tinysrgb&w=1400"
+             alt="Motorista com passageira dentro do carro"
+             loading="eager"
+             fetchpriority="high"
+             width="1400" height="1750">
         <div class="hero-badge">
           <span class="hero-badge-n" data-count-to="4000">0</span>
           <span class="hero-badge-l"><span class="live-dot" aria-hidden="true"></span>Motoristas ativos agora</span>
@@ -1123,11 +1178,19 @@
       <span class="eyebrow">A realidade</span>
       <h2>Um dia ruim trava meses da sua vida.</h2>
     </div>
-    <div class="problem-body">
-      <p>Você acorda cedo. Liga o app. Roda 10, 12, 14 horas. Sol, chuva, madrugada. O carro é o que paga aluguel, comida, escola do filho.</p>
-      <p class="problem-kicker">Agora imagina perder tudo numa noite.</p>
-      <p>Um roubo no semáforo. Uma batida voltando pra casa. Um furto enquanto você descansa. Sem seguro, você perde o carro. E <strong>junto com ele, perde a renda</strong>.</p>
-      <p>Sem carro, zero corrida. Sem corrida, zero renda. Sem renda, zero carro novo. O ciclo trava — e desandar pode levar meses. Ou anos.</p>
+    <div class="problem-grid">
+      <div class="problem-body reveal">
+        <p>Você acorda cedo. Liga o app. Roda 10, 12, 14 horas. Sol, chuva, madrugada. O carro é o que paga aluguel, comida, escola do filho.</p>
+        <p class="problem-kicker">Agora imagina perder tudo numa noite.</p>
+        <p>Um roubo no semáforo. Uma batida voltando pra casa. Um furto enquanto você descansa. Sem seguro, você perde o carro. E <strong>junto com ele, perde a renda</strong>.</p>
+        <p>Sem carro, zero corrida. Sem corrida, zero renda. Sem renda, zero carro novo. O ciclo trava — e desandar pode levar meses. Ou anos.</p>
+      </div>
+      <figure class="problem-image reveal">
+        <img src="https://images.pexels.com/photos/7144242/pexels-photo-7144242.jpeg?auto=compress&cs=tinysrgb&w=1200"
+             alt="Motorista pensativa dentro do carro"
+             loading="lazy"
+             width="1200" height="1500">
+      </figure>
     </div>
   </div>
 </section>
@@ -1349,6 +1412,16 @@
       <span class="eyebrow">Credibilidade</span>
       <h2>Seguro de verdade,<br>não proteção veicular.</h2>
     </div>
+    <figure class="trust-banner reveal">
+      <img src="https://images.pexels.com/photos/7144176/pexels-photo-7144176.jpeg?auto=compress&cs=tinysrgb&w=1800"
+           alt="Equipe Loovi em reunião"
+           loading="lazy"
+           width="1800" height="686">
+      <figcaption class="trust-banner-caption">
+        <span class="eyebrow">Regulada pela SUSEP</span>
+        <h3>Contrato formal. Respaldo jurídico. Obrigação legal de indenizar.</h3>
+      </figcaption>
+    </figure>
     <div class="compare-stack">
       <div class="compare-col good">
         <span class="label">Loovi · Seguro regulado</span>
@@ -1668,13 +1741,13 @@
   }
 
   // =========================
-  // 9. PARALLAX on scroll — blobs e phone mockup
+  // 9. PARALLAX on scroll — hero image
   // =========================
-  const phone = document.querySelector('.phone-mockup');
+  const heroImg = document.querySelector('.img-hero-driver');
   window.addEventListener('scroll', () => {
     const scrolled = window.scrollY;
-    if (phone) {
-      phone.style.translate = `0 ${Math.min(scrolled * 0.15, 100)}px`;
+    if (heroImg) {
+      heroImg.style.translate = `0 ${Math.min(scrolled * 0.08, 60)}px`;
     }
   }, { passive: true });
 
