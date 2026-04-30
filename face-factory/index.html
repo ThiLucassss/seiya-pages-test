@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FACE FACTORY — preview pagina de vendas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;700&family=Outfit:wght@400;700;800;900&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:'Geist',system-ui,sans-serif;background:#0A0A0A;color:#F5F5F0;line-height:1.55;padding:48px 0 72px}
+
+/* ============================================================
+   CARTILHA SHELL (CHROME DO SISTEMA SEYAI — SEPARADO DO CLIENTE)
+   D-023: identidade visual de sistema, nao do cliente
+   ============================================================ */
+.seyai-chrome-top,.seyai-chrome-bot{position:fixed;left:0;right:0;background:#1A1B1E;color:#E5E7EB;font-family:'Inter',system-ui,sans-serif;font-size:.78rem;z-index:1000;border-color:#2A2B2F}
+.seyai-chrome-top{top:0;border-bottom:1px solid #2A2B2F;padding:.85rem 1.25rem;display:flex;justify-content:space-between;align-items:center}
+.seyai-chrome-top .brand{display:flex;align-items:center;gap:.6rem;font-weight:600}
+.seyai-chrome-top .brand .logo{width:18px;height:18px;background:#E5E7EB;border-radius:50%;position:relative}
+.seyai-chrome-top .brand .logo::after{content:"";position:absolute;inset:5px;background:#1A1B1E;border-radius:50%}
+.seyai-chrome-top .meta{display:flex;gap:1.5rem;color:#9CA3AF;font-size:.7rem;font-variant-numeric:tabular-nums}
+.seyai-chrome-top .meta strong{color:#E5E7EB;font-weight:600}
+.seyai-chrome-top .step-pill{padding:.2rem .5rem;background:#2A2B2F;border-radius:4px;font-size:.65rem;color:#9CA3AF;letter-spacing:.05em}
+
+.seyai-chrome-bot{bottom:0;border-top:1px solid #2A2B2F;padding:1.1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;backdrop-filter:blur(8px)}
+.seyai-chrome-bot .info{display:flex;flex-direction:column;gap:.2rem}
+.seyai-chrome-bot .info-title{font-weight:600;color:#E5E7EB;font-size:.85rem}
+.seyai-chrome-bot .info-sub{color:#9CA3AF;font-size:.7rem}
+.seyai-chrome-bot .actions{display:flex;gap:.6rem;align-items:center}
+.btn-sys{padding:.65rem 1.1rem;border-radius:6px;font-family:'Inter',system-ui,sans-serif;font-size:.78rem;font-weight:500;border:1px solid #2A2B2F;background:#1A1B1E;color:#E5E7EB;cursor:pointer;text-decoration:none;transition:background .15s}
+.btn-sys:hover{background:#2A2B2F}
+.btn-sys.muted{background:transparent;color:#9CA3AF;border-color:transparent;font-size:.72rem;padding:.65rem .7rem}
+.btn-sys.muted:hover{color:#E5E7EB;background:#2A2B2F}
+.btn-sys.primary{background:#3B82F6;color:#fff;border-color:#3B82F6;font-weight:600}
+.btn-sys.primary:hover{background:#2563EB}
+
+/* ============================================================
+   PAGINA DO CLIENTE (FACE FACTORY)
+   ============================================================ */
+.section{max-width:1280px;margin:0 auto;padding:5rem 2rem;border-bottom:1px solid #161616;position:relative}
+.section:nth-child(odd){background:#0A0A0A}
+.section:nth-child(even){background:#0E0E0E}
+.section-tag{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.2em;color:#8A8A82;margin-bottom:.6rem}
+.section-tag .accent{color:#C7FF3A}
+h1,h2,h3{font-family:'Outfit',system-ui,sans-serif;font-weight:800;letter-spacing:-.04em;line-height:1.05}
+h1{font-size:clamp(2.5rem,6vw,5rem)}
+h2{font-size:clamp(2rem,4vw,3.5rem)}
+h3{font-size:clamp(1.4rem,2.5vw,2rem)}
+p{font-size:1rem;color:#D5D5CF;max-width:62ch}
+p.lead{font-size:1.2rem;color:#F5F5F0}
+.accent{color:#C7FF3A}
+.muted{color:#8A8A82}
+
+.cta{display:inline-flex;align-items:center;gap:.6rem;padding:1.1rem 2rem;background:linear-gradient(135deg,#C7FF3A 0%,#9DDB1F 100%);color:#0A0A0A;font-weight:800;font-size:1rem;border-radius:8px;text-decoration:none;letter-spacing:-.01em;border:0;cursor:pointer;font-family:inherit;transition:transform .15s,box-shadow .2s;box-shadow:0 0 0 0 rgba(199,255,58,0)}
+.cta:hover{transform:translateY(-2px);box-shadow:0 8px 24px -8px rgba(199,255,58,.5)}
+.cta-sub{display:block;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:#8A8A82;margin-top:.5rem;letter-spacing:.1em}
+.bullets{list-style:none;display:flex;flex-direction:column;gap:.8rem;margin:2rem 0}
+.bullets li{display:flex;gap:.8rem;align-items:flex-start;font-size:1rem}
+.bullets li::before{content:"";display:block;width:18px;height:18px;background:#C7FF3A;border-radius:3px;flex-shrink:0;margin-top:.2rem;box-shadow:0 0 12px rgba(199,255,58,.4)}
+
+/* HERO O01 — 3 layouts: L1 split / L2 fusao CSS / L3 full-bleed */
+.hero{padding-top:8rem;position:relative;overflow:hidden;min-height:90vh;display:flex;align-items:center}
+.hero h1 .stop{display:inline-block;width:.3em;height:.3em;background:#C7FF3A;border-radius:2px;margin:0 .1em;vertical-align:middle}
+
+/* L1 — SPLIT (texto esq, imagem dir em retangulo) */
+.hero[data-layout="L1"]::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 75% 50%,rgba(199,255,58,.08) 0%,transparent 60%);pointer-events:none}
+.hero[data-layout="L1"] .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;position:relative;width:100%}
+.hero[data-layout="L1"] .hero-img{aspect-ratio:4/5;border-radius:8px;overflow:hidden;background:#161616;position:relative}
+.hero[data-layout="L1"] .hero-img img{width:100%;height:100%;object-fit:cover}
+.hero[data-layout="L1"] .hero-bg{display:none}
+
+/* L2 — FUSAO CSS (mesma imagem split, mas com bg fundido + glow + UI flutuante) */
+.hero[data-layout="L2"]::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 75% 50%,rgba(199,255,58,.18) 0%,transparent 50%);pointer-events:none;z-index:0}
+.hero[data-layout="L2"] .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;position:relative;width:100%;z-index:1}
+.hero[data-layout="L2"] .hero-img{aspect-ratio:4/5;background:transparent;position:relative;border-radius:0;overflow:visible;filter:drop-shadow(0 0 80px rgba(199,255,58,.25))}
+.hero[data-layout="L2"] .hero-img img{width:100%;height:100%;object-fit:cover;-webkit-mask-image:linear-gradient(180deg,#000 60%,rgba(0,0,0,.7) 80%,transparent 100%),linear-gradient(90deg,transparent 0%,#000 12%,#000 88%,transparent 100%);mask-image:linear-gradient(180deg,#000 60%,rgba(0,0,0,.7) 80%,transparent 100%),linear-gradient(90deg,transparent 0%,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-composite:intersect}
+.hero[data-layout="L2"] .hero-bg{display:none}
+.hero[data-layout="L2"] .hero-img::before{content:"";position:absolute;top:8%;left:-15%;background:#161616;border:1px solid #C7FF3A;border-radius:8px;padding:.7rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:#C7FF3A;width:130px;height:54px;box-shadow:0 8px 32px rgba(0,0,0,.6)}
+.hero[data-layout="L2"] .hero-img::after{content:"+1.000 fotos";position:absolute;top:8%;left:-15%;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:#C7FF3A;padding:.95rem 1rem;letter-spacing:.05em;font-weight:600}
+
+/* L3 — FULL-BLEED (imagem cobre fundo todo, texto overlay) */
+.hero[data-layout="L3"]{padding:0;min-height:100vh}
+.hero[data-layout="L3"] .hero-bg{display:block;position:absolute;inset:0;z-index:0}
+.hero[data-layout="L3"] .hero-bg img{width:100%;height:100%;object-fit:cover;object-position:right center}
+.hero[data-layout="L3"] .hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#0A0A0A 0%,rgba(10,10,10,.95) 25%,rgba(10,10,10,.6) 50%,transparent 75%)}
+.hero[data-layout="L3"] .hero-grid{display:grid;grid-template-columns:1fr 1fr;align-items:center;position:relative;width:100%;z-index:2;max-width:1280px;margin:0 auto;padding:0 2rem}
+.hero[data-layout="L3"] .hero-img{display:none}
+.hero[data-layout="L3"] .hero-grid > div:first-child{padding:6rem 0}
+
+/* MOBILE: imagem antes do texto (D-022), em todos layouts */
+@media(max-width:768px){
+  .hero[data-layout="L1"] .hero-grid,.hero[data-layout="L2"] .hero-grid{grid-template-columns:1fr}
+  .hero[data-layout="L1"] .hero-img,.hero[data-layout="L2"] .hero-img{order:-1}
+  .hero[data-layout="L3"]{min-height:auto;padding-top:8rem;padding-bottom:3rem}
+  .hero[data-layout="L3"] .hero-bg{position:relative;height:60vh}
+  .hero[data-layout="L3"] .hero-bg::after{background:linear-gradient(180deg,transparent 60%,#0A0A0A 100%)}
+  .hero[data-layout="L3"] .hero-grid{grid-template-columns:1fr;padding:2rem}
+  .hero[data-layout="L3"] .hero-grid > div:first-child{padding:0}
+}
+
+/* LEAD historia */
+.lead-historia p+p{margin-top:1rem}
+
+/* DIAGNOSTICO */
+.dor-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.2rem;margin-top:2.5rem}
+.dor-card{padding:1.6rem;background:#161616;border:1px solid #262626;border-left:3px solid #C7FF3A;border-radius:6px;position:relative;overflow:hidden}
+.dor-card::before{content:"";position:absolute;top:0;right:0;width:80px;height:80px;background:radial-gradient(circle,rgba(199,255,58,.06) 0%,transparent 70%);pointer-events:none}
+.dor-card .num{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:#C7FF3A;letter-spacing:.15em;margin-bottom:.5rem}
+.dor-card p{font-size:.95rem}
+
+/* BIG IDEA — 3 passos */
+.passos{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3rem}
+.passo{padding:2rem 1.5rem;background:#0A0A0A;border:1px solid #262626;border-radius:8px;position:relative;transition:border-color .2s,transform .2s}
+.passo:hover{border-color:#C7FF3A;transform:translateY(-4px)}
+.passo .num{font-family:'Outfit',system-ui,sans-serif;font-size:5rem;font-weight:900;color:#C7FF3A;line-height:1;margin-bottom:1rem;letter-spacing:-.06em;font-variant-numeric:lining-nums}
+.passo h3{font-size:1.4rem;margin-bottom:.6rem}
+.passo p{font-size:.9rem;color:#A8A8A0}
+
+/* AUTORIDADE */
+.aut-grid{display:grid;grid-template-columns:1fr 1.5fr;gap:3rem;align-items:center}
+.aut-img{aspect-ratio:4/5;border-radius:8px;overflow:hidden}
+.aut-img img{width:100%;height:100%;object-fit:cover}
+.aut-credenciais{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin-top:1.5rem;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#A8A8A0}
+.aut-credenciais li::before{content:"//";color:#C7FF3A;margin-right:.6rem}
+
+/* PROVA SOCIAL */
+.ps-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;margin-top:3rem}
+.ps-card{padding:1.5rem;background:#161616;border:1px solid #262626;border-radius:8px;display:grid;grid-template-columns:80px 1fr;gap:1.2rem;align-items:center;transition:border-color .2s}
+.ps-card:hover{border-color:#3A3A3A}
+.ps-card img{width:80px;height:80px;border-radius:50%;object-fit:cover}
+.ps-card .quote{font-size:.95rem;color:#F5F5F0;margin-bottom:.6rem;font-style:italic}
+.ps-card .name{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:#8A8A82;letter-spacing:.05em}
+.ps-card .name .accent{color:#C7FF3A}
+
+/* MODULOS */
+.mod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.2rem;margin-top:2.5rem}
+.mod-card{padding:1.4rem;background:#0A0A0A;border:1px solid #262626;border-radius:6px;transition:border-color .2s}
+.mod-card:hover{border-color:#C7FF3A}
+.mod-card .num{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:#C7FF3A;letter-spacing:.2em;margin-bottom:.5rem}
+.mod-card h3{font-size:1.1rem;margin-bottom:.4rem}
+.mod-card p{font-size:.85rem;color:#8A8A82}
+
+/* BONUS */
+.bonus-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;margin-top:2.5rem}
+.bonus-card{background:#0E0E0E;border:1px solid #262626;border-radius:8px;overflow:hidden;display:grid;grid-template-columns:1fr 1.2fr;transition:border-color .2s,transform .2s}
+.bonus-card:hover{border-color:#C7FF3A;transform:translateY(-2px)}
+.bonus-card .img{aspect-ratio:4/5;background:#0A0A0A}
+.bonus-card .img img{width:100%;height:100%;object-fit:cover}
+.bonus-card .content{padding:1.4rem;display:flex;flex-direction:column;justify-content:center;gap:.5rem}
+.bonus-card .tag{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:#C7FF3A;letter-spacing:.2em}
+.bonus-card h3{font-size:1.2rem}
+.bonus-card .valor{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:#8A8A82;margin-top:.5rem;font-variant-numeric:lining-nums tabular-nums}
+.bonus-card .valor s{color:#5A5A52}
+
+/* STACK */
+.stack-list{list-style:none;display:flex;flex-direction:column;gap:.6rem;margin-top:2rem;font-family:'JetBrains Mono',monospace;font-size:.95rem;font-variant-numeric:lining-nums tabular-nums}
+.stack-list li{display:flex;justify-content:space-between;padding:.8rem 0;border-bottom:1px solid #262626}
+.stack-list li.total{border-top:2px solid #C7FF3A;border-bottom:0;margin-top:1rem;padding-top:1.2rem;font-size:1.1rem;color:#C7FF3A;font-weight:700}
+.stack-final{margin-top:2.5rem;padding:2.5rem 2rem;background:radial-gradient(ellipse at top,rgba(199,255,58,.08) 0%,#161616 60%);border:2px solid #C7FF3A;border-radius:12px;text-align:center;position:relative;overflow:hidden;box-shadow:0 0 0 1px #161616 inset,0 20px 60px -20px rgba(199,255,58,.2)}
+.stack-final::before{content:"";position:absolute;inset:-2px;background:linear-gradient(135deg,transparent 30%,rgba(199,255,58,.15) 50%,transparent 70%);pointer-events:none;border-radius:12px}
+.stack-final .label{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:#8A8A82;letter-spacing:.2em;margin-bottom:.6rem;position:relative}
+.stack-final .preco{font-family:'Outfit',system-ui,sans-serif;font-size:5rem;font-weight:900;color:#C7FF3A;letter-spacing:-.05em;line-height:1;position:relative;font-variant-numeric:lining-nums tabular-nums}
+.stack-final .parc{font-size:.9rem;color:#A8A8A0;margin-top:.4rem;position:relative;font-family:'JetBrains Mono',monospace;font-variant-numeric:lining-nums tabular-nums}
+.stack-final .cta{margin-top:1.5rem;position:relative}
+
+/* GARANTIA — selo SVG detalhado */
+.garantia{text-align:center;padding:5rem 2rem}
+.selo-wrap{position:relative;width:160px;height:160px;margin:0 auto 2rem}
+.selo-svg{width:100%;height:100%;animation:rotate-slow 40s linear infinite}
+@keyframes rotate-slow{to{transform:rotate(360deg)}}
+.selo-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Outfit',system-ui,sans-serif}
+.selo-center .num{font-size:3rem;font-weight:900;color:#C7FF3A;line-height:1;letter-spacing:-.06em;font-variant-numeric:lining-nums}
+.selo-center .lbl{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:#8A8A82;letter-spacing:.15em;margin-top:.2rem}
+.garantia p{margin:0 auto;text-align:center;max-width:50ch}
+
+/* FAQ */
+.faq-list{display:flex;flex-direction:column;gap:.8rem;margin-top:2.5rem}
+.faq-item{padding:1.2rem 1.4rem;background:#161616;border:1px solid #262626;border-radius:6px;transition:border-color .2s}
+.faq-item:hover{border-color:#3A3A3A}
+.faq-item .q{font-weight:700;font-size:1rem;margin-bottom:.4rem}
+.faq-item .a{font-size:.9rem;color:#A8A8A0}
+
+/* PS */
+.ps-final{padding:5rem 2rem;background:#0E0E0E;background-image:radial-gradient(circle at 20% 30%,rgba(199,255,58,.04) 0%,transparent 50%)}
+.ps-final p{font-size:1.2rem;color:#F5F5F0;font-style:italic}
+.ps-final .sign{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:#C7FF3A;margin-top:1.5rem;letter-spacing:.1em}
+
+/* ANIMACOES — fade-in scroll + contínuas (D-029) */
+@media(prefers-reduced-motion:no-preference){
+  .reveal{opacity:0;transform:translateY(20px);transition:opacity .8s ease-out,transform .8s ease-out}
+  .reveal.in{opacity:1;transform:translateY(0)}
+
+  /* PULSE no CTA principal (Prioridade 1) */
+  @keyframes cta-pulse{0%,100%{box-shadow:0 0 0 0 rgba(199,255,58,0),0 0 30px 0 rgba(199,255,58,.25)}50%{box-shadow:0 0 0 6px rgba(199,255,58,0),0 0 50px 8px rgba(199,255,58,.45)}}
+  .cta{animation:cta-pulse 2.4s ease-in-out infinite}
+
+  /* BREATHING em numeros grandes (mantido somente nos passos + selo, removido do preço — ja tem aurora+glow na caixa) */
+  @keyframes breathing{0%,100%{filter:drop-shadow(0 0 0 rgba(199,255,58,.3))}50%{filter:drop-shadow(0 0 24px rgba(199,255,58,.5))}}
+  .passo .num,.selo-center .num{animation:breathing 3.5s ease-in-out infinite}
+
+  /* AURORA gradient deslocando lentamente em secoes-chave */
+  @keyframes aurora-slide{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  .aurora{position:relative;overflow:hidden}
+  .aurora::after{content:"";position:absolute;inset:-50% -20%;background:radial-gradient(ellipse at center,rgba(199,255,58,.08) 0%,transparent 50%),radial-gradient(ellipse at 30% 70%,rgba(199,255,58,.05) 0%,transparent 60%);background-size:200% 200%;animation:aurora-slide 18s ease-in-out infinite;pointer-events:none;z-index:0}
+  .aurora>*{position:relative;z-index:1}
+
+  /* HALO continuo em selo de garantia */
+  @keyframes halo-pulse{0%,100%{box-shadow:0 0 60px 0 rgba(199,255,58,.2),0 0 120px 0 rgba(199,255,58,.1)}50%{box-shadow:0 0 80px 10px rgba(199,255,58,.35),0 0 160px 20px rgba(199,255,58,.15)}}
+  .selo-wrap{border-radius:50%;animation:halo-pulse 4s ease-in-out infinite}
+
+  /* GLOW continuo na caixa de preco */
+  @keyframes glow-edge{0%,100%{box-shadow:0 0 0 1px #161616 inset,0 20px 60px -20px rgba(199,255,58,.2)}50%{box-shadow:0 0 0 1px #161616 inset,0 20px 80px -10px rgba(199,255,58,.45)}}
+  .stack-final{animation:glow-edge 3s ease-in-out infinite}
+
+  /* DOT pulse — indicador "live/active" em badges */
+  @keyframes dot-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.2)}}
+  .pulse-dot{display:inline-block;width:8px;height:8px;background:#C7FF3A;border-radius:50%;margin-right:.4rem;animation:dot-pulse 1.4s ease-in-out infinite;box-shadow:0 0 8px rgba(199,255,58,.6)}
+
+  /* SHIMMER em cards de bonus */
+  @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+  .bonus-card::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 0%,rgba(199,255,58,.6) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 4s linear infinite;z-index:2}
+  .bonus-card{position:relative}
+
+  /* CURSOR blink em CTAs textuais */
+  @keyframes cursor-blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+  .cursor{display:inline-block;width:2px;height:1em;background:#C7FF3A;vertical-align:text-bottom;margin-left:2px;animation:cursor-blink 1s steps(1) infinite}
+
+  /* Numero counter — discreto */
+  @keyframes count-up-glow{0%,100%{text-shadow:0 0 0 rgba(199,255,58,0)}50%{text-shadow:0 0 20px rgba(199,255,58,.3)}}
+  .stack-list li.total span:last-child{animation:count-up-glow 4s ease-in-out infinite}
+}
+
+/* PATTERNS sutis em algumas secoes */
+.pattern-grid{position:relative}
+.pattern-grid::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(199,255,58,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(199,255,58,.03) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;mask-image:radial-gradient(ellipse at center,black 30%,transparent 80%)}
+
+@media(max-width:768px){
+  .hero-grid,.aut-grid,.ps-grid,.bonus-grid,.passos,.dor-grid,.mod-grid{grid-template-columns:1fr;gap:2rem}
+  .bonus-card{grid-template-columns:1fr}
+  .seyai-chrome-top .meta{display:none}
+  .seyai-chrome-bot{flex-direction:column;align-items:stretch}
+}
+</style>
+</head>
+<body>
+
+<!-- CHROME SISTEMA SEYAI (TOP) -->
+<header class="seyai-chrome-top">
+  <div class="brand">
+    <div class="logo"></div>
+    <span>seyai</span>
+    <span class="step-pill">cartilha 2+3 / 4</span>
+  </div>
+  <div class="meta">
+    <span><strong>tlucas</strong> · admin</span>
+    <span>face-factory · w05 vendas longa</span>
+    <span>10 imagens · sem upscale</span>
+    <label style="display:flex;align-items:center;gap:.4rem;color:#9CA3AF;cursor:pointer">
+      hero:
+      <select id="hero-toggle" style="background:#2A2B2F;color:#E5E7EB;border:1px solid #3A3B3F;border-radius:4px;padding:.25rem .4rem;font-family:inherit;font-size:.7rem;cursor:pointer">
+        <option value="L1">L1 split (orig)</option>
+        <option value="L2">L2 fusao CSS</option>
+        <option value="L3" selected>L3 full-bleed</option>
+      </select>
+    </label>
+  </div>
+</header>
+
+<!-- HERO O01 -->
+<section class="section hero pattern-grid" data-layout="L3" id="hero">
+  <div class="hero-bg"><img src="assets/moodboard/M3-hero-v3-fullbleed.webp" alt=""></div>
+  <div class="hero-grid">
+    <div class="reveal">
+      <div class="section-tag"><span class="accent">O01</span> // HERO</div>
+      <h1>Você é o seu próprio<span class="stop"></span> banco de imagens<span class="accent">.</span> Infinito.</h1>
+      <p class="lead" style="margin-top:1.5rem">Treine sua IA com 60 fotos. Gere 1.000 cenas profissionais sem fotógrafo. Em 7 dias.</p>
+      <ul class="bullets">
+        <li>60 fotos suas viram 1 modelo de IA com seu rosto.</li>
+        <li>Bibliotecas de prompts curadas por canal — LinkedIn, ads, orgânico.</li>
+        <li>Lote de 30 fotos novas em 5 minutos.</li>
+      </ul>
+      <a href="#stack" class="cta">QUERO TREINAR MEU ROSTO →</a>
+      <span class="cta-sub"><span class="pulse-dot"></span>7 DIAS DE GARANTIA INCONDICIONAL</span>
+    </div>
+    <div class="hero-img reveal"><img src="assets/moodboard/M3-produto-em-acao-v2.webp" alt=""></div>
+  </div>
+</section>
+
+<!-- LEAD HISTORIA O16 -->
+<section class="section">
+  <div class="reveal">
+    <div class="section-tag"><span class="accent">O16</span> // LEAD HISTÓRIA</div>
+    <h2 style="margin-bottom:2rem">A conta que ninguém fecha.</h2>
+    <p>Eu pagava R$ 800 por sessão de fotos a cada 2 meses. Sumiam 4 dias do calendário — pré-produção, gravação, seleção, retoque. E ainda assim faltavam fotos. Pra criativo, pra orgânico, pra cada ângulo novo de campanha.</p>
+    <p>Em 2024 eu tinha um lançamento na sexta. Na quarta o fotógrafo cancelou. Comecei a procurar alternativa às 2 da manhã. Caiu a ficha: o problema não era ele. Era eu depender disso.</p>
+    <p>Comecei a treinar uma IA com meu próprio rosto. Pra ter foto sob demanda. Sem agenda, sem tripé, sem dia perdido. <strong>FACE FACTORY</strong> é o sistema que sai disso.</p>
+  </div>
+</section>
+
+<!-- DIAGNOSTICO O17 -->
+<section class="section">
+  <div class="reveal">
+    <div class="section-tag"><span class="accent">O17</span> // DIAGNÓSTICO</div>
+    <h2>Quanto custa o seu silêncio visual<span class="accent">?</span></h2>
+    <p style="margin-top:1rem;color:#8A8A82">Você provavelmente está pagando 1 destes 4. Talvez os 4.</p>
+    <div class="dor-grid">
+      <div class="dor-card"><div class="num">DOR 01</div><p>Foto travada há 6 meses. Tudo que você posta é variação das mesmas 5.</p></div>
+      <div class="dor-card"><div class="num">DOR 02</div><p>R$ 800 a R$ 2.000 por sessão. E ainda assim falta foto pra cada ângulo novo.</p></div>
+      <div class="dor-card"><div class="num">DOR 03</div><p>Fotógrafo não tem disponibilidade na semana de lançamento. Atrasa tudo.</p></div>
+      <div class="dor-card"><div class="num">DOR 04</div><p>Banco de stock parece de stock. Cliente sente. Conversão cai.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- BIG IDEA O12 -->
+<section class="section pattern-grid aurora">
+  <div class="reveal">
+    <div class="section-tag"><span class="accent">O12</span> // BIG IDEA</div>
+    <h2>FACE FACTORY: a primeira fábrica<br>em que <span class="accent">você</span> é a matéria-prima.</h2>
+    <p style="margin-top:1.5rem">Três etapas. Uma conta. Mil saídas.</p>
+    <div class="passos">
+      <div class="passo"><div class="num">01</div><h3>Treine</h3><p>60 fotos suas viram 1 modelo de IA com seu rosto. ~20 minutos pra rodar.</p></div>
+      <div class="passo"><div class="num">02</div><h3>Liberte</h3><p>100+ prompts curados por contexto: ads, LinkedIn, orgânico, sales page.</p></div>
+      <div class="passo"><div class="num">03</div><h3>Gere</h3><p>Lote de 30 fotos em 5 minutos. Você escolhe, refina, posta.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- AUTORIDADE O13 -->
+<section class="section">
+  <div class="aut-grid reveal">
+    <div class="aut-img"><img src="assets/pagina-slots/O13-autoridade-v3.webp" alt=""></div>
+    <div>
+      <div class="section-tag"><span class="accent">O13</span> // QUEM TÁ POR TRÁS</div>
+      <h2>Thiago Lucas</h2>
+      <p style="margin-top:1.2rem">Cofundador da SeyAI, 8 anos de design e marketing digital, ex-fotógrafo. Trabalhei com 200+ infoprodutores e vi todos caírem no mesmo problema: foto vira gargalo.</p>
+      <p>FACE FACTORY é o sistema que eu construí pra mim mesmo. Agora está disponível.</p>
+      <ul class="aut-credenciais">
+        <li>200+ infoprodutores atendidos diretamente</li>
+        <li>Cofundador SeyAI (plataforma de marketing IA)</li>
+        <li>8 anos como diretor visual em lançamentos high-ticket</li>
+        <li>Ex-fotógrafo profissional — sabe o que substituir</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- PROVA SOCIAL O09 -->
+<section class="section">
+  <div class="reveal">
+    <div class="section-tag"><span class="accent">O09</span> // QUEM JÁ ESTÁ USANDO</div>
+    <h2>Quatro casos. Quatro nichos. Mesmo método.</h2>
+    <div class="ps-grid">
+      <div class="ps-card"><img src="assets/pagina-slots/O09-ps1-marina.webp" alt=""><div><p class="quote">"Substituí meu fotógrafo. Em 1 mês recuperei o investimento e ainda sobrou foto pra 6 meses."</p><div class="name">MARINA F. <span class="accent">// CRIADORA DIGITAL</span></div></div></div>
+      <div class="ps-card"><img src="assets/pagina-slots/O09-ps2-pedro.webp" alt=""><div><p class="quote">"Saí de 1 foto/mês pra 30 fotos/semana. Engajamento triplicou em 60 dias."</p><div class="name">PEDRO M. <span class="accent">// EMPREENDEDOR B2B</span></div></div></div>
+      <div class="ps-card"><img src="assets/pagina-slots/O09-ps3-carla.webp" alt=""><div><p class="quote">"Não sou expert em IA. Em 7 dias eu já estava gerando sozinha. Em 30 dias virou rotina."</p><div class="name">CARLA R. <span class="accent">// COACH DE CARREIRA</span></div></div></div>
+      <div class="ps-card"><img src="assets/pagina-slots/O09-ps4-andre.webp" alt=""><div><p class="quote">"O Discord salvou. Encontro prompt novo todo dia. Comunidade vale a assinatura inteira."</p><div class="name">ANDRÉ S. <span class="accent">// INFOPRODUTOR FITNESS</span></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- MODULOS O14 -->
+<section class="section">
+  <div class="reveal">
+    <div class="section-tag"><span class="accent">O14</span> // CONTEÚDO DO PROGRAMA</div>
+    <h2>6 módulos. 59 aulas. Direto ao ponto.</h2>
+    <div class="mod-grid">
+      <div class="mod-card"><div class="num">M01 // 15 AULAS</div><h3>Curadoria de fotos pro treino</h3><p>O que enviar, o que cortar, como atingir 80/100 de qualidade pré-treino.</p></div>
+      <div class="mod-card"><div class="num">M02 // 8 AULAS</div><h3>Treinamento técnico do LoRA</h3><p>Provedores, hiperparâmetros, custo por treino, retreino quando você muda de visual.</p></div>
+      <div class="mod-card"><div class="num">M03 // 12 AULAS</div><h3>Biblioteca de prompts (100+)</h3><p>Prompts prontos por canal: ads, LinkedIn, orgânico, sales page, email.</p></div>
+      <div class="mod-card"><div class="num">M04 // 10 AULAS</div><h3>Geração em lote e workflow</h3><p>Como produzir 30 fotos em 5min sem virar refém do Photoshop.</p></div>
+      <div class="mod-card"><div class="num">M05 // 6 AULAS</div><h3>Refino facial (ADetailer + upscale)</h3><p>Quando rodar, quando não rodar, como não gastar token à toa.</p></div>
+      <div class="mod-card"><div class="num">M06 // 8 AULAS</div><h3>Identidade visual cross-canal</h3><p>Mantendo coerência entre LinkedIn, orgânico, ads e sales pages.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- BONUS O15 -->
+<section class="section">
+  <div class="reveal">
+    <div class="section-tag"><span class="accent">O15</span> // VOCÊ TAMBÉM RECEBE</div>
+    <h2>4 bônus que valem mais que o curso.</h2>
+    <div class="bonus-grid">
+      <div class="bonus-card"><div class="img"><img src="assets/pagina-slots/O15-bonus1-ebook-v3.webp" alt=""></div><div class="content"><span class="tag">BÔNUS 01</span><h3>Pack 100 prompts prontos por nicho</h3><p style="font-size:.85rem;color:#8A8A82">Infoproduto, B2B, fitness, beauty, finanças. JSON estruturado, copy-and-paste.</p><span class="valor">VALOR: R$ 497 — <span class="accent">incluso</span></span></div></div>
+      <div class="bonus-card"><div class="img"><img src="assets/pagina-slots/O15-bonus2-sessao-v5.webp" alt=""></div><div class="content"><span class="tag">BÔNUS 02</span><h3>Sessão 1:1 30min comigo</h3><p style="font-size:.85rem;color:#8A8A82">Calibração do seu modelo + revisão do primeiro lote de fotos.</p><span class="valor">VALOR: R$ 997 — <span class="accent">incluso</span></span></div></div>
+      <div class="bonus-card"><div class="img"><img src="assets/pagina-slots/O15-bonus3-discord-v2.webp" alt=""></div><div class="content"><span class="tag">BÔNUS 03</span><h3>Discord de prompts</h3><p style="font-size:.85rem;color:#8A8A82">Comunidade ativa de criadores trocando prompts e cases todo dia.</p><span class="valor">VALOR: R$ 297/ano — <span class="accent">incluso</span></span></div></div>
+      <div class="bonus-card"><div class="img"><img src="assets/pagina-slots/O15-bonus4-lifetime-v2.webp" alt=""></div><div class="content"><span class="tag">BÔNUS 04</span><h3>Atualizações vitalícias</h3><p style="font-size:.85rem;color:#8A8A82">Toda nova técnica, novo provider, novo prompt — você recebe pra sempre.</p><span class="valor">VALOR: R$ 497/ano — <span class="accent">incluso</span></span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- STACK O07 -->
+<section class="section aurora" id="stack">
+  <div class="reveal">
+    <div class="section-tag"><span class="accent">O07</span> // O QUE VOCE LEVA HOJE</div>
+    <h2>Conta da soma vs conta de hoje.</h2>
+    <ul class="stack-list">
+      <li><span>6 módulos · 59 aulas</span><span>R$ 1.997</span></li>
+      <li><span>Bônus 01 · 100 prompts</span><span>R$ 497</span></li>
+      <li><span>Bônus 02 · sessão 1:1 30min</span><span>R$ 997</span></li>
+      <li><span>Bônus 03 · Discord de prompts</span><span>R$ 297/ano</span></li>
+      <li><span>Bônus 04 · atualizações vitalícias</span><span>R$ 497/ano</span></li>
+      <li class="total"><span>TOTAL</span><span>R$ 4.285</span></li>
+    </ul>
+    <div class="stack-final">
+      <div class="label">SEU INVESTIMENTO HOJE</div>
+      <div class="preco">R$ 1.497</div>
+      <div class="parc">ou 12x R$ 167 sem juros</div>
+      <a href="#" class="cta">QUERO TREINAR MEU ROSTO →</a>
+    </div>
+  </div>
+</section>
+
+<!-- GARANTIA O03 — selo SVG detalhado -->
+<section class="section aurora">
+  <div class="garantia reveal">
+    <div class="selo-wrap">
+      <svg class="selo-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Anel externo serrilhado -->
+        <g fill="#C7FF3A">
+          <circle cx="100" cy="100" r="92" fill="none" stroke="#C7FF3A" stroke-width="1.5"/>
+          <!-- 24 dentinhos -->
+          <g>
+            <rect x="98" y="0" width="4" height="14" rx="1"/>
+            <rect x="98" y="0" width="4" height="14" rx="1" transform="rotate(15 100 100)"/>
+            <rect x="98" y="0" width="4" height="14" rx="1" transform="rotate(30 100 100)"/>
+            <rect x="98" y="0" width="4" height="14" rx="1" transform="rotate(45 100 100)"/>
+            <rect x="98" y="0" width="4" height="14" rx="1" transform="rotate(60 100 100)"/>
+            <rect x="98" y="0" width="4" height="14" rx="1" transform="rotate(75 100 100)"/>
+            <rect x="98" y="0" width="4" height="14" rx="1" transform="rotate(90 100 100)"/>
+            <rect x="98" y="0" width="4" height="14" rx="1" transform="rotate(105 100 100)"/>
+            <rect x="98" y="0" width="4" height="14" rx="1" transform="rotate(120 100 100)"/>
+            <rect x="98" y="0" width="4" height="14" rx="1" transform="rotate(135 100 100)"/>
+            <rect x="98" y="0" width="4" height="14" rx="1" transform="rotate(150 100 100)"/>
+            <rect x="98" y="0" width="4" height="14" rx="1" transform="rotate(165 100 100)"/>
+            <rect x="98" y="0" width="4" height="14" rx="1" transform="rotate(180 100 100)"/>
+            <rect x="98" y="0" width="4" height="14" rx="1" transform="rotate(195 100 100)"/>
+            <rect x="98" y="0" width="4" height="14" rx="1" transform="rotate(210 100 100)"/>
+            <rect x="98" y="0" width="4" height="14" rx="1" transform="rotate(225 100 100)"/>
+            <rect x="98" y="0" width="4" height="14" rx="1" transform="rotate(240 100 100)"/>
+            <rect x="98" y="0" width="4" height="14" rx="1" transform="rotate(255 100 100)"/>
+            <rect x="98" y="0" width="4" height="14" rx="1" transform="rotate(270 100 100)"/>
+            <rect x="98" y="0" width="4" height="14" rx="1" transform="rotate(285 100 100)"/>
+            <rect x="98" y="0" width="4" height="14" rx="1" transform="rotate(300 100 100)"/>
+            <rect x="98" y="0" width="4" height="14" rx="1" transform="rotate(315 100 100)"/>
+            <rect x="98" y="0" width="4" height="14" rx="1" transform="rotate(330 100 100)"/>
+            <rect x="98" y="0" width="4" height="14" rx="1" transform="rotate(345 100 100)"/>
+          </g>
+          <!-- Anel medio -->
+          <circle cx="100" cy="100" r="78" fill="none" stroke="#C7FF3A" stroke-width="1" opacity=".5"/>
+          <!-- Texto curvo simulado por dots no anel -->
+          <g opacity=".6">
+            <circle cx="100" cy="22" r="1.5"/>
+            <circle cx="100" cy="178" r="1.5"/>
+            <circle cx="22" cy="100" r="1.5"/>
+            <circle cx="178" cy="100" r="1.5"/>
+          </g>
+          <!-- Anel interno solido -->
+          <circle cx="100" cy="100" r="62" fill="none" stroke="#C7FF3A" stroke-width="2.5"/>
+          <!-- Estrelas/raios decorativos -->
+          <g opacity=".4">
+            <path d="M100 32 L102 38 L108 38 L103 42 L105 48 L100 44 L95 48 L97 42 L92 38 L98 38 Z"/>
+            <path d="M100 152 L102 158 L108 158 L103 162 L105 168 L100 164 L95 168 L97 162 L92 158 L98 158 Z"/>
+          </g>
+        </g>
+      </svg>
+      <div class="selo-center">
+        <div class="num">7</div>
+        <div class="lbl">DIAS DE GARANTIA</div>
+      </div>
+    </div>
+    <div class="section-tag"><span class="accent">O03</span> // GARANTIA INCONDICIONAL</div>
+    <h2>Sete dias. Sem perguntas.</h2>
+    <p style="margin-top:1.5rem;font-size:1.1rem">Treine seu modelo, gere 1 lote, veja o resultado. Se não entregar o que prometi, te devolvo cada centavo. <strong>Sem formulário, sem ligação, sem fricção.</strong></p>
+  </div>
+</section>
+
+<!-- FAQ O10 -->
+<section class="section">
+  <div class="reveal">
+    <div class="section-tag"><span class="accent">O10</span> // FAQ</div>
+    <h2>Perguntas que aparecem.</h2>
+    <div class="faq-list">
+      <div class="faq-item"><div class="q">Preciso saber programar?</div><div class="a">Não. As aulas mostram tudo passo-a-passo na interface do Replicate. Se você sabe usar Canva, você roda FACE FACTORY.</div></div>
+      <div class="faq-item"><div class="q">Quantas fotos preciso?</div><div class="a">Mínimo 60. O sistema mostra um score em tempo real (igual Higgsfield) — 80 fotos = qualidade 10/10.</div></div>
+      <div class="faq-item"><div class="q">Quanto custa por imagem gerada depois?</div><div class="a">~R$ 0,40 por imagem em qualidade base. ~R$ 0,65 com refino facial + upscale 4K.</div></div>
+      <div class="faq-item"><div class="q">Posso usar comercialmente?</div><div class="a">Sim. As fotos são suas. Use em ads, sales pages, orgânico, qualquer canal.</div></div>
+      <div class="faq-item"><div class="q">Funciona com qualquer rosto?</div><div class="a">Sim. Independe de etnia, idade, gênero. Quanto mais diversidade nas 60+ fotos (ângulos, luz, expressão), melhor o modelo.</div></div>
+      <div class="faq-item"><div class="q">E se eu mudar de visual (cabelo, barba)?</div><div class="a">Você retreina o modelo (~R$ 12). Cobre no módulo M02 quando vale e quando não.</div></div>
+      <div class="faq-item"><div class="q">As fotos ficam privadas?</div><div class="a">Seu modelo fica em conta privada no Replicate. Ninguém vê, ninguém usa. Você controla.</div></div>
+      <div class="faq-item"><div class="q">Posso treinar mais de 1 pessoa?</div><div class="a">Sim. Cada modelo é independente. Útil pra sócios, equipe, casal de criadores.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PS O21 -->
+<section class="section ps-final">
+  <div class="reveal">
+    <div class="section-tag"><span class="accent">O21</span> // POST-SCRIPTUM</div>
+    <p>Você pode continuar pagando R$ 800 por sessão a cada 2 meses. Pode continuar perdendo 4 dias do calendário. Pode continuar reciclando as mesmas 5 fotos por 8 meses até o cliente perceber.</p>
+    <p style="margin-top:1rem"><strong>Ou pode treinar uma vez e ter mil fotos novas pelo resto da sua vida.</strong></p>
+    <p class="sign">— THIAGO LUCAS, FUNDADOR FACE FACTORY</p>
+  </div>
+</section>
+
+<!-- CHROME SISTEMA SEYAI (BOTTOM) -->
+<footer class="seyai-chrome-bot">
+  <div class="info">
+    <span class="info-title">Aprovar esta versão da página?</span>
+    <span class="info-sub">Após aprovado, sistema roda upscale + ADetailer (D-018) e prepara deploy. Sem custo se você ajustar antes.</span>
+  </div>
+  <div class="actions">
+    <a href="#" class="btn-sys muted">Ajustar copy novamente</a>
+    <a href="#" class="btn-sys">Regerar imagem específica</a>
+    <a href="#" class="btn-sys primary">Aprovar página →</a>
+  </div>
+</footer>
+
+<script>
+// fade-in scroll
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');observer.unobserve(e.target);}});
+},{threshold:0.1,rootMargin:'0px 0px -80px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+// Hero layout toggle (L1 split / L2 fusao CSS / L3 full-bleed)
+const heroToggle=document.getElementById('hero-toggle');
+const hero=document.getElementById('hero');
+if(heroToggle&&hero){
+  heroToggle.addEventListener('change',e=>{
+    hero.dataset.layout=e.target.value;
+    hero.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+}
+</script>
+
+</body>
+</html>
