@@ -111,16 +111,20 @@ p.lead{font-size:1.2rem;color:#F5F5F0}
   .hero[data-layout="L1"] h1,.hero[data-layout="L2"] h1{font-size:clamp(2rem,8vw,2.8rem)}
   .hero[data-layout="L2"] .hero-img::before,.hero[data-layout="L2"] .hero-img::after{display:none}
 
-  /* L3: imagem cobre topo (60vh) canto-a-canto sem padding lateral, texto stack abaixo */
-  .hero[data-layout="L3"]{min-height:auto;padding:0;flex-direction:column;display:flex;width:100vw;max-width:100vw;margin-left:calc(-1*((100vw - 100%)/2))}
-  .hero[data-layout="L3"] .hero-bg{position:relative;width:100%;height:60vh;flex-shrink:0}
-  /* object-position 78% horizontal puxa para o lado direito da imagem (onde esta o expert) */
+  /* L3: imagem cobre topo canto-a-canto, texto SOBREPÕE quarto inferior escuro da imagem */
+  .hero[data-layout="L3"]{min-height:auto;padding:0;flex-direction:column;display:flex;width:100vw;max-width:100vw;margin-left:calc(-1*((100vw - 100%)/2));position:relative}
+  .hero[data-layout="L3"] .hero-bg{position:relative;width:100%;height:72vh;flex-shrink:0}
+  /* object-position 78% puxa pro lado direito (expert) */
   .hero[data-layout="L3"] .hero-bg img{object-position:78% center;object-fit:cover}
-  .hero[data-layout="L3"] .hero-bg::after{background:linear-gradient(180deg,transparent 55%,rgba(10,10,10,.7) 80%,#0A0A0A 100%)}
-  .hero[data-layout="L3"] .hero-grid{grid-template-columns:1fr;padding:2rem 1.25rem 3rem;width:100%;max-width:none}
+  /* Gradiente comeca mais cedo (40%) pra criar a "zona escura" onde texto vai sobrepor */
+  .hero[data-layout="L3"] .hero-bg::after{background:linear-gradient(180deg,transparent 35%,rgba(10,10,10,.55) 60%,rgba(10,10,10,.92) 80%,#0A0A0A 100%)}
+  .hero[data-layout="L3"] .hero-grid{grid-template-columns:1fr;padding:1rem 1.25rem 2.5rem;width:100%;max-width:none;margin-top:-32vh;position:relative;z-index:5}
   .hero[data-layout="L3"] .hero-grid > div:first-child{padding:0}
-  .hero[data-layout="L3"] h1{font-size:clamp(1.8rem,7vw,2.4rem)}
+  /* Headline maior pra ocupar espaço e ter presença */
+  .hero[data-layout="L3"] h1{font-size:clamp(2.2rem,9vw,3.2rem);line-height:1.02}
   .hero[data-layout="L3"] .hero-img{display:none}
+  .hero[data-layout="L3"] .lead{font-size:1.05rem}
+  .hero[data-layout="L3"] .bullets li{font-size:.92rem}
 
   /* Bullets responsivos */
   .bullets li{font-size:.9rem;line-height:1.4}
@@ -341,7 +345,7 @@ body[data-skin="L3"] .selo-wrap{width:240px;height:240px}
 
 <!-- HERO O01 -->
 <section class="section hero pattern-grid" data-layout="L3" id="hero">
-  <div class="hero-bg"><img src="assets/upscaled/M3-hero-v3-fullbleed_2x.webp" alt=""></div>
+  <div class="hero-bg"><img src="assets/upscaled/M3-hero-v5-realismo_2x.webp" alt=""></div>
   <div class="hero-grid">
     <div class="reveal">
   <h1>Você é o seu próprio <span class="accent">banco de imagens</span>. <span class="underline">Infinito</span>.</h1>
@@ -398,7 +402,7 @@ body[data-skin="L3"] .selo-wrap{width:240px;height:240px}
 <!-- AUTORIDADE O13 -->
 <section class="section">
   <div class="aut-grid reveal">
-    <div class="aut-img"><img src="assets/upscaled/O13-autoridade-v3_2x.webp" alt=""></div>
+    <div class="aut-img"><img src="assets/upscaled/O13-autoridade-v5-realismo_2x.webp" alt=""></div>
     <div>
         <h2>Thiago Lucas</h2>
       <p style="margin-top:1.2rem">Cofundador da SeyAI, 8 anos de design e marketing digital, ex-fotógrafo. Trabalhei com 200+ infoprodutores e vi todos caírem no mesmo problema: foto vira gargalo.</p>
