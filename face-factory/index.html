@@ -60,9 +60,10 @@ body.iframe-inner{padding:0 !important}
 /* ============================================================
    PAGINA DO CLIENTE (FACE FACTORY)
    ============================================================ */
-.section{max-width:1440px;margin:0 auto;padding:5rem 2.5rem;border-bottom:1px solid #161616;position:relative}
-@media(min-width:1600px){.section{max-width:1600px;padding:6rem 3rem}}
-@media(min-width:1920px){.section{max-width:1760px;padding:7rem 4rem}}
+/* Container alinhado ao hero L3 (max-width 1280px) — todas as seções respeitam o mesmo container central */
+.section{max-width:1280px;margin:0 auto;padding:5rem 2rem;border-bottom:1px solid #161616;position:relative}
+/* Em viewports muito grandes, padding lateral cresce mas max-width fica em 1280 — evita textos grudando na borda */
+@media(min-width:1920px){.section{padding:6rem 2rem}}
 .section:nth-child(odd){background:#0A0A0A}
 .section:nth-child(even){background:#0E0E0E}
 .section-tag{font-family:'Manrope',system-ui,sans-serif;font-size:.65rem;letter-spacing:.2em;color:#8A8A82;margin-bottom:.6rem}
@@ -106,7 +107,8 @@ p.lead{font-size:1.2rem;color:#F5F5F0}
 .hero[data-layout="L2"] .hero-img::after{content:"+1.000 fotos";position:absolute;top:8%;left:-15%;font-family:'Manrope',system-ui,sans-serif;font-size:.75rem;color:#C7FF3A;padding:.95rem 1rem;letter-spacing:.05em;font-weight:600}
 
 /* L3 — FULL-BLEED (imagem cobre fundo todo, texto overlay) */
-.hero[data-layout="L3"]{padding:0;min-height:100vh}
+/* Altura controlada: minimo 640px, prefere 80vh, maximo 880px (evita estourar em 2K/4K/Ultrawide) */
+.hero[data-layout="L3"]{padding:0;min-height:clamp(640px,80vh,880px);max-height:880px}
 .hero[data-layout="L3"] .hero-bg{display:block;position:absolute;inset:0;z-index:0}
 .hero[data-layout="L3"] .hero-bg img{width:100%;height:100%;object-fit:cover;object-position:right center}
 .hero[data-layout="L3"] .hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#0A0A0A 0%,rgba(10,10,10,.95) 25%,rgba(10,10,10,.6) 50%,transparent 75%)}
