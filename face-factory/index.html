@@ -33,6 +33,18 @@ body{font-family:'Geist',system-ui,sans-serif;background:#0A0A0A;color:#F5F5F0;l
 .hamb-panel strong{color:#E5E7EB}
 .hamb-panel select{background:#2A2B2F;color:#E5E7EB;border:1px solid #3A3B3F;border-radius:4px;padding:.25rem .4rem;font-family:inherit;font-size:.75rem}
 
+/* Device viewport simulator (iframe-based, 16 dispositivos canônicos do SeyAI) */
+.device-wrapper{display:none;position:fixed;inset:48px 0 72px 0;background:#000;overflow:auto;padding:2rem;z-index:500;flex-direction:column;align-items:center;justify-content:flex-start;gap:.8rem}
+.device-wrapper.active{display:flex}
+.device-frame{background:#0A0A0A;box-shadow:0 0 80px rgba(0,0,0,.8),0 0 0 8px #1A1B1E,0 0 0 9px #2A2B2F;border-radius:18px;overflow:hidden;transition:width .25s ease,height .25s ease;flex-shrink:0}
+.device-frame iframe{width:100%;height:100%;border:0;display:block;background:#0A0A0A}
+.device-meta{color:#9CA3AF;font-family:'Inter',sans-serif;font-size:.72rem;text-align:center;letter-spacing:.05em}
+.device-meta strong{color:#E5E7EB}
+.device-meta .badge{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:.4rem;vertical-align:middle}
+body.device-mode .page-content{display:none}
+body.iframe-inner .seyai-chrome-top,body.iframe-inner .seyai-chrome-bot,body.iframe-inner .device-wrapper{display:none !important}
+body.iframe-inner{padding:0 !important}
+
 .seyai-chrome-bot{bottom:0;border-top:1px solid #2A2B2F;padding:1.1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;backdrop-filter:blur(8px)}
 .seyai-chrome-bot .info{display:flex;flex-direction:column;gap:.2rem}
 .seyai-chrome-bot .info-title{font-weight:600;color:#E5E7EB;font-size:.85rem}
@@ -323,6 +335,36 @@ body[data-skin="L3"] .selo-wrap{width:240px;height:240px}
         <option value="L3" selected>L3 full-bleed</option>
       </select>
     </label>
+    <label style="display:flex;align-items:center;gap:.4rem;color:#9CA3AF;cursor:pointer">
+      device:
+      <select id="device-toggle" style="background:#2A2B2F;color:#E5E7EB;border:1px solid #3A3B3F;border-radius:4px;padding:.25rem .4rem;font-family:inherit;font-size:.7rem;cursor:pointer;max-width:200px">
+        <option value="auto" selected>Auto (viewport real)</option>
+        <optgroup label="Mobile">
+          <option value="iphone-se">iPhone SE — 375×667</option>
+          <option value="galaxy-fold">Galaxy Fold — 344×882</option>
+          <option value="galaxy-s23">Galaxy S23 — 360×780</option>
+          <option value="iphone-14-pro">iPhone 14 Pro — 393×852</option>
+          <option value="pixel-8">Pixel 8 — 412×915</option>
+          <option value="iphone-14-pro-max">iPhone 14 Pro Max — 430×932</option>
+        </optgroup>
+        <optgroup label="Tablet">
+          <option value="ipad-mini">iPad Mini — 768×1024</option>
+          <option value="ipad">iPad — 820×1180</option>
+          <option value="ipad-pro-11">iPad Pro 11 — 834×1194</option>
+          <option value="ipad-pro-12-9">iPad Pro 12.9 — 1024×1366</option>
+        </optgroup>
+        <optgroup label="Desktop">
+          <option value="laptop-13">Laptop 13 — 1280×800</option>
+          <option value="laptop-15">Laptop 15 — 1440×900</option>
+          <option value="desktop-fullhd">Desktop FullHD — 1920×1080</option>
+          <option value="desktop-2k">Desktop 2K — 2560×1440</option>
+          <option value="desktop-ultrawide">Ultrawide 34 — 3440×1440</option>
+        </optgroup>
+        <optgroup label="TV">
+          <option value="tv-4k">TV 4K — 3840×2160</option>
+        </optgroup>
+      </select>
+    </label>
   </div>
   <button class="hamb-btn" id="hamb-btn" aria-label="abrir menu">
     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h12M2 12h12"/></svg>
@@ -343,6 +385,7 @@ body[data-skin="L3"] .selo-wrap{width:240px;height:240px}
   </div>
 </div>
 
+<div class="page-content">
 <!-- HERO O01 -->
 <section class="section hero pattern-grid" data-layout="L3" id="hero">
   <div class="hero-bg"><img src="assets/upscaled/M3-hero-v3-fullbleed_2x.webp" alt=""></div>
@@ -572,6 +615,16 @@ body[data-skin="L3"] .selo-wrap{width:240px;height:240px}
   </div>
 </section>
 
+</div><!-- /page-content -->
+
+<!-- DEVICE VIEWPORT SIMULATOR (16 dispositivos canonicos do SeyAI) -->
+<div class="device-wrapper" id="device-wrapper">
+  <div class="device-meta" id="device-meta"><span class="badge"></span><strong>iPhone 14 Pro</strong> · 393×852</div>
+  <div class="device-frame" id="device-frame" style="width:393px;height:852px">
+    <iframe src="" id="device-iframe"></iframe>
+  </div>
+</div>
+
 <!-- CHROME SISTEMA SEYAI (BOTTOM) -->
 <footer class="seyai-chrome-bot">
   <div class="info">
@@ -613,6 +666,50 @@ const hambPanel=document.getElementById('hamb-panel');
 if(hambBtn&&hambPanel){
   hambBtn.addEventListener('click',()=>hambPanel.classList.toggle('open'));
 }
+
+// Inner mode (iframe): esconde chrome top/bot quando carregado dentro do device-iframe
+if(window.location.hash==='#inner'){document.body.classList.add('iframe-inner');}
+
+// Device viewport simulator (16 dispositivos canonicos)
+const DEVICES={
+  'iphone-se':{w:375,h:667,n:'iPhone SE',c:'#818CF8'},
+  'galaxy-fold':{w:344,h:882,n:'Galaxy Fold',c:'#818CF8'},
+  'galaxy-s23':{w:360,h:780,n:'Galaxy S23',c:'#818CF8'},
+  'iphone-14-pro':{w:393,h:852,n:'iPhone 14 Pro',c:'#818CF8'},
+  'pixel-8':{w:412,h:915,n:'Pixel 8',c:'#818CF8'},
+  'iphone-14-pro-max':{w:430,h:932,n:'iPhone 14 Pro Max',c:'#818CF8'},
+  'ipad-mini':{w:768,h:1024,n:'iPad Mini',c:'#A78BFA'},
+  'ipad':{w:820,h:1180,n:'iPad',c:'#A78BFA'},
+  'ipad-pro-11':{w:834,h:1194,n:'iPad Pro 11"',c:'#A78BFA'},
+  'ipad-pro-12-9':{w:1024,h:1366,n:'iPad Pro 12.9"',c:'#A78BFA'},
+  'laptop-13':{w:1280,h:800,n:'Laptop 13"',c:'#6366F1'},
+  'laptop-15':{w:1440,h:900,n:'Laptop 15"',c:'#6366F1'},
+  'desktop-fullhd':{w:1920,h:1080,n:'Desktop FullHD',c:'#6366F1'},
+  'desktop-2k':{w:2560,h:1440,n:'Desktop 2K',c:'#6366F1'},
+  'desktop-ultrawide':{w:3440,h:1440,n:'Ultrawide 34"',c:'#6366F1'},
+  'tv-4k':{w:3840,h:2160,n:'TV 4K',c:'#4F46E5'}
+};
+const deviceToggle=document.getElementById('device-toggle');
+const deviceWrapper=document.getElementById('device-wrapper');
+const deviceFrame=document.getElementById('device-frame');
+const deviceIframe=document.getElementById('device-iframe');
+const deviceMeta=document.getElementById('device-meta');
+function setDevice(id){
+  if(id==='auto'||!id){
+    deviceWrapper.classList.remove('active');
+    document.body.classList.remove('device-mode');
+    deviceIframe.src='';
+    return;
+  }
+  const d=DEVICES[id];if(!d)return;
+  deviceFrame.style.width=d.w+'px';
+  deviceFrame.style.height=d.h+'px';
+  deviceMeta.innerHTML='<span class="badge" style="background:'+d.c+'"></span><strong>'+d.n+'</strong> · '+d.w+'×'+d.h;
+  deviceIframe.src=window.location.pathname+'#inner';
+  deviceWrapper.classList.add('active');
+  document.body.classList.add('device-mode');
+}
+if(deviceToggle){deviceToggle.addEventListener('change',e=>setDevice(e.target.value));}
 </script>
 
 </body>
