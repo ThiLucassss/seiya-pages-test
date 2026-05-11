@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>[SeyAI] Pagina de Captura · Higgsfield Soul 2 · thiago-surf-coach</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --chrome-top: 48px;
+  --chrome-bot: 64px;
+  --chrome-bg: #1A1B1E;
+  --chrome-border: rgba(255,255,255,.06);
+  --chrome-text: rgba(255,255,255,.5);
+  --chrome-hi: rgba(255,255,255,.88);
+  --chrome-accent: #62B6CB;
+  --aqua: #62B6CB;
+  --navy: #1B4965;
+  --aqua-l: #BEE9E8;
+  --aqua-xl: #EBF7F9;
+  --bg: #F8FAFB;
+  --bg2: #EEF6F9;
+  --fg: #1B4965;
+  --fg-2: #3D6B82;
+  --fg-3: #7FA8BC;
+  --line: rgba(98,182,203,0.14);
+  --white: #FFFFFF;
+  --title: 'Nunito', system-ui, sans-serif;
+  --body: 'Inter', system-ui, sans-serif;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+/* ══ CHROME TOP ══ */
+.sy-top{position:fixed;top:0;left:0;right:0;z-index:1000;height:var(--chrome-top);background:var(--chrome-bg);border-bottom:1px solid var(--chrome-border);display:flex;align-items:center;gap:12px;padding:0 16px;font-family:var(--body);font-size:12px;}
+.sy-brand{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.sy-logo{width:22px;height:22px;border-radius:5px;background:var(--chrome-accent);display:flex;align-items:center;justify-content:center;font-family:var(--title);font-weight:900;font-size:13px;color:#fff;flex-shrink:0;}
+.sy-name{font-family:var(--title);font-weight:700;font-size:13px;color:var(--chrome-hi);letter-spacing:.02em;}
+.sy-pill{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--chrome-accent);background:rgba(98,182,203,.12);border:1px solid rgba(98,182,203,.22);border-radius:999px;padding:2px 8px;flex-shrink:0;}
+.sy-sep{width:1px;height:18px;background:var(--chrome-border);flex-shrink:0;}
+.sy-meta{display:flex;align-items:center;gap:10px;flex:1;min-width:0;color:var(--chrome-text);font-size:11px;overflow:hidden;}
+.sy-meta span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sy-meta strong{color:var(--chrome-hi);}
+.sy-dv{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.sy-dv select{background:rgba(255,255,255,.06);border:1px solid var(--chrome-border);border-radius:5px;color:var(--chrome-text);font-family:var(--body);font-size:10px;padding:3px 6px;cursor:pointer;outline:none;}
+.sy-dv select:hover{border-color:rgba(255,255,255,.15);}
+.sy-motor{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--chrome-accent);opacity:.8;white-space:nowrap;}
+
+/* ══ CHROME BOTTOM ══ */
+.sy-bot{position:fixed;bottom:0;left:0;right:0;z-index:1000;height:var(--chrome-bot);background:var(--chrome-bg);border-top:1px solid var(--chrome-border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-family:var(--body);}
+.sy-info-title{font-size:12px;font-weight:500;color:var(--chrome-hi);}
+.sy-info-sub{font-size:10px;color:var(--chrome-text);margin-top:2px;letter-spacing:.04em;}
+.sy-actions{display:flex;align-items:center;gap:8px;}
+.sy-btn{padding:6px 14px;border-radius:6px;border:1px solid var(--chrome-border);background:rgba(255,255,255,.06);color:var(--chrome-hi);font-family:var(--body);font-size:11px;cursor:pointer;transition:background .15s,border-color .15s;}
+.sy-btn:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.15);}
+.sy-btn.primary{background:var(--chrome-accent);border-color:var(--chrome-accent);color:#1A1B1E;font-weight:600;}
+.sy-btn.primary:hover{background:#7ecadc;border-color:#7ecadc;}
+
+/* ══ PAGE BASE — scroll TOTALMENTE LIVRE, sem scroll-snap ══ */
+html{overflow-y:scroll;}
+body{
+  background:var(--bg);color:var(--fg);
+  font-family:var(--body);font-weight:400;line-height:1.6;
+  overflow-x:hidden;-webkit-font-smoothing:antialiased;
+  padding-top:var(--chrome-top);
+  padding-bottom:var(--chrome-bot);
+}
+
+/* ══ SLIDES (sections) ══ */
+.vs-slide{
+  position:relative;width:100%;
+  min-height:calc(100vh - var(--chrome-top) - var(--chrome-bot));
+  overflow:hidden;
+}
+.vs-progress{position:absolute;top:0;left:0;right:0;height:2px;background:rgba(98,182,203,.08);z-index:5;}
+.vs-progress-fill{height:100%;background:var(--aqua);box-shadow:0 0 6px rgba(98,182,203,.55);}
+.vs-next{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);font-family:var(--body);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--fg-3);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:5;pointer-events:none;}
+.vs-next-arrow{font-size:14px;color:var(--aqua);animation:bounce 1.6s ease-in-out infinite;}
+@keyframes bounce{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(8px);opacity:1}}
+
+/* ══ STEP INDICATOR (lateral direita) ══ */
+.step-ind{position:fixed;right:20px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:14px;z-index:150;font-family:var(--body);font-size:10px;letter-spacing:.2em;text-transform:uppercase;}
+.step-ind-item{display:flex;align-items:center;gap:10px;justify-content:flex-end;color:var(--fg-3);transition:color 300ms;cursor:pointer;}
+.step-ind-item.active{color:var(--aqua);}
+.step-ind-bar{height:2px;background:var(--fg-3);border-radius:1px;transition:width 300ms,background 300ms,box-shadow 300ms;}
+.step-ind-item.active .step-ind-bar{background:var(--aqua);box-shadow:0 0 6px var(--aqua);}
+.step-ind-label{transition:opacity 300ms,transform 300ms;}
+
+/* ══ S1 HERO — full-bleed com mask-image ══ */
+#s1{background:var(--white);}
+.hero-bg{position:absolute;inset:0;overflow:hidden;}
+.hero-bg img{
+  width:100%;height:100%;
+  object-fit:cover;object-position:72% 20%;
+  display:block;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, rgba(0,0,0,.18) 14%, rgba(0,0,0,.7) 32%, black 48%),
+    linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+  mask-image:
+    linear-gradient(to right, transparent 0%, rgba(0,0,0,.18) 14%, rgba(0,0,0,.7) 32%, black 48%),
+    linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+  -webkit-mask-composite:source-in;
+  mask-composite:intersect;
+}
+.hero-left{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:60px 48px 60px 72px;max-width:560px;
+  min-height:calc(100vh - var(--chrome-top) - var(--chrome-bot));
+}
+@media(max-width:1100px){.hero-left{padding:48px 36px 48px 48px;max-width:480px;}}
+@media(max-width:768px){.hero-left{padding:40px 28px;max-width:100%;background:rgba(248,250,251,.85);backdrop-filter:blur(10px);}}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--aqua-xl);color:var(--navy);font-family:var(--title);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:5px 14px;border-radius:999px;margin-bottom:24px;width:fit-content;}
+.hero-eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--aqua);}
+.hero-h1{font-family:var(--title);font-weight:900;font-size:clamp(30px,4vw,52px);line-height:1.08;color:var(--navy);margin-bottom:16px;letter-spacing:-.01em;}
+.hero-h1 .line{display:block;overflow:hidden;}
+.hero-h1 .word{display:inline-block;}
+.hero-h1 em{color:var(--aqua);font-style:normal;}
+.hero-sub{font-size:16px;line-height:1.7;color:var(--fg-2);margin-bottom:10px;max-width:460px;}
+.hero-support{font-size:14px;line-height:1.7;color:var(--fg-3);margin-bottom:28px;max-width:440px;}
+.capture-form{display:flex;flex-direction:column;gap:10px;max-width:380px;}
+.capture-form input{padding:13px 16px;border:2px solid var(--line);border-radius:10px;background:rgba(255,255,255,.92);font-family:var(--body);font-size:15px;color:var(--fg);outline:none;transition:border-color .2s;}
+.capture-form input:focus{border-color:var(--aqua);}
+.capture-form input::placeholder{color:var(--fg-3);}
+.cta-btn{padding:15px 20px;border-radius:10px;background:var(--aqua);color:var(--white);font-family:var(--title);font-weight:900;font-size:15px;border:none;cursor:pointer;transition:background .2s,transform .15s;text-align:center;}
+.cta-btn:hover{background:#4fa8bf;transform:translateY(-2px);}
+.hero-proof{font-size:12px;color:var(--fg-3);margin-top:8px;}
+
+/* ══ S2 BENEFICIOS ══ */
+#s2{background:var(--bg);display:grid;place-items:center;}
+.s2-inner{max-width:700px;width:100%;padding:0 48px;text-align:center;}
+.s-tag{font-family:var(--title);font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--aqua);margin-bottom:16px;}
+.s-h2{font-family:var(--title);font-weight:900;font-size:clamp(24px,3.2vw,40px);line-height:1.15;color:var(--navy);margin-bottom:10px;}
+.s-lead{font-size:15px;color:var(--fg-2);margin-bottom:28px;}
+.bullets{display:flex;flex-direction:column;gap:0;text-align:left;}
+.bullet{display:flex;align-items:flex-start;gap:14px;padding:12px 0;border-bottom:1px solid var(--line);font-size:14px;line-height:1.6;color:var(--fg-2);}
+.bullet:last-child{border-bottom:none;}
+.bullet-num{font-family:var(--title);font-weight:900;font-size:13px;color:var(--aqua);min-width:22px;flex-shrink:0;margin-top:1px;}
+.bullet strong{color:var(--navy);}
+.s2-fecho{font-size:13px;color:var(--fg-3);margin-top:16px;}
+
+/* ══ S3 PROVA SOCIAL ══ */
+#s3{background:var(--bg2);display:grid;place-items:center;}
+.s3-inner{max-width:720px;width:100%;padding:0 48px;}
+.s3-cards{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:24px;}
+@media(max-width:640px){.s3-cards{grid-template-columns:1fr;}}
+.testimonial{background:var(--white);border-radius:14px;padding:24px;border-left:4px solid var(--aqua);box-shadow:0 4px 20px rgba(27,73,101,0.06);}
+.testimonial blockquote{font-size:15px;line-height:1.7;color:var(--fg-2);font-style:italic;margin-bottom:14px;}
+.testimonial cite{font-family:var(--title);font-weight:700;font-size:13px;color:var(--navy);font-style:normal;}
+.smoke-note{font-size:11px;color:var(--fg-3);margin-top:6px;font-style:italic;}
+
+/* ══ S4 FORM REPETIDO ══ */
+#s4{background:var(--navy);display:grid;place-items:center;}
+.s4-inner{max-width:520px;width:100%;padding:0 48px;text-align:center;}
+.s4-h2{font-family:var(--title);font-weight:900;font-size:clamp(24px,3.5vw,42px);line-height:1.1;color:var(--white);margin-bottom:12px;}
+.s4-sub{font-size:15px;color:rgba(255,255,255,.7);margin-bottom:32px;}
+.capture-form-2{display:flex;flex-direction:column;gap:10px;}
+.capture-form-2 input{padding:13px 16px;border-radius:10px;border:2px solid rgba(98,182,203,.35);background:rgba(255,255,255,.08);font-family:var(--body);font-size:15px;color:var(--white);outline:none;transition:border-color .2s;}
+.capture-form-2 input:focus{border-color:var(--aqua);}
+.capture-form-2 input::placeholder{color:rgba(255,255,255,.4);}
+.cta-btn-2{padding:15px 20px;border-radius:10px;background:var(--aqua);color:var(--navy);font-family:var(--title);font-weight:900;font-size:15px;border:none;cursor:pointer;transition:background .2s,transform .15s;}
+.cta-btn-2:hover{background:#7ecadc;transform:translateY(-2px);}
+.s4-proof{font-size:12px;color:rgba(255,255,255,.4);margin-top:10px;}
+
+/* ══ S5 LEGAL ══ */
+#s5{background:var(--white);display:grid;place-items:center;}
+.s5-inner{max-width:580px;width:100%;padding:0 48px;text-align:center;}
+.legal-text{font-size:12px;line-height:1.8;color:var(--fg-3);}
+.legal-text a{color:var(--aqua);text-decoration:none;}
+.legal-divider{width:40px;height:2px;background:var(--line);margin:16px auto;}
+.motor-credit{font-size:10px;color:var(--fg-3);letter-spacing:.12em;text-transform:uppercase;}
+</style>
+</head>
+<body>
+
+<!-- SeyAI Chrome Top -->
+<header class="sy-top">
+  <div class="sy-brand">
+    <div class="sy-logo">S</div>
+    <span class="sy-name">seyai</span>
+    <span class="sy-pill">VULCANO · smoke</span>
+  </div>
+  <div class="sy-sep"></div>
+  <div class="sy-meta">
+    <span><strong>thiago-surf-coach</strong> · expert</span>
+    <span>funil-1-captura-verao · pagina-captura</span>
+  </div>
+  <div class="sy-dv">
+    <select id="dv-sel" title="Simular viewport de dispositivo">
+      <option value="">Desktop (livre)</option>
+      <option value="375">iPhone 14 · 375px</option>
+      <option value="390">iPhone 15 Pro · 390px</option>
+      <option value="430">iPhone 15 Plus · 430px</option>
+      <option value="360">Android M · 360px</option>
+      <option value="412">Pixel 8 · 412px</option>
+      <option value="768">iPad Mini · 768px</option>
+      <option value="820">iPad Air · 820px</option>
+      <option value="1024">iPad Pro 11 · 1024px</option>
+      <option value="1280">Laptop 1280px</option>
+    </select>
+    <span class="sy-motor">Higgsfield · Soul 2</span>
+  </div>
+</header>
+
+<!-- React mount -->
+<div id="root"></div>
+
+<!-- SeyAI Chrome Bottom -->
+<footer class="sy-bot">
+  <div>
+    <div class="sy-info-title">Pagina de Captura · Funil 1 Verao</div>
+    <div class="sy-info-sub">Smoke E2E · thiago-surf-coach · Higgsfield Soul 2 · 2026-05-11</div>
+  </div>
+  <div class="sy-actions">
+    <button class="sy-btn" onclick="scrollToTopFn()">Topo</button>
+    <button class="sy-btn" onclick="window.open('pagina-replicate.html','_blank')">Ver Replicate</button>
+    <button class="sy-btn primary" onclick="approveSmoke()">Aprovar Smoke</button>
+  </div>
+</footer>
+
+<!-- React 18 + Babel standalone (mesma stack dos testes) -->
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+
+<script>
+/* Chrome interactions — vanilla, fora de React */
+window.dataLayer = window.dataLayer || [];
+window.dataLayer.push({event:'form_view', lead_form_id:'form-captura-verao-v1', motor:'higgsfield'});
+
+document.getElementById('dv-sel').addEventListener('change', function(){
+  var w = this.value;
+  var root = document.getElementById('root');
+  if(w){
+    root.style.maxWidth = w + 'px';
+    root.style.margin = '0 auto';
+    root.style.boxShadow = '0 0 0 1px rgba(0,0,0,.08),0 8px 40px rgba(0,0,0,.18)';
+  }else{
+    root.style.maxWidth = '';
+    root.style.margin = '';
+    root.style.boxShadow = '';
+  }
+});
+
+function scrollToTopFn(){ window.scrollTo({ top: 0, behavior: 'smooth' }); }
+function approveSmoke(){
+  alert('Smoke E2E aprovado\nArquivo: pagina-higgsfield.html\nCliente: thiago-surf-coach\nFunil: funil-1-captura-verao\nMotor: Higgsfield Soul 2\nData: 2026-05-11');
+}
+function submitLeadForm(btn, motor){
+  var form = btn.closest('.capture-form,.capture-form-2');
+  var email = form.querySelector('[type=email]');
+  if(!email || !email.value || !email.value.includes('@')){
+    email.style.borderColor = '#e63946'; email.focus(); return;
+  }
+  window.dataLayer.push({event:'form_submit_lead', lead_form_id:'form-captura-verao-v1', motor:motor, email:email.value});
+  btn.textContent = 'Enviado! Verifique seu email.';
+  btn.style.background = '#10b981'; btn.disabled = true;
+}
+</script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+/* ── Helpers ── */
+const clamp = (v, lo=0, hi=1) => Math.max(lo, Math.min(hi, v));
+const sub = (p, a, b) => clamp((p - a) / (b - a), 0, 1);
+const easeOut = t => 1 - Math.pow(1 - t, 3);
+
+function fadeUp(time, start, end, dy=14) {
+  const e = end != null ? end : start + 0.4;
+  const p = easeOut(sub(time, start, e));
+  return { opacity: p, transform: `translateY(${(1 - p) * dy}px)` };
+}
+function fadeIn(time, start, end) {
+  const e = end != null ? end : start + 0.4;
+  return { opacity: easeOut(sub(time, start, e)) };
+}
+
+/* ── Hook: timer local por slide via IntersectionObserver ── */
+function useVideoTimer(ref, duration, threshold=0.4){
+  const [time, setTime] = useState(0);
+  const [active, setActive] = useState(false);
+  const rafRef = useRef(null);
+  const startRef = useRef(null);
+
+  useEffect(() => {
+    if(!ref.current) return;
+    const el = ref.current;
+    const io = new IntersectionObserver((entries) => {
+      const e = entries[0];
+      setActive(e.isIntersecting && e.intersectionRatio >= threshold);
+    }, { threshold: [0, threshold, 1] });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [ref, threshold]);
+
+  useEffect(() => {
+    if(!active){
+      setTime(0); startRef.current = null;
+      if(rafRef.current) cancelAnimationFrame(rafRef.current);
+      return;
+    }
+    startRef.current = null;
+    const step = (ts) => {
+      if(startRef.current == null) startRef.current = ts;
+      const t = (ts - startRef.current) / 1000;
+      if(t >= duration){ setTime(duration); return; }
+      setTime(t);
+      rafRef.current = requestAnimationFrame(step);
+    };
+    rafRef.current = requestAnimationFrame(step);
+    return () => { if(rafRef.current) cancelAnimationFrame(rafRef.current); };
+  }, [active, duration]);
+
+  return { time, active, progress: clamp(time/duration, 0, 1) };
+}
+
+/* ── VideoSlide wrapper ── */
+function VideoSlide({ id, duration, children }){
+  const ref = useRef(null);
+  const timer = useVideoTimer(ref, duration);
+  return (
+    <section ref={ref} id={id} className="vs-slide">
+      <div className="vs-progress"><div className="vs-progress-fill" style={{width: (timer.progress * 100) + '%'}}/></div>
+      {typeof children === 'function' ? children({...timer, duration}) : children}
+    </section>
+  );
+}
+
+/* ── Next Hint ── */
+function NextHint({ visible }){
+  if(!visible) return null;
+  return (
+    <div className="vs-next">
+      <div>continue rolando</div>
+      <div className="vs-next-arrow">↓</div>
+    </div>
+  );
+}
+
+/* ── Step Indicator (lateral direita) ── */
+function StepIndicator({ items }){
+  const [active, setActive] = useState(0);
+  useEffect(() => {
+    const onScroll = () => {
+      const secs = document.querySelectorAll('.vs-slide');
+      let best = 0, bestDist = Infinity;
+      secs.forEach((s, i) => {
+        const r = s.getBoundingClientRect();
+        const center = Math.abs(r.top + r.height/2 - window.innerHeight/2);
+        if(center < bestDist){ bestDist = center; best = i; }
+      });
+      setActive(best);
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+  return (
+    <nav className="step-ind">
+      {items.map((label, i) => (
+        <div key={i}
+          className={'step-ind-item ' + (i === active ? 'active' : '')}
+          onClick={() => document.querySelectorAll('.vs-slide')[i]?.scrollIntoView({behavior:'smooth'})}>
+          <span className="step-ind-label" style={{
+            opacity: i === active ? 1 : 0,
+            transform: 'translateX(' + (i === active ? 0 : 8) + 'px)'
+          }}>{label}</span>
+          <div className="step-ind-bar" style={{ width: (i === active ? 24 : 6) + 'px' }}/>
+        </div>
+      ))}
+    </nav>
+  );
+}
+
+/* ══ SCENES ══ */
+
+/* S1 HERO (duration 4.5s) */
+function HeroScene({ time, duration }){
+  const imgStyle = {
+    opacity: easeOut(sub(time, 0, 0.9)),
+    transform: `scale(${1.05 - 0.05 * easeOut(sub(time, 0, 1.4))})`,
+    transition: 'none'
+  };
+  return (
+    <>
+      <div className="hero-bg">
+        <img src="https://d8j0ntlcm91z4.cloudfront.net/user_3AfgSQ1pBB8qDlclTCouojEjQWJ/hf_20260511_191544_15f7a115-9087-4654-bbc2-8e64f2aa899b_min.webp" alt="Thiago Freitas surfando" style={imgStyle}/>
+      </div>
+      <div className="hero-left">
+        <div className="hero-eyebrow" style={fadeUp(time, 0.3, 0.7)}>Ebook gratis · Surf para iniciantes</div>
+        <h1 className="hero-h1">
+          <span className="line"><span className="word" style={fadeUp(time, 0.5, 1.0, 44)}>Ainda nao fica</span></span>
+          <span className="line"><span className="word" style={fadeUp(time, 0.8, 1.3, 44)}>em pe na <em>prancha?</em></span></span>
+        </h1>
+        <p className="hero-sub" style={fadeUp(time, 1.3, 1.7)}>Descubra os 7 erros que fazem iniciantes cairem sempre no mesmo ponto — e como eliminar cada um sem precisar de talento especial.</p>
+        <p className="hero-support" style={fadeUp(time, 1.6, 2.0)}>Voce aparece. Tenta. Cai no mesmo lugar. Tenta de novo. Cai igual.<br/>Isso nao e falta de jeito. Sao 7 erros tecnicos especificos. Cada um tem uma correcao simples.</p>
+        <div className="capture-form" style={fadeUp(time, 2.0, 2.5)}>
+          <input type="text" placeholder="Primeiro nome (opcional)" autoComplete="given-name"/>
+          <input type="email" placeholder="Seu melhor email" autoComplete="email" required/>
+          <button className="cta-btn" onClick={(e)=>submitLeadForm(e.currentTarget,'higgsfield')}>Quero meu ebook gratis</button>
+        </div>
+        <p className="hero-proof" style={fadeUp(time, 2.5, 2.9)}>Sem spam. Voce pode cancelar a qualquer hora.</p>
+      </div>
+      <NextHint visible={time > 3.2}/>
+    </>
+  );
+}
+
+/* S2 BENEFICIOS (duration 5.5s) */
+function BeneficiosScene({ time, duration }){
+  const bullets = [
+    ['01','Por que voce perde o equilibrio na hora de levantar','— e o ajuste de peso que muda tudo no proximo treino'],
+    ['02','O erro de joelhos que 9 em 10 iniciantes cometem','— e que faz voce cair sempre do mesmo lado'],
+    ['03','Como usar os bracos pra nao cair','— a maioria ignora isso completamente, e e mais facil de corrigir do que parece'],
+    ['04','Por que voce pega a onda mas nao controla pra onde vai','— tem a ver com onde voce olha, nao com forca'],
+    ['05','O posicionamento certo na prancha','— muito a frente ou muito atras arruina tudo antes de voce levantar'],
+    ['06','Por que a remada inconsistente faz voce perder onda tras onda','— e a tecnica simples que resolve isso'],
+    ['07','Quando voce esta pronto pra tentar virar','— e por que tentar antes disso e a raiz de muita frustracao'],
+  ];
+  return (
+    <>
+      <div className="s2-inner">
+        <div className="s-tag" style={fadeUp(time, 0.1, 0.5)}>O que voce vai aprender</div>
+        <h2 className="s-h2" style={fadeUp(time, 0.3, 0.8, 18)}>Em 8 paginas voce vai entender exatamente:</h2>
+        <p className="s-lead" style={fadeUp(time, 0.6, 1.0)}>Tudo em linguagem direta. Sem enrolacao. 10 minutos de leitura.</p>
+        <div className="bullets">
+          {bullets.map(([num, t1, t2], i) => {
+            const start = 1.0 + i * 0.32;
+            const p = easeOut(sub(time, start, start + 0.5));
+            return (
+              <div key={i} className="bullet" style={{ opacity: p, transform: `translateX(${(1-p) * -18}px)` }}>
+                <span className="bullet-num">{num}</span>
+                <span><strong>{t1}</strong> {t2}</span>
+              </div>
+            );
+          })}
+        </div>
+        <p className="s2-fecho" style={fadeUp(time, 3.6, 4.0)}>PDF gratuito. Sem cadastro de cartao. Acesso imediato.</p>
+      </div>
+      <NextHint visible={time > 4.5}/>
+    </>
+  );
+}
+
+/* S3 PROVA SOCIAL (duration 3.5s) */
+function ProvaSocialScene({ time, duration }){
+  return (
+    <>
+      <div className="s3-inner">
+        <div className="s-tag" style={fadeUp(time, 0.1, 0.5)}>O que dizem</div>
+        <h2 className="s-h2" style={fadeUp(time, 0.3, 0.8, 18)}>Quem ja eliminou esses erros</h2>
+        <div className="s3-cards">
+          <div className="testimonial" style={fadeUp(time, 0.7, 1.2, 20)}>
+            <blockquote>"Eu ficava caindo sempre no lado direito e achei que era jeito. Era o joelho. Corrigi em uma aula."</blockquote>
+            <cite>[Nome], [cidade]</cite>
+            <div className="smoke-note">smoke — substituir por depoimento real</div>
+          </div>
+          <div className="testimonial" style={fadeUp(time, 1.0, 1.5, 20)}>
+            <blockquote>"Tentei por meses sozinho. Li o ebook, entendi onde estava errando. Na aula seguinte fiquei em pe."</blockquote>
+            <cite>[Nome], [cidade]</cite>
+            <div className="smoke-note">smoke — substituir por depoimento real</div>
+          </div>
+        </div>
+      </div>
+      <NextHint visible={time > 2.5}/>
+    </>
+  );
+}
+
+/* S4 FORM REPETIDO (duration 3.2s) */
+function FormRepetidoScene({ time, duration }){
+  return (
+    <>
+      <div className="s4-inner">
+        <h2 className="s4-h2" style={fadeUp(time, 0.1, 0.6, 20)}>Pronto pra eliminar esses erros?</h2>
+        <p className="s4-sub" style={fadeUp(time, 0.4, 0.9)}>Receba o PDF gratis agora. Leia antes do proximo treino.</p>
+        <div className="capture-form-2" style={fadeUp(time, 0.7, 1.2, 16)}>
+          <input type="text" placeholder="Primeiro nome (opcional)" autoComplete="given-name"/>
+          <input type="email" placeholder="Seu melhor email" autoComplete="email" required/>
+          <button className="cta-btn-2" onClick={(e)=>submitLeadForm(e.currentTarget,'higgsfield')}>Quero meu ebook gratis</button>
+        </div>
+        <p className="s4-proof" style={fadeUp(time, 1.2, 1.6)}>Sem spam. Voce pode cancelar a qualquer hora.</p>
+      </div>
+      <NextHint visible={time > 2.0}/>
+    </>
+  );
+}
+
+/* S5 LEGAL (duration 2s) */
+function LegalScene({ time, duration }){
+  return (
+    <div className="s5-inner">
+      <p className="legal-text" style={fadeUp(time, 0.1, 0.6)}>Ao enviar seu email voce concorda em receber conteudos de Thiago Freitas sobre surf e tecnica de surf. Voce pode cancelar a qualquer momento pelo link de descadastro em todos os emails. Seus dados nao serao compartilhados com terceiros. <a href="#">Politica de privacidade</a>.</p>
+      <div className="legal-divider" style={fadeIn(time, 0.5, 0.9)}/>
+      <p className="motor-credit" style={fadeUp(time, 0.7, 1.1)}>Imagens geradas · Higgsfield Soul 2 · Smoke E2E SeyAI 2026-05-11</p>
+    </div>
+  );
+}
+
+/* ── App ── */
+function App(){
+  return (
+    <>
+      <VideoSlide id="s1" duration={4.5}>
+        {(t) => <HeroScene {...t}/>}
+      </VideoSlide>
+      <VideoSlide id="s2" duration={5.5}>
+        {(t) => <BeneficiosScene {...t}/>}
+      </VideoSlide>
+      <VideoSlide id="s3" duration={3.5}>
+        {(t) => <ProvaSocialScene {...t}/>}
+      </VideoSlide>
+      <VideoSlide id="s4" duration={3.2}>
+        {(t) => <FormRepetidoScene {...t}/>}
+      </VideoSlide>
+      <VideoSlide id="s5" duration={2.0}>
+        {(t) => <LegalScene {...t}/>}
+      </VideoSlide>
+      <StepIndicator items={['Inicio','Aprender','Prova','Baixar','Legal']}/>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
