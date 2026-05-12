@@ -106,6 +106,17 @@ p.lead{font-size:1.2rem;color:#F5F5F0}
 .hero[data-layout="L2"] .hero-img::before{content:"";position:absolute;top:8%;left:-15%;background:#161616;border:1px solid #C7FF3A;border-radius:8px;padding:.7rem 1rem;font-family:'Manrope',system-ui,sans-serif;font-size:.7rem;color:#C7FF3A;width:130px;height:54px;box-shadow:0 8px 32px rgba(0,0,0,.6)}
 .hero[data-layout="L2"] .hero-img::after{content:"+1.000 fotos";position:absolute;top:8%;left:-15%;font-family:'Manrope',system-ui,sans-serif;font-size:.75rem;color:#C7FF3A;padding:.95rem 1rem;letter-spacing:.05em;font-weight:600}
 
+/* L4 — FULL-BLEED v2 (imagem regerada via M3 photo-prompt-agent + L17 auto-eval 9.0/10)
+   Mesmo comportamento de L3 mas com hero image regerada (subject far right, lime sutil no canto, screens abstratas)
+   E gradient adjustado para a nova composicao (left 65% ja dark na imagem, precisa menos overlay) */
+.hero[data-layout="L4"]{padding:0;min-height:clamp(640px,80vh,880px);max-height:880px}
+.hero[data-layout="L4"] .hero-bg{display:block;position:absolute;inset:0;z-index:0}
+.hero[data-layout="L4"] .hero-bg img{width:100%;height:100%;object-fit:cover;object-position:right center}
+.hero[data-layout="L4"] .hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#0A0A0A 0%,rgba(10,10,10,.65) 35%,rgba(10,10,10,.25) 55%,transparent 75%)}
+.hero[data-layout="L4"] .hero-grid{display:grid;grid-template-columns:1fr 1fr;align-items:center;position:relative;width:100%;z-index:2;max-width:1280px;margin:0 auto;padding:0 2rem}
+.hero[data-layout="L4"] .hero-img{display:none}
+.hero[data-layout="L4"] .hero-grid > div:first-child{padding:6rem 0}
+
 /* L3 — FULL-BLEED (imagem cobre fundo todo, texto overlay) */
 /* Altura controlada: minimo 640px, prefere 80vh, maximo 880px (evita estourar em 2K/4K/Ultrawide) */
 .hero[data-layout="L3"]{padding:0;min-height:clamp(640px,80vh,880px);max-height:880px}
@@ -124,6 +135,18 @@ p.lead{font-size:1.2rem;color:#F5F5F0}
   .hero[data-layout="L1"] .hero-img,.hero[data-layout="L2"] .hero-img{order:-1;width:100%;max-width:480px;margin:0 auto;aspect-ratio:4/5}
   .hero[data-layout="L1"] h1,.hero[data-layout="L2"] h1{font-size:clamp(2rem,8vw,2.8rem)}
   .hero[data-layout="L2"] .hero-img::before,.hero[data-layout="L2"] .hero-img::after{display:none}
+
+  /* L4: mesmo comportamento mobile de L3 (full-bleed empilhado) com a imagem regerada */
+  .hero[data-layout="L4"]{min-height:auto;padding:0;flex-direction:column;display:flex;width:100vw;max-width:100vw;margin-left:calc(-1*((100vw - 100%)/2));position:relative}
+  .hero[data-layout="L4"] .hero-bg{position:relative;width:100%;height:72vh;flex-shrink:0}
+  .hero[data-layout="L4"] .hero-bg img{object-position:78% center;object-fit:cover}
+  .hero[data-layout="L4"] .hero-bg::after{background:linear-gradient(180deg,transparent 35%,rgba(10,10,10,.55) 60%,rgba(10,10,10,.92) 80%,#0A0A0A 100%)}
+  .hero[data-layout="L4"] .hero-grid{grid-template-columns:1fr;padding:1rem 1.25rem 2.5rem;width:100%;max-width:none;margin-top:-32vh;position:relative;z-index:5}
+  .hero[data-layout="L4"] .hero-grid > div:first-child{padding:0}
+  .hero[data-layout="L4"] h1{font-size:clamp(2.2rem,9vw,3.2rem);line-height:1.02}
+  .hero[data-layout="L4"] .hero-img{display:none}
+  .hero[data-layout="L4"] .lead{font-size:1.05rem}
+  .hero[data-layout="L4"] .bullets li{font-size:.92rem}
 
   /* L3: imagem cobre topo canto-a-canto, texto SOBREPÕE quarto inferior escuro da imagem */
   .hero[data-layout="L3"]{min-height:auto;padding:0;flex-direction:column;display:flex;width:100vw;max-width:100vw;margin-left:calc(-1*((100vw - 100%)/2));position:relative}
@@ -323,7 +346,7 @@ body[data-skin="L3"] .selo-wrap{width:240px;height:240px}
   <div class="brand">
     <div class="logo"></div>
     <span>seyai</span>
-    <span class="step-pill">cartilha 2+3 / 4</span>
+    <span class="step-pill">L4 adicionado · M3 + L17 auto-eval 9.0/10</span>
   </div>
   <div class="meta">
     <span><strong>tlucas</strong> · admin</span>
@@ -334,7 +357,8 @@ body[data-skin="L3"] .selo-wrap{width:240px;height:240px}
       <select id="hero-toggle" style="background:#2A2B2F;color:#E5E7EB;border:1px solid #3A3B3F;border-radius:4px;padding:.25rem .4rem;font-family:inherit;font-size:.7rem;cursor:pointer">
         <option value="L1">L1 split (orig)</option>
         <option value="L2">L2 fusao CSS</option>
-        <option value="L3" selected>L3 full-bleed</option>
+        <option value="L3" selected>L3 full-bleed (orig)</option>
+        <option value="L4">L4 full-bleed (M3+L17 regen)</option>
       </select>
     </label>
     <label style="display:flex;align-items:center;gap:.4rem;color:#9CA3AF;cursor:pointer">
@@ -382,7 +406,8 @@ body[data-skin="L3"] .selo-wrap{width:240px;height:240px}
     <select id="hero-toggle-mobile">
       <option value="L1">L1 split</option>
       <option value="L2">L2 fusao CSS</option>
-      <option value="L3" selected>L3 full-bleed</option>
+      <option value="L3" selected>L3 full-bleed (orig)</option>
+      <option value="L4">L4 full-bleed (M3+L17 regen)</option>
     </select>
   </div>
 </div>
@@ -390,7 +415,7 @@ body[data-skin="L3"] .selo-wrap{width:240px;height:240px}
 <div class="page-content">
 <!-- HERO O01 -->
 <section class="section hero pattern-grid" data-layout="L3" id="hero">
-  <div class="hero-bg"><img src="assets/imagens/hero/M3-hero-v3-fullbleed_2x.webp" alt=""></div>
+  <div class="hero-bg"><img id="hero-bg-img" src="assets/imagens/hero/M3-hero-v3-fullbleed_2x.webp" alt="Thiago Lucas (L3 original / L4 regerado via M3+L17)"></div>
   <div class="hero-grid">
     <div class="reveal">
   <h1>Você é o seu próprio <span class="accent">banco de imagens</span>. <span class="underline">Infinito</span>.</h1>
@@ -651,11 +676,20 @@ document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
 const hero=document.getElementById('hero');
 const heroToggle=document.getElementById('hero-toggle');
 const heroToggleMobile=document.getElementById('hero-toggle-mobile');
+// L3 = imagem original; L4 = imagem regerada via M3 photo-prompt-agent + L17 auto-eval 9.0/10
+const HERO_IMG_BY_LAYOUT={
+  L1:'assets/imagens/hero/M3-produto-em-acao-v2_2x.webp',
+  L2:'assets/imagens/hero/M3-produto-em-acao-v2_2x.webp',
+  L3:'assets/imagens/hero/M3-hero-v3-fullbleed_2x.webp',
+  L4:'https://d8j0ntlcm91z4.cloudfront.net/user_3AfgSQ1pBB8qDlclTCouojEjQWJ/hf_20260511_232616_2137fb9a-13ad-4956-a1a4-06c13596dfdd_min.webp'
+};
 function setHeroLayout(v){
   if(hero){hero.dataset.layout=v}
   if(heroToggle){heroToggle.value=v}
   if(heroToggleMobile){heroToggleMobile.value=v}
   document.body.dataset.skin=v;
+  const heroImg=document.getElementById('hero-bg-img');
+  if(heroImg && HERO_IMG_BY_LAYOUT[v]){heroImg.src=HERO_IMG_BY_LAYOUT[v];}
 }
 // inicializa
 document.body.dataset.skin=hero?.dataset.layout||'L3';
